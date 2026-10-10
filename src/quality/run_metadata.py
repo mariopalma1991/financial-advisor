@@ -9,6 +9,7 @@ Rule for what becomes a persisted event: job lifecycle, per-source fetch results
 rows written per table, every quality-check outcome, every screener match.
 Observability must never break the pipeline — persistence is best-effort.
 """
+
 from __future__ import annotations
 
 import os
@@ -32,28 +33,60 @@ def current_run_id() -> str:
     return os.getenv("GITHUB_RUN_ID") or _LOCAL_RUN_ID
 
 
-def send_alert(message: str) -> None:
-    """Push an alert to the configured webhook (Telegram/Discord/Slack). Optional."""
+def _slack_blocks(title: str, fields: dict[str, str], color: str = "#36a64f") -> dict:
+    """Build a Slack message attachment with fields."""
+    return {
+        "attachments": [
+            {
+                "color": color,
+                "title": title,
+                "fields": [{"title": k, "value": v, "short": True} for k, v in fields.items()],
+                "footer": f"financial-advisor · {current_run_id()}",
+                "ts": int(__import__("time").time()),
+            }
+        ]
+    }
+
+
+def send_alert(message: str, title: str = "🚨 Pipeline Alert") -> None:
+    """Push an alert to Slack via incoming webhook."""
     settings = Settings.from_env()
     if not settings.alert_webhook_url:
         return
     try:
-        httpx.post(
-            settings.alert_webhook_url,
-            json={"content": message, "text": message},
-            timeout=10,
-        )
-    except Exception as exc:  # alerting must never break the pipeline
+        payload = _slack_blocks(title, {"Message": message}, color="#ff0000")
+        httpx.post(settings.alert_webhook_url, json=payload, timeout=10)
+    except Exception as exc:
         log.warning("alert_delivery_failed", error=str(exc))
 
 
+def send_summary(job_name: str, fields: dict[str, str], success: bool = True) -> None:
+    """Send a job completion summary to Slack."""
+    settings = Settings.from_env()
+    if not settings.alert_webhook_url:
+        return
+    try:
+        emoji = "✅" if success else "❌"
+        color = "#36a64f" if success else "#ff0000"
+        payload = _slack_blocks(
+            f"{emoji} {job_name} completed",
+            fields,
+            color=color,
+        )
+        httpx.post(settings.alert_webhook_url, json=payload, timeout=10)
+    except Exception as exc:
+        log.warning("summary_delivery_failed", error=str(exc))
+
+
 class EventEmitter:
-    """Emits structured events for one job run."""
+    """Emits structured events for one job run. Tracks summary stats."""
 
     def __init__(self, job_name: str, client: Any | None = None) -> None:
         self.job_name = job_name
         self.run_id = current_run_id()
         self._client = client
+        self._summary: dict[str, str] = {}
+        self._error_count = 0
 
     def emit(
         self,
@@ -79,14 +112,21 @@ class EventEmitter:
             client = self._client
             if client is None:
                 from src.storage.supabase_client import get_client
-
                 client = get_client()
             client.table("pipeline_events").insert(row).execute()
         except Exception as exc:
             log.warning("event_persist_failed", error=str(exc))
 
         if level == "ERROR":
-            send_alert(f"[{self.job_name}] {event_type}: {message}")
+            self._error_count += 1
+            send_alert(message, title=f"🚨 [{self.job_name}] {event_type}")
+
+        # Track summary stats from rows_written events
+        if event_type == "rows_written" and payload:
+            for k, v in payload.items():
+                self._summary[k] = str(v)
+        if event_type == "source_fetched" and payload:
+            self._summary[message] = f"{payload.get('rows', '?')} rows"
 
 
 @contextmanager
@@ -98,6 +138,8 @@ def job_run(job_name: str) -> Iterator[EventEmitter]:
         yield emitter
     except Exception as exc:
         emitter.emit("ERROR", "job_failed", str(exc))
+        send_summary(job_name, emitter._summary, success=False)
         raise
     else:
         emitter.emit("INFO", "job_completed", f"{job_name} completed")
+        send_summary(job_name, emitter._summary, success=True)
