@@ -45,8 +45,9 @@ def get_research_package(ticker: str, as_of: str | None = None) -> dict[str, Any
 
 
 def get_feed(ticker: str, feed: str, as_of: str | None = None) -> dict[str, Any]:
-    """One role-scoped feed by name (price_technicals | fundamentals | screener |
-    data_quality | full). Every response carries its snapshot_id for audit."""
+    """One role-scoped feed by name (price_technicals | fundamentals |
+    news_sentiment | screener | data_quality | full). Every response carries
+    its snapshot_id for audit."""
     pkg = curated.get_latest_package(ticker, feed=feed, as_of=_parse_as_of(as_of))
     if pkg is None:
         return {"error": f"no feed '{feed}' for {ticker}"}
@@ -127,6 +128,51 @@ def list_tickers(tier: str | None = None) -> dict[str, Any]:
             }
             for r in rows
         ]
+    }
+
+
+def search_news(
+    ticker: str, query: str | None = None, top_k: int = 10, as_of: str | None = None
+) -> dict[str, Any]:
+    """Search recent news articles for a ticker. Returns headlines with sentiment
+    scores, most recent first. Optionally filter by a text query (simple headline
+    substring match until Qdrant semantic search is wired in Phase 2b)."""
+    articles = curated.get_news_articles(
+        ticker=ticker, window_days=30, as_of=_parse_as_of(as_of), limit=100
+    )
+    if query:
+        q = query.lower()
+        articles = [a for a in articles if q in (a.get("headline") or "").lower()]
+    top = articles[:top_k]
+    return {
+        "ticker": ticker,
+        "articles": [
+            {
+                "date": str(a["published_at"])[:10],
+                "headline": a.get("headline"),
+                "sentiment": a.get("sentiment_score"),
+            }
+            for a in top
+        ],
+    }
+
+
+def get_news_sentiment(ticker: str, as_of: str | None = None) -> dict[str, Any]:
+    """Daily sentiment aggregates for a ticker (last 30 days): 1d, 3d, 7d rolling
+    mean sentiment scores plus article counts."""
+    rows = curated.get_news_sentiment(ticker, window_days=30, as_of=_parse_as_of(as_of))
+    return {
+        "ticker": ticker,
+        "daily": [
+            {
+                "date": str(r["date"]),
+                "sent_1d": r.get("sent_1d"),
+                "sent_3d": r.get("sent_3d"),
+                "sent_7d": r.get("sent_7d"),
+                "article_count": r.get("article_count"),
+            }
+            for r in rows
+        ],
     }
 
 

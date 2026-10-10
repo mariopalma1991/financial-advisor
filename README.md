@@ -16,7 +16,15 @@ Ticker universe: [`plans/ticker-universe.md`](plans/ticker-universe.md)
 ## Setup
 
 ```bash
+# Create and activate a virtual environment
+python -m venv venv
+venv\Scripts\activate     # Windows
+# source venv/bin/activate  # macOS / Linux
+
+# Install the project and its dependencies
 pip install -e ".[dev]"
+
+# Configure credentials
 copy .env.example .env   # then fill in Supabase credentials
 python scripts/apply_migration.py
 ```
@@ -24,6 +32,8 @@ python scripts/apply_migration.py
 `.env` needs: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_DB_URL` (direct Postgres string), optional `ALERT_WEBHOOK_URL`.
 
 ## Daily operation (local)
+
+All commands assume the venv is activated. From the project root:
 
 ```bash
 python scripts/dev_cycle.py AAPL MSFT        # full cycle for a few tickers
@@ -35,6 +45,7 @@ Or individual jobs:
 python -m src.jobs.ingest_prices             # prices + cross-check + freshness
 python -m src.jobs.compute_indicators        # add --full to rewrite history
 python -m src.jobs.ingest_filings            # EDGAR fundamentals + filings
+python -m src.jobs.ingest_news               # RSS news -> ticker linking -> FinBERT sentiment
 python -m src.jobs.run_screener              # screens -> screener_results
 python -m src.jobs.build_feeds               # feeds -> research_packages
 python -m src.jobs.backfill AAPL WALMEX.MX   # history for new/promoted tickers
@@ -48,15 +59,16 @@ python -m src.mcp_server.server              # stdio transport
 ```
 
 Tools: `get_research_package`, `get_feed`, `get_price_history`, `get_fundamentals`,
-`run_screener`, `get_screener_results`, `list_tickers`, `get_pipeline_runs`, `get_pipeline_events`.
+`search_news`, `get_news_sentiment`, `run_screener`, `get_screener_results`,
+`list_tickers`, `get_pipeline_runs`, `get_pipeline_events`.
 
 ## Cloud operation
 
 GitHub Actions runs the pipeline on schedule (see `.github/workflows/`):
-`daily_pipeline.yml` (prices → indicators → screener → feeds, 01:00 UTC Tue–Sat) and
-`ingest_filings.yml` (daily 12:00 UTC). Required repo secrets: `SUPABASE_URL`,
-`SUPABASE_SERVICE_KEY`, `SUPABASE_DB_URL`, optional `ALERT_WEBHOOK_URL`;
-optional repo variable: `EDGAR_USER_AGENT`.
+`daily_pipeline.yml` (prices → indicators → screener → feeds, 01:00 UTC Tue–Sat),
+`ingest_filings.yml` (daily 12:00 UTC), and `ingest_news.yml` (3×/day at 13, 19, 23 UTC).
+Required repo secrets: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_DB_URL`,
+optional `ALERT_WEBHOOK_URL`; optional repo variable: `EDGAR_USER_AGENT`.
 
 ## Tests
 

@@ -16,6 +16,8 @@ for fn in (
     tools.get_feed,
     tools.get_price_history,
     tools.get_fundamentals,
+    tools.search_news,
+    tools.get_news_sentiment,
     tools.run_screener,
     tools.get_screener_results,
     tools.list_tickers,

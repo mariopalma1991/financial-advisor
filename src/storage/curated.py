@@ -351,3 +351,75 @@ def enabled_tickers(tier: str | None = None) -> list[dict]:
         sql += " and tier = %s"
         params = (tier,)
     return fetch_all(sql, params)
+
+
+# ---------- news ----------
+
+def upsert_news_articles(rows: list[dict[str, Any]]) -> int:
+    """Insert curated news articles; idempotent on article_id.
+
+    Each row must have: article_id, published_at, tickers[], headline,
+    sentiment_score, storage_path, valid_from.
+    """
+    if not rows:
+        return 0
+    now = _now()
+    payload = [{**r, "ingested_at": now} for r in rows]
+    get_client().table("news_articles").upsert(
+        payload, on_conflict="article_id", ignore_duplicates=True
+    ).execute()
+    return len(payload)
+
+
+def upsert_news_sentiment(rows: list[dict[str, Any]]) -> int:
+    """Upsert daily sentiment aggregates; rebuildable derived data.
+
+    Each row must have: ticker, date, sent_1d, sent_3d, sent_7d, article_count.
+    """
+    if not rows:
+        return 0
+    now = _now()
+    payload = [
+        {**r, "valid_from": f"{r['date']}T23:59:59+00:00", "ingested_at": now}
+        for r in rows
+    ]
+    get_client().table("news_sentiment_daily").upsert(
+        payload, on_conflict="ticker,date", ignore_duplicates=True
+    ).execute()
+    return len(payload)
+
+
+def get_news_articles(
+    ticker: str | None = None,
+    window_days: int = 30,
+    as_of: date | None = None,
+    limit: int = 100,
+) -> list[dict]:
+    """Point-in-time news articles, most recent first."""
+    as_of_ts = f"{as_of.isoformat()}T23:59:59+00:00" if as_of else None
+    sql = """
+        select * from news_articles
+        where (%s::text is null or %s = any(tickers))
+          and (%s::date is null or published_at::date >= current_date - %s::int)
+          and (%s::timestamptz is null or valid_from <= %s)
+        order by published_at desc
+        limit %s
+    """
+    return fetch_all(sql, (ticker, ticker, as_of, window_days, as_of_ts, as_of_ts, limit))
+
+
+def get_news_sentiment(
+    ticker: str,
+    window_days: int = 30,
+    as_of: date | None = None,
+) -> list[dict]:
+    """Point-in-time daily sentiment aggregates, ascending by date."""
+    as_of_ts = f"{as_of.isoformat()}T23:59:59+00:00" if as_of else None
+    sql = """
+        select * from news_sentiment_daily
+        where ticker = %s
+          and (%s::date is null or date >= current_date - %s::int)
+          and (%s::timestamptz is null or valid_from <= %s)
+        order by date asc
+    """
+    return fetch_all(sql, (ticker, as_of, window_days, as_of_ts, as_of_ts))

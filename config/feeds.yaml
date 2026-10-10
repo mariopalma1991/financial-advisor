@@ -6,7 +6,7 @@ feeds:
     tables: [price_bars_daily, indicators_daily, corporate_actions]
   fundamentals:
     tables: [fundamentals_quarterly]
-  news_sentiment:            # Phase 2
+  news_sentiment:
     tables: [news_articles, news_sentiment_daily]
   catalysts:                 # Phase 3
     tables: [catalyst_events]

@@ -106,6 +106,43 @@ def build_fundamentals(ticker: str, as_of: date | None = None) -> dict[str, Any]
     }
 
 
+def build_news_sentiment(ticker: str, as_of: date | None = None) -> dict[str, Any]:
+    """News digest: sentiment windows + top headlines for one ticker."""
+    articles = curated.get_news_articles(ticker=ticker, window_days=30, as_of=as_of, limit=50)
+    sentiment_rows = curated.get_news_sentiment(ticker, window_days=30, as_of=as_of)
+
+    # Latest sentiment windows
+    latest_sent = sentiment_rows[-1] if sentiment_rows else {}
+    sentiment = {
+        "1d": _r(latest_sent.get("sent_1d")),
+        "3d": _r(latest_sent.get("sent_3d")),
+        "7d": _r(latest_sent.get("sent_7d")),
+    }
+
+    # Top headlines by recency × sentiment strength
+    top_n = load_platform().feeds.get("top_news_items", 10)
+    ranked = sorted(
+        articles,
+        key=lambda a: abs(a.get("sentiment_score") or 0),
+        reverse=True,
+    )[:top_n]
+
+    top_items = [
+        {
+            "date": str(a["published_at"])[:10],
+            "headline": a.get("headline"),
+            "sentiment": _r(a.get("sentiment_score")),
+        }
+        for a in ranked
+    ]
+
+    return {
+        "sentiment": sentiment,
+        "article_count_7d": latest_sent.get("article_count", 0) if latest_sent else 0,
+        "top_items": top_items,
+    }
+
+
 def build_screener_feed(ticker: str) -> dict[str, Any]:
     rows = [r for r in curated.get_screener_results(matched_only=True) if r["ticker"] == ticker]
     if not rows:
@@ -146,6 +183,7 @@ def build_full(ticker: str, feeds: dict[str, dict[str, Any]]) -> dict[str, Any]:
         "currency": currency,
         "price_summary": feeds.get("price_technicals", {}),
         "fundamentals": feeds.get("fundamentals", {}),
+        "news_digest": feeds.get("news_sentiment", {}),
         "screener": feeds.get("screener", {}),
         "data_quality": feeds.get("data_quality", {}),
         "cost_context": {
@@ -167,6 +205,7 @@ def build_all(as_of: date | None = None) -> int:
         feeds = {
             "price_technicals": build_price_technicals(ticker, as_of),
             "fundamentals": build_fundamentals(ticker, as_of),
+            "news_sentiment": build_news_sentiment(ticker, as_of),
             "screener": build_screener_feed(ticker),
             "data_quality": build_data_quality(ticker),
         }

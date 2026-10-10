@@ -39,6 +39,17 @@ class RawCorporateAction:
     payload: dict[str, Any] = field(default_factory=dict)
 
 
+@dataclass
+class RawNewsArticle:
+    source: str
+    article_id: str  # stable hash of url
+    published_at: datetime
+    url: str | None = None
+    headline: str | None = None
+    body: str | None = None  # full text; stored in Supabase Storage for analysis tier
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
 class PriceAdapter(Protocol):
     """Contract for price sources (yfinance, Stooq, Tiingo later...)."""
 

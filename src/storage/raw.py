@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from src.adapters.base import RawCorporateAction, RawPriceBar
+from src.adapters.base import RawCorporateAction, RawNewsArticle, RawPriceBar
 from src.adapters.edgar_filings import RawFiling
 from src.storage.supabase_client import get_client
 
@@ -84,5 +84,28 @@ def insert_filings(filings: list[RawFiling]) -> int:
     ]
     get_client().table("raw_filings").upsert(
         rows, on_conflict="accession_no", ignore_duplicates=True
+    ).execute()
+    return len(rows)
+
+
+def insert_news_articles(articles: list[RawNewsArticle]) -> int:
+    """Insert raw news articles; idempotent on (source, article_id)."""
+    if not articles:
+        return 0
+    rows = [
+        {
+            "source": a.source,
+            "article_id": a.article_id,
+            "published_at": a.published_at.isoformat(),
+            "url": a.url,
+            "headline": a.headline,
+            "payload_json": a.payload,
+            "valid_from": a.published_at.isoformat(),
+            "ingested_at": _now(),
+        }
+        for a in articles
+    ]
+    get_client().table("raw_news_articles").upsert(
+        rows, on_conflict="source,article_id", ignore_duplicates=True
     ).execute()
     return len(rows)

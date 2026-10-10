@@ -1,6 +1,7 @@
 """Promote a ticker from the screening tier to the analysis tier.
 
 Usage: python scripts/promote_ticker.py NVDA
+Requires an activated venv.
 
 Moves the entry from config/screening_universe.yaml to config/tickers.yaml,
 then runs the backfill job (which pulls full history + indicators).
