@@ -19,8 +19,15 @@ from src.storage import curated, raw
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Backfill price history + indicators")
-    parser.add_argument("tickers", nargs="+", help="symbols to backfill")
+    parser.add_argument("tickers", nargs="*", help="symbols to backfill (omit with --all)")
+    parser.add_argument("--all", action="store_true", help="backfill all enabled tickers")
     args = parser.parse_args()
+
+    if args.all:
+        from src.config import all_symbols
+        args.tickers = all_symbols()
+    if not args.tickers:
+        parser.error("no tickers specified (use --all or list symbols)")
 
     cfg = load_platform()
     prices_cfg = cfg.ingestion["prices"]
@@ -29,12 +36,7 @@ def main() -> None:
     with job_run("backfill") as em:
         curated.sync_dim_tickers()  # dim_ticker must reflect config before benchmark lookup
         for ticker in args.tickers:
-            years_key = (
-                "backfill_years_analysis"
-                if tier_of(ticker) == "analysis"
-                else "backfill_years_screening"
-            )
-            since = date.today() - timedelta(days=int(365.25 * float(prices_cfg[years_key])))
+            since = date.today() - timedelta(days=365)  # 1 year for all tickers
 
             yf = YFinanceAdapter()
             bars = yf.fetch_bars([ticker], since)

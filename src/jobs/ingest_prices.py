@@ -18,7 +18,7 @@ def main() -> None:
     with job_run("ingest_prices") as em:
         synced = curated.sync_dim_tickers()
         symbols = all_symbols()
-        since = date.today() - timedelta(days=30)  # rolling window; backfill owns history
+        since = date.today() - timedelta(days=1)  # just yesterday; backfill owns history
 
         yf = YFinanceAdapter()
         bars = yf.fetch_bars(symbols, since)

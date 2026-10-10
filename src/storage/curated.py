@@ -490,6 +490,6 @@ def get_news_sentiment(
         cutoff = (date.today() - timedelta(days=window_days)).isoformat()
         query = query.gte("date", cutoff)
 
-    query = query.order("date", asc=True)
+    query = query.order("date", desc=False)
     rows = _paginate(query)
     return rows
