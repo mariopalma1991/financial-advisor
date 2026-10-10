@@ -136,40 +136,68 @@ def _build_ticker_pattern(symbols: list[str]) -> re.Pattern[str]:
     return re.compile(pattern)
 
 
+def _build_name_map() -> dict[str, str]:
+    """Build a mapping of company name (lowercase) -> ticker symbol."""
+    from src.config import load_analysis_universe, load_screening_universe
+
+    name_map: dict[str, str] = {}
+    for universe in (load_analysis_universe(), load_screening_universe()):
+        for t in universe.tickers:
+            name = t.name.lower().strip()
+            if name and len(name) > 3:
+                # Store the full name
+                name_map[name] = t.symbol
+                # Also store short forms (first word of multi-word names)
+                parts = name.split()
+                if len(parts) > 1 and len(parts[0]) > 2:
+                    name_map[parts[0]] = t.symbol
+    return name_map
+
+
 def link_tickers(
     articles: list[RawNewsArticle],
     symbols: list[str] | None = None,
 ) -> list[dict[str, Any]]:
-    """Scan headlines for known ticker symbols; return curated-zone rows.
+    """Scan headlines and bodies for ticker symbols and company names.
 
+    Matches both ticker symbols (e.g. AAPL) and company names (e.g. Apple).
     Each output row has: article_id, published_at, tickers[], headline,
     sentiment_score (None until scored), storage_path (None for screening tier).
-
-    Args:
-        articles: Raw news articles from the adapter.
-        symbols: Ticker symbols to match against. Defaults to all enabled symbols.
-
-    Returns:
-        List of dicts ready for curated.upsert_news_articles().
     """
     if symbols is None:
         symbols = all_symbols()
 
-    pattern = _build_ticker_pattern(symbols)
+    ticker_pattern = _build_ticker_pattern(symbols)
+    name_map = _build_name_map()
+    # Build a name pattern: match known company names (case-insensitive)
+    name_escaped = sorted(
+        [re.escape(n) for n in name_map if len(n) > 3],
+        key=len,
+        reverse=True,
+    )
+    name_pattern = re.compile(r"\b(" + "|".join(name_escaped) + r")\b", re.IGNORECASE) if name_escaped else None
+
     rows: list[dict[str, Any]] = []
 
     for a in articles:
         headline = a.headline or ""
-        # Find all ticker mentions in the headline (case-insensitive)
-        matches = pattern.findall(headline.upper() if headline else "")
-        # Also check the body/summary for ticker mentions
         body = a.body or ""
-        body_matches = pattern.findall(body.upper() if body else "")
-        all_matches = sorted(set(matches + body_matches))
+        text = f"{headline} {body}"
+
+        # Match ticker symbols (case-insensitive)
+        ticker_matches = ticker_pattern.findall(text.upper())
+
+        # Match company names and map to tickers
+        name_matches: set[str] = set()
+        if name_pattern:
+            for match in name_pattern.findall(text):
+                ticker = name_map.get(match.lower())
+                if ticker:
+                    name_matches.add(ticker)
+
+        all_matches = sorted(set(ticker_matches) | name_matches)
 
         if not all_matches:
-            # Article doesn't mention any known ticker — skip for curated zone
-            # (raw zone still has it for future re-processing)
             continue
 
         rows.append(
@@ -178,8 +206,8 @@ def link_tickers(
                 "published_at": a.published_at.isoformat(),
                 "tickers": all_matches,
                 "headline": headline if headline else None,
-                "sentiment_score": None,  # filled by score_sentiment()
-                "storage_path": None,     # screening tier: no body storage
+                "sentiment_score": None,
+                "storage_path": None,
                 "valid_from": a.published_at.isoformat(),
             }
         )
