@@ -1,0 +1,27 @@
+# Broker cost model — GBM published schedule. See plan §12 for computed round trips.
+
+cost_model:
+  broker: GBM
+  currency: MXN
+  iva_pct: 0.16                    # IVA applied to brokerage commissions
+
+  commission:
+    type: tiered
+    basis: trailing_3m_avg_traded_mxn   # GBM tiers on avg amount traded, last 3 months
+    tiers:
+      - { up_to_mxn: 1000000,  per_side_pct: 0.0025  }
+      - { up_to_mxn: 3000000,  per_side_pct: 0.0020  }
+      - { up_to_mxn: 5000000,  per_side_pct: 0.0015  }
+      - { up_to_mxn: 10000000, per_side_pct: 0.00125 }
+      - { up_to_mxn: null,     per_side_pct: 0.0010  }   # above 10M
+    current_tier_pct: 0.0025       # active rate — update as the 3-month average grows
+
+  fx:
+    applies_to: us_stocks_via_sic  # not charged for BMV-listed Mexican stocks
+    spread_per_side_pct: 0.005     # PLACEHOLDER — verify GBM's real MXN/USD spread on a statement
+
+  slippage_per_side_pct: 0.0005    # execution assumption for backtests
+  spread_per_side_pct: 0.0005      # bid/ask estimate, liquid large-caps
+
+  decision_rules:
+    min_edge_multiple: 3.0         # judge rejects BUY unless expected move >= 3x round-trip cost

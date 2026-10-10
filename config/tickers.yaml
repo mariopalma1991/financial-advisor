@@ -1,0 +1,64 @@
+# ANALYSIS tier — full pipeline (news, filings, feeds, agents).
+# Criteria and rationale: plans/ticker-universe.md
+# Note: BMV symbols use yfinance naming (.MX suffix).
+
+tickers:
+  - symbol: AAPL
+    name: Apple Inc.
+    exchange: NASDAQ
+    currency: USD
+    sector: Technology
+    benchmark: SPY
+    enabled: true
+    tags: [mega-cap, services-transition]
+    notes: ""
+
+  - symbol: MSFT
+    name: Microsoft Corp.
+    exchange: NASDAQ
+    currency: USD
+    sector: Technology
+    benchmark: SPY
+    enabled: true
+    tags: [mega-cap, cloud, ai]
+    notes: ""
+
+  - symbol: NVDA
+    name: NVIDIA Corp.
+    exchange: NASDAQ
+    currency: USD
+    sector: Semiconductors
+    benchmark: SPY
+    enabled: true
+    tags: [high-atr, ai]
+    notes: ""
+
+  - symbol: JPM
+    name: JPMorgan Chase & Co.
+    exchange: NYSE
+    currency: USD
+    sector: Financials
+    benchmark: SPY
+    enabled: true
+    tags: [rates-sensitive]
+    notes: ""
+
+  - symbol: WALMEX.MX
+    name: Walmart de Mexico
+    exchange: BMV
+    currency: MXN
+    sector: Consumer Staples
+    benchmark: EWW
+    enabled: true
+    tags: [defensive, mx-domestic]
+    notes: ""
+
+  - symbol: GFNORTEO.MX
+    name: Grupo Financiero Banorte
+    exchange: BMV
+    currency: MXN
+    sector: Financials
+    benchmark: EWW
+    enabled: true
+    tags: [mx-rates]
+    notes: ""

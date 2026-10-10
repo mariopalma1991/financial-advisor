@@ -1,0 +1,39 @@
+# Platform-wide operational settings. See plans/data-engineering-platform-plan.md §12.
+
+platform:
+  timezone: America/Mexico_City
+
+ingestion:
+  prices:
+    # After US market close, Tue-Sat UTC
+    schedule_cron: "0 1 * * 2-6"
+    backfill_years_analysis: 3
+    backfill_years_screening: 1
+  filings:
+    schedule_cron: "0 12 * * *"
+  news: # Phase 2
+    schedule_cron: "0 13,19,23 * * *"
+
+indicators:
+  sma_windows: [10, 20, 50, 200]
+  ema_windows: [10, 20, 50, 200]
+  rsi_period: 14          # Wilder
+  macd: { fast: 12, slow: 26, signal: 9 }
+  atr_period: 14
+  bollinger: { window: 20, num_std: 2.0 }
+  volume_ma_window: 20
+  relative_strength_window_days: 21  # ~1 trading month vs benchmark
+
+horizons:
+  # Trading-day windows matching the three-tier design (tactical / trade / regime)
+  returns_windows: { "5d": 5, "1m": 21, "3m": 63, "6m": 126, "12m": 252 }
+  sentiment_windows: { "1d": 1, "3d": 3, "7d": 7, "30d": 30 }
+  catalyst_lookahead_days: 60
+
+quality:
+  price_divergence_pct: 0.005   # 0.5% close divergence between sources -> alert
+  price_staleness_hours: 36
+  screener_zero_days_alert: 5   # a screen flagging nothing for 5 straight days -> alert
+
+feeds:
+  top_news_items: 10

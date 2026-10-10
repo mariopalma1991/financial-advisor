@@ -1,0 +1,33 @@
+# Screener definitions — evaluated daily over the screening tier after price ingestion.
+# Metrics are computed in src/screener/metrics.py. Add a new screen here; no code changes needed.
+
+screens:
+  oversold_swing_candidate:
+    description: Liquid names oversold with enough daily range to clear round-trip costs
+    filters:
+      - { metric: atr_pct,            op: ">=", value: 0.015 }
+      - { metric: dollar_volume_20d,  op: ">=", value: 10000000 }
+      - { metric: rsi_14,             op: "<=", value: 35 }
+
+  unusual_volume_breakout:
+    description: Volume spike with price holding above the 50-day average, near 52-week high
+    filters:
+      - { metric: volume_ratio_20d,   op: ">=", value: 2.0 }
+      - { metric: close_vs_sma_50,    op: ">=", value: 0 }
+      - { metric: pct_from_52w_high,  op: ">=", value: -0.05 }
+
+  momentum_pullback:
+    description: Uptrend (above 200 SMA) pulling back toward the 50 SMA with tradeable range
+    filters:
+      - { metric: close_vs_sma_200,     op: ">=", value: 0 }
+      - { metric: dist_from_sma_50_pct, op: "<=", value: 0.02 }
+      - { metric: dist_from_sma_50_pct, op: ">=", value: -0.03 }
+      - { metric: atr_pct,              op: ">=", value: 0.015 }
+
+  value_and_growth:
+    description: Fundamentals screen — profitable, growing, not expensively valued (uses quarterly fundamentals)
+    filters:
+      - { metric: pe_ttm,              op: ">",  value: 0 }
+      - { metric: pe_ttm,              op: "<=", value: 30 }
+      - { metric: revenue_growth_yoy,  op: ">=", value: 0.05 }
+      - { metric: atr_pct,             op: ">=", value: 0.015 }

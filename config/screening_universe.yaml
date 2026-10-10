@@ -1,0 +1,129 @@
+# SCREENING tier — cheap data only (prices, fundamentals, headline news in Phase 2).
+# Composition: S&P 100 constituents + most-liquid BMV names.
+# Promote to analysis tier via scripts/promote_ticker.py (or by moving the entry to config/tickers.yaml).
+
+tickers:
+  # --- S&P 100 (USD, benchmark SPY) ---
+  - { symbol: AAPL,  name: Apple Inc.,                 exchange: NASDAQ, currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: ABBV,  name: AbbVie Inc.,                exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: ABT,   name: Abbott Laboratories,        exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: ACN,   name: Accenture,                  exchange: NYSE,   currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: ADBE,  name: Adobe Inc.,                 exchange: NASDAQ, currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: AIG,   name: American International,     exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: AMD,   name: Advanced Micro Devices,     exchange: NASDAQ, currency: USD, sector: Semiconductors,      benchmark: SPY, enabled: true }
+  - { symbol: AMGN,  name: Amgen Inc.,                 exchange: NASDAQ, currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: AMT,   name: American Tower,             exchange: NYSE,   currency: USD, sector: Real Estate,         benchmark: SPY, enabled: true }
+  - { symbol: AMZN,  name: Amazon.com Inc.,            exchange: NASDAQ, currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: AVGO,  name: Broadcom Inc.,              exchange: NASDAQ, currency: USD, sector: Semiconductors,      benchmark: SPY, enabled: true }
+  - { symbol: AXP,   name: American Express,           exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: BA,    name: Boeing Co.,                 exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: BAC,   name: Bank of America,            exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: BK,    name: BNY Mellon,                 exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: BKNG,  name: Booking Holdings,           exchange: NASDAQ, currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: BLK,   name: BlackRock Inc.,             exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: BMY,   name: Bristol-Myers Squibb,       exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: BRK-B, name: Berkshire Hathaway B,       exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: C,     name: Citigroup Inc.,             exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: CAT,   name: Caterpillar Inc.,           exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: CHTR,  name: Charter Communications,     exchange: NASDAQ, currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: CL,    name: Colgate-Palmolive,          exchange: NYSE,   currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: CMCSA, name: Comcast Corp.,              exchange: NASDAQ, currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: COF,   name: Capital One,                exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: COP,   name: ConocoPhillips,             exchange: NYSE,   currency: USD, sector: Energy,              benchmark: SPY, enabled: true }
+  - { symbol: COST,  name: Costco Wholesale,           exchange: NASDAQ, currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: CRM,   name: Salesforce Inc.,            exchange: NYSE,   currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: CSCO,  name: Cisco Systems,              exchange: NASDAQ, currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: CVS,   name: CVS Health,                 exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: CVX,   name: Chevron Corp.,              exchange: NYSE,   currency: USD, sector: Energy,              benchmark: SPY, enabled: true }
+  - { symbol: DE,    name: Deere & Co.,                exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: DHR,   name: Danaher Corp.,              exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: DIS,   name: Walt Disney Co.,            exchange: NYSE,   currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: DUK,   name: Duke Energy,                exchange: NYSE,   currency: USD, sector: Utilities,           benchmark: SPY, enabled: true }
+  - { symbol: EMR,   name: Emerson Electric,           exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: EXC,   name: Exelon Corp.,               exchange: NASDAQ, currency: USD, sector: Utilities,           benchmark: SPY, enabled: true }
+  - { symbol: F,     name: Ford Motor Co.,             exchange: NYSE,   currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: FDX,   name: FedEx Corp.,                exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: GD,    name: General Dynamics,           exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: GE,    name: GE Aerospace,               exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: GILD,  name: Gilead Sciences,            exchange: NASDAQ, currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: GM,    name: General Motors,             exchange: NYSE,   currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: GOOG,  name: Alphabet Inc. C,            exchange: NASDAQ, currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: GOOGL, name: Alphabet Inc. A,            exchange: NASDAQ, currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: HD,    name: Home Depot,                 exchange: NYSE,   currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: HON,   name: Honeywell Intl,             exchange: NASDAQ, currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: IBM,   name: IBM Corp.,                  exchange: NYSE,   currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: INTC,  name: Intel Corp.,                exchange: NASDAQ, currency: USD, sector: Semiconductors,      benchmark: SPY, enabled: true }
+  - { symbol: INTU,  name: Intuit Inc.,                exchange: NASDAQ, currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: ISRG,  name: Intuitive Surgical,         exchange: NASDAQ, currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: JNJ,   name: Johnson & Johnson,          exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: JPM,   name: JPMorgan Chase,             exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: KHC,   name: Kraft Heinz,                exchange: NASDAQ, currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: KMI,   name: Kinder Morgan,              exchange: NYSE,   currency: USD, sector: Energy,              benchmark: SPY, enabled: true }
+  - { symbol: KO,    name: Coca-Cola Co.,              exchange: NYSE,   currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: LIN,   name: Linde plc,                  exchange: NASDAQ, currency: USD, sector: Materials,           benchmark: SPY, enabled: true }
+  - { symbol: LLY,   name: Eli Lilly,                  exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: LMT,   name: Lockheed Martin,            exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: LOW,   name: Lowe's Companies,           exchange: NYSE,   currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: MA,    name: Mastercard Inc.,            exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: MCD,   name: McDonald's Corp.,           exchange: NYSE,   currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: MDLZ,  name: Mondelez Intl,              exchange: NASDAQ, currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: MDT,   name: Medtronic plc,              exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: MET,   name: MetLife Inc.,               exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: META,  name: Meta Platforms,             exchange: NASDAQ, currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: MMM,   name: 3M Co.,                     exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: MO,    name: Altria Group,               exchange: NYSE,   currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: MRK,   name: Merck & Co.,                exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: MS,    name: Morgan Stanley,             exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: MSFT,  name: Microsoft Corp.,            exchange: NASDAQ, currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: NEE,   name: NextEra Energy,             exchange: NYSE,   currency: USD, sector: Utilities,           benchmark: SPY, enabled: true }
+  - { symbol: NFLX,  name: Netflix Inc.,               exchange: NASDAQ, currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: NKE,   name: Nike Inc.,                  exchange: NYSE,   currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: NVDA,  name: NVIDIA Corp.,               exchange: NASDAQ, currency: USD, sector: Semiconductors,      benchmark: SPY, enabled: true }
+  - { symbol: ORCL,  name: Oracle Corp.,               exchange: NYSE,   currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: OXY,   name: Occidental Petroleum,       exchange: NYSE,   currency: USD, sector: Energy,              benchmark: SPY, enabled: true }
+  - { symbol: PANW,  name: Palo Alto Networks,         exchange: NASDAQ, currency: USD, sector: Technology,          benchmark: SPY, enabled: true }
+  - { symbol: PEP,   name: PepsiCo Inc.,               exchange: NASDAQ, currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: PFE,   name: Pfizer Inc.,                exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: PG,    name: Procter & Gamble,           exchange: NYSE,   currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: PLD,   name: Prologis Inc.,              exchange: NYSE,   currency: USD, sector: Real Estate,         benchmark: SPY, enabled: true }
+  - { symbol: PM,    name: Philip Morris Intl,         exchange: NYSE,   currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: PYPL,  name: PayPal Holdings,            exchange: NASDAQ, currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: QCOM,  name: Qualcomm Inc.,              exchange: NASDAQ, currency: USD, sector: Semiconductors,      benchmark: SPY, enabled: true }
+  - { symbol: RTX,   name: RTX Corp.,                  exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: SBUX,  name: Starbucks Corp.,            exchange: NASDAQ, currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: SCHW,  name: Charles Schwab,             exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: SLB,   name: Schlumberger,               exchange: NYSE,   currency: USD, sector: Energy,              benchmark: SPY, enabled: true }
+  - { symbol: SO,    name: Southern Co.,               exchange: NYSE,   currency: USD, sector: Utilities,           benchmark: SPY, enabled: true }
+  - { symbol: SPG,   name: Simon Property Group,       exchange: NYSE,   currency: USD, sector: Real Estate,         benchmark: SPY, enabled: true }
+  - { symbol: T,     name: AT&T Inc.,                  exchange: NYSE,   currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: TGT,   name: Target Corp.,               exchange: NYSE,   currency: USD, sector: Consumer Disc.,      benchmark: SPY, enabled: true }
+  - { symbol: TMO,   name: Thermo Fisher Scientific,   exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: TMUS,  name: T-Mobile US,                exchange: NASDAQ, currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: TRV,   name: Travelers Companies,        exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: TXN,   name: Texas Instruments,          exchange: NASDAQ, currency: USD, sector: Semiconductors,      benchmark: SPY, enabled: true }
+  - { symbol: UNH,   name: UnitedHealth Group,         exchange: NYSE,   currency: USD, sector: Healthcare,          benchmark: SPY, enabled: true }
+  - { symbol: UNP,   name: Union Pacific,              exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: UPS,   name: United Parcel Service,      exchange: NYSE,   currency: USD, sector: Industrials,         benchmark: SPY, enabled: true }
+  - { symbol: USB,   name: U.S. Bancorp,               exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: V,     name: Visa Inc.,                  exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: VZ,    name: Verizon Communications,     exchange: NYSE,   currency: USD, sector: Communication,       benchmark: SPY, enabled: true }
+  - { symbol: WFC,   name: Wells Fargo,                exchange: NYSE,   currency: USD, sector: Financials,          benchmark: SPY, enabled: true }
+  - { symbol: WMT,   name: Walmart Inc.,               exchange: NYSE,   currency: USD, sector: Consumer Staples,    benchmark: SPY, enabled: true }
+  - { symbol: XOM,   name: Exxon Mobil Corp.,          exchange: NYSE,   currency: USD, sector: Energy,              benchmark: SPY, enabled: true }
+
+  # --- BMV most-liquid (MXN, benchmark EWW) — yfinance .MX naming ---
+  - { symbol: WALMEX.MX,    name: Walmart de Mexico,        exchange: BMV, currency: MXN, sector: Consumer Staples, benchmark: EWW, enabled: true }
+  - { symbol: AMXB.MX,      name: America Movil B,          exchange: BMV, currency: MXN, sector: Communication,    benchmark: EWW, enabled: true }
+  - { symbol: GFNORTEO.MX,  name: Grupo Financiero Banorte, exchange: BMV, currency: MXN, sector: Financials,       benchmark: EWW, enabled: true }
+  - { symbol: FEMSAUBD.MX,  name: FEMSA UBD,                exchange: BMV, currency: MXN, sector: Consumer Staples, benchmark: EWW, enabled: true }
+  - { symbol: GMEXICOB.MX,  name: Grupo Mexico B,           exchange: BMV, currency: MXN, sector: Materials,        benchmark: EWW, enabled: true }
+  - { symbol: CEMEXCPO.MX,  name: Cemex CPO,                exchange: BMV, currency: MXN, sector: Materials,        benchmark: EWW, enabled: true }
+  - { symbol: BBAJIOO.MX,   name: Grupo Financiero BBVA,    exchange: BMV, currency: MXN, sector: Financials,       benchmark: EWW, enabled: true }
+  - { symbol: BIMBOA.MX,    name: Grupo Bimbo A,            exchange: BMV, currency: MXN, sector: Consumer Staples, benchmark: EWW, enabled: true }
+  - { symbol: AC.MX,        name: Arca Continental,         exchange: BMV, currency: MXN, sector: Consumer Staples, benchmark: EWW, enabled: true }
+  - { symbol: ASURB.MX,     name: ASUR B,                   exchange: BMV, currency: MXN, sector: Industrials,      benchmark: EWW, enabled: true }
+  - { symbol: GAPB.MX,      name: Grupo Aeroportuario Pacifico, exchange: BMV, currency: MXN, sector: Industrials,  benchmark: EWW, enabled: true }
+  - { symbol: KOFUBL.MX,    name: Coca-Cola FEMSA UBL,      exchange: BMV, currency: MXN, sector: Consumer Staples, benchmark: EWW, enabled: true }
+  - { symbol: TLEVISACPO.MX, name: Televisa CPO,            exchange: BMV, currency: MXN, sector: Communication,    benchmark: EWW, enabled: true }
+  - { symbol: GRUMAB.MX,    name: Gruma B,                  exchange: BMV, currency: MXN, sector: Consumer Staples, benchmark: EWW, enabled: true }
+  - { symbol: ALPEKA.MX,    name: Alpek A,                  exchange: BMV, currency: MXN, sector: Materials,        benchmark: EWW, enabled: true }

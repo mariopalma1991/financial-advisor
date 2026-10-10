@@ -1,0 +1,189 @@
+"""Feed Builder — assembles versioned, role-scoped feeds per analysis-tier ticker.
+
+Every feed built in one run shares a snapshot_id, so the exact world-state each
+agent saw is reconstructable (plan §8). Feeds are views, not pipelines: they are
+assembled from the curated zone at build time, with prices adjusted as of as_of.
+"""
+from __future__ import annotations
+
+from datetime import date, datetime, timezone
+from typing import Any
+
+import pandas as pd
+
+from src.config import load_cost_model, load_platform
+from src.storage import curated
+from src.transforms.adjustments import adjust_bars
+
+SCHEMA_VERSION = "1.0"
+
+
+def _r(x: Any, nd: int = 4) -> float | None:
+    try:
+        return None if x is None or pd.isna(x) else round(float(x), nd)
+    except (TypeError, ValueError):
+        return None
+
+
+def _returns(bars: pd.DataFrame, windows: dict[str, int]) -> dict[str, float | None]:
+    close = bars["close"]
+    return {
+        label: (round(float(close.iloc[-1] / close.iloc[-1 - w] - 1), 6) if len(close) > w else None)
+        for label, w in windows.items()
+    }
+
+
+def _adjusted_bars(ticker: str, as_of: date | None, window_days: int = 300) -> pd.DataFrame:
+    rows = curated.get_price_history(ticker, window_days=window_days, as_of=as_of)
+    if not rows:
+        return pd.DataFrame()
+    bars = pd.DataFrame(rows)
+    bars["bar_date"] = pd.to_datetime(bars["bar_date"]).dt.date
+    bars = bars.set_index("bar_date").sort_index()
+    actions_rows = curated.get_corporate_actions(ticker, as_of=as_of)
+    actions = (
+        pd.DataFrame(actions_rows)
+        if actions_rows
+        else pd.DataFrame(columns=["ex_date", "action_type", "amount", "ratio"])
+    )
+    if not actions.empty:
+        actions["ex_date"] = pd.to_datetime(actions["ex_date"]).dt.date
+    return adjust_bars(bars, actions, as_of=as_of)
+
+
+def build_price_technicals(ticker: str, as_of: date | None = None) -> dict[str, Any]:
+    adj = _adjusted_bars(ticker, as_of)
+    if adj.empty:
+        return {}
+    inds = curated.get_indicators(ticker, window_days=1, as_of=as_of)
+    latest_ind = inds[-1] if inds else {}
+    windows = load_platform().horizons["returns_windows"]
+    highs = [h for h in adj["high"].tail(252) if pd.notna(h)]
+    lows = [l for l in adj["low"].tail(252) if pd.notna(l)]
+    return {
+        "last_close": _r(adj["close"].iloc[-1]),
+        "returns": _returns(adj, windows),
+        "indicators": {
+            k: _r(latest_ind.get(k))
+            for k in (
+                "rsi_14", "macd", "macd_signal", "macd_hist",
+                "sma_10", "sma_20", "sma_50", "sma_200",
+                "ema_10", "ema_20", "ema_50", "ema_200",
+                "atr_14", "bb_upper", "bb_lower", "volume_ma_20", "rel_strength_21d",
+            )
+        },
+        "high_52w": _r(max(highs) if highs else None),
+        "low_52w": _r(min(lows) if lows else None),
+    }
+
+
+def build_fundamentals(ticker: str, as_of: date | None = None) -> dict[str, Any]:
+    rows = curated.get_fundamentals(ticker, quarters=8, as_of=as_of)
+    if not rows:
+        return {}
+    latest = rows[-1]
+    bars = curated.get_price_history(ticker, window_days=5, as_of=as_of)
+    close = bars[-1]["close"] if bars else None
+    eps_vals = [r["eps"] for r in rows[-4:] if r.get("eps")]
+    eps_ttm = sum(eps_vals) if len(eps_vals) == 4 else None
+    debt, equity = latest.get("total_debt"), latest.get("equity")
+    return {
+        "quarters": [
+            {
+                "period_end": str(r["period_end"]),
+                "revenue": _r(r.get("revenue"), 0),
+                "net_income": _r(r.get("net_income"), 0),
+                "eps": _r(r.get("eps"), 2),
+                "growth_yoy": _r(r.get("growth_yoy")),
+            }
+            for r in rows
+        ],
+        "pe_ttm": _r(close / eps_ttm if close and eps_ttm else None, 2),
+        "debt_to_equity": _r(debt / equity if debt and equity else None, 3),
+        "gross_margin": _r(latest.get("gross_margin")),
+        "net_margin": _r(latest.get("net_margin")),
+        "revenue_growth_yoy": _r(latest.get("growth_yoy")),
+    }
+
+
+def build_screener_feed(ticker: str) -> dict[str, Any]:
+    rows = [r for r in curated.get_screener_results(matched_only=True) if r["ticker"] == ticker]
+    if not rows:
+        return {"matched_screens": []}
+    latest_date = max(r["result_date"] for r in rows)
+    matched = [r["screen_name"] for r in rows if r["result_date"] == latest_date]
+    return {"as_of": str(latest_date), "matched_screens": matched}
+
+
+def build_data_quality(ticker: str) -> dict[str, Any]:
+    bars = curated.get_price_history(ticker, window_days=5)
+    latest = bars[-1]["bar_date"] if bars else None
+    age_days = (date.today() - latest).days if latest else None
+    warnings = [
+        e
+        for e in curated.get_pipeline_events(level="WARN", limit=50)
+        + curated.get_pipeline_events(level="ERROR", limit=50)
+        if e.get("ticker") == ticker
+    ][:10]
+    return {
+        "prices_fresh": (age_days is not None and age_days <= 5),
+        "latest_bar_date": str(latest) if latest else None,
+        "recent_warnings": [
+            {"type": e["event_type"], "message": e.get("message"), "at": str(e["created_at"])}
+            for e in warnings
+        ],
+    }
+
+
+def build_full(ticker: str, feeds: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    info = next((t for t in curated.enabled_tickers() if t["ticker"] == ticker), {})
+    cost = load_cost_model()
+    currency = info.get("currency", "USD")
+    return {
+        "ticker": ticker,
+        "name": info.get("name"),
+        "sector": info.get("sector"),
+        "currency": currency,
+        "price_summary": feeds.get("price_technicals", {}),
+        "fundamentals": feeds.get("fundamentals", {}),
+        "screener": feeds.get("screener", {}),
+        "data_quality": feeds.get("data_quality", {}),
+        "cost_context": {
+            "round_trip_pct": round(cost.round_trip_pct(currency), 5),
+            "min_edge_pct": round(cost.min_edge_pct(currency), 5),
+        },
+    }
+
+
+def build_all(as_of: date | None = None) -> int:
+    """Build all v1 feeds for every analysis-tier ticker; one shared snapshot_id."""
+    now = datetime.now(timezone.utc)
+    snapshot_id = now.strftime("%Y%m%dT%H%M%SZ")
+    data_as_of = as_of or date.today()
+    tickers = [t["ticker"] for t in curated.enabled_tickers(tier="analysis")]
+
+    rows: list[dict[str, Any]] = []
+    for ticker in tickers:
+        feeds = {
+            "price_technicals": build_price_technicals(ticker, as_of),
+            "fundamentals": build_fundamentals(ticker, as_of),
+            "screener": build_screener_feed(ticker),
+            "data_quality": build_data_quality(ticker),
+        }
+        feeds["full"] = build_full(ticker, feeds)
+        for feed_name, payload in feeds.items():
+            if not payload:
+                continue
+            rows.append(
+                {
+                    "ticker": ticker,
+                    "snapshot_id": snapshot_id,
+                    "feed": feed_name,
+                    "generated_at": now.isoformat(),
+                    "data_as_of": data_as_of.isoformat(),
+                    "schema_version": SCHEMA_VERSION,
+                    "payload_json": payload,
+                    "ingested_at": now.isoformat(),
+                }
+            )
+    return curated.insert_research_packages(rows)

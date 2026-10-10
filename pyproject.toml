@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "financial-advisor"
+version = "0.1.0"
+description = "Data engineering platform for a multi-agent financial advisor (swing trading)"
+requires-python = ">=3.11"
+dependencies = [
+    "yfinance>=0.2.40",
+    "pandas>=2.1",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+    "pydantic>=2.5",
+    "supabase>=2.3",
+    "psycopg2-binary>=2.9",
+    "httpx>=0.27",
+    "tenacity>=8.2",
+    "structlog>=24.1",
+    "python-dotenv>=1.0",
+    "mcp>=1.0,<2.0",
+    "python-dateutil>=2.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "responses>=0.24",
+    "ruff>=0.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
