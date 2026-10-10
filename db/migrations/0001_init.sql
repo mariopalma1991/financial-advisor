@@ -186,7 +186,8 @@ create table if not exists news_sentiment_daily ( -- Phase 2
     sent_7d       double precision,
     article_count integer,
     valid_from    timestamptz not null,
-    ingested_at   timestamptz not null default now()
+    ingested_at   timestamptz not null default now(),
+    unique (ticker, date)
 );
 
 create table if not exists catalyst_events (      -- Phase 3

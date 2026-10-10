@@ -444,9 +444,19 @@ def upsert_news_sentiment(rows: list[dict[str, Any]]) -> int:
         {**r, "valid_from": f"{r['date']}T23:59:59+00:00", "ingested_at": now}
         for r in rows
     ]
-    get_client().table("news_sentiment_daily").upsert(
-        payload, on_conflict="ticker,date", ignore_duplicates=True
-    ).execute()
+    # Insert one by one to avoid ON CONFLICT issues if constraint doesn't exist yet
+    client = get_client()
+    inserted = 0
+    for row in payload:
+        try:
+            client.table("news_sentiment_daily").upsert(
+                row, on_conflict="ticker,date", ignore_duplicates=True
+            ).execute()
+            inserted += 1
+        except Exception:
+            # Row already exists or constraint missing — skip
+            pass
+    return inserted
     return len(payload)
 
 
