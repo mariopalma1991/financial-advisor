@@ -36,7 +36,7 @@ def render():
     if not matched.empty:
         st.dataframe(
             matched[["ticker", "screen_name", "metrics_json"]].head(20),
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
         )
     else:
@@ -65,7 +65,7 @@ def render():
             title=f"Daily matches — {selected_screen}",
         )
         fig.update_layout(height=300, margin=dict(l=0, r=0, t=30, b=0))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     # ---- All results table ----
     st.subheader("All Results")
@@ -74,6 +74,6 @@ def render():
     display_df["matched_icon"] = display_df["matched"].map({True: "✅", False: "—"})
     st.dataframe(
         display_df[["result_date", "screen_name", "ticker", "matched_icon"]].head(50),
-        use_container_width=True,
+        width='stretch',
         hide_index=True,
     )

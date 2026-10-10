@@ -57,7 +57,7 @@ def render():
         df["status"] = df["errors"].apply(lambda e: "❌" if e > 0 else "✅")
         st.dataframe(
             df[["status", "job_name", "started", "duration", "events", "errors"]].head(20),
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
         )
 
@@ -70,7 +70,7 @@ def render():
         ev_df["lvl"] = ev_df["level"].map({"ERROR": "🔴", "WARN": "🟡", "INFO": "🔵"})
         st.dataframe(
             ev_df[["lvl", "time", "job_name", "event_type", "message", "ticker"]].head(30),
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
         )
 
@@ -100,6 +100,6 @@ def render():
     if fresh_rows:
         st.dataframe(
             pd.DataFrame(fresh_rows),
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
         )

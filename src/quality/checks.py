@@ -24,10 +24,11 @@ def check_freshness(emitter: EventEmitter) -> None:
         .order("bar_date", desc=True)
         .limit(1)
     )
-    latest = rows[0]["bar_date"] if rows else None
-    if latest is None:
+    latest_str = rows[0]["bar_date"] if rows else None
+    if latest_str is None:
         emitter.emit("ERROR", "freshness_check", "no price bars in the database at all")
         return
+    latest = datetime.fromisoformat(str(latest_str)).date()
     age_days = (datetime.now(timezone.utc).date() - latest).days
     if age_days > 5:
         emitter.emit(

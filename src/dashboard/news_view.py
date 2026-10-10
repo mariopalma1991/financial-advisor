@@ -65,7 +65,7 @@ def render():
                 yaxis_title="Sentiment",
                 yaxis_range=[-1, 1],
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
     # ---- Top tickers by volume ----
     if ticker is None:
@@ -79,7 +79,7 @@ def render():
             tdf = pd.DataFrame(top, columns=["ticker", "articles"])
             fig = px.bar(tdf, x="ticker", y="articles", template="plotly_dark")
             fig.update_layout(height=300, margin=dict(l=0, r=0, t=0, b=0))
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
     # ---- Articles table ----
     st.subheader(f"Articles ({len(articles)})")
@@ -94,7 +94,7 @@ def render():
     cols = [c for c in ["date", "tickers_str", "headline", "sent"] if c in adf.columns]
     st.dataframe(
         adf[cols].head(50),
-        use_container_width=True,
+        width='stretch',
         hide_index=True,
         column_config={
             "date": "Date",

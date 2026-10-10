@@ -92,7 +92,7 @@ def render():
         xaxis_rangeslider_visible=False,
         template="plotly_dark",
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
     # ---- Indicator summary ----
     if inds:
@@ -111,7 +111,7 @@ def render():
     if funds:
         fdf = pd.DataFrame(funds)
         cols_to_show = [c for c in ["period_end", "revenue", "net_income", "eps", "gross_margin", "net_margin", "growth_yoy"] if c in fdf.columns]
-        st.dataframe(fdf[cols_to_show], use_container_width=True, hide_index=True)
+        st.dataframe(fdf[cols_to_show], width='stretch', hide_index=True)
     else:
         st.info("No fundamentals data.")
 
