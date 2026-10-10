@@ -52,6 +52,14 @@ python -m src.jobs.backfill AAPL WALMEX.MX   # history for new/promoted tickers
 python scripts/promote_ticker.py NVDA        # screening -> analysis tier
 ```
 
+## Dashboard
+
+```bash
+streamlit run src/dashboard/app.py
+```
+
+Four pages: **Pipeline** (run history, events, freshness), **Market Data** (OHLCV charts, indicators, fundamentals), **News** (articles, sentiment trends, volume), **Screener** (candidates, screen history).
+
 ## MCP server
 
 ```bash
