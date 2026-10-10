@@ -3,8 +3,8 @@ name: ingest_filings
 # EDGAR fundamentals + filing metadata. Independent of the price chain.
 
 on:
-  schedule:
-    - cron: "0 12 * * *"
+  # schedule:
+  #   - cron: "0 12 * * *"   # disabled — needs valid EDGAR_USER_AGENT with real email
   workflow_dispatch: {}
 
 jobs:

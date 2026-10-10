@@ -23,7 +23,7 @@ log = structlog.get_logger()
 
 _DATA = "https://data.sec.gov"
 _WWW = "https://www.sec.gov"
-_UA = os.getenv("EDGAR_USER_AGENT", "financial-advisor/1.0 (contact@example.com)")
+_UA = os.getenv("EDGAR_USER_AGENT", "SET_EDGAR_USER_AGENT")
 
 # us-gaap tags we extract, mapped to our metric names (first match wins)
 _TAGS: dict[str, list[str]] = {
