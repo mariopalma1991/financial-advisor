@@ -1,0 +1,22 @@
+# CURATED UNIVERSE
+# Tickers with market data + news articles + fundamentals. This is the analysis-tier universe — used for deep research and feed building. Symbols are EXACTLY as listed on BMV (no .MX suffix). 16 tickers.
+# Total: 16 tickers
+
+tickers:
+  # --- ESTADOS UNIDOS (USD, benchmark SPY) ---
+  - { symbol: "AAPL", name: "APPLE COMPUTER INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AVGO", name: "BROADCOM INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AXP", name: "AMERICAN EXPRESS COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BAC", name: "BANK OF AMERICA CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COF", name: "CAPITAL ONE FINANCIAL CORPORATION.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DE", name: "DEERE & COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HD", name: "THE HOME DEPOT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INTC", name: "INTEL CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JPM", name: "JP MORGAN CHASE & CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MSFT", name: "MICROSOFT CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NVDA", name: "NVIDIA CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ORCL", name: "ORACLE CORP", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "T", name: "AT&T INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TMUS", name: "T-MOBILE US, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "V", name: "VISA INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VZ", name: "VERIZON COMMUNICATIONS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }

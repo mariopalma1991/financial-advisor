@@ -1,0 +1,3 @@
+Found: 88/102
+Missing: ['BK', 'LIN', 'SBUX', 'SO', 'SPG', 'TMUS', 'TXN', 'UNH', 'UPS', 'USB', 'VZ', 'WFC', 'WMT', 'XOM']
+Found: ['AAPL', 'ABBV', 'ABT', 'ACN', 'ADBE', 'AIG', 'AMD', 'AMGN', 'AMT', 'AMZN', 'AVGO', 'AXP', 'BA', 'BAC', 'BKNG', 'BLK', 'BMY', 'C', 'CAT', 'CHTR', 'CL', 'CMCSA', 'COF', 'COP', 'COST', 'CRM', 'CSCO', 'CVS', 'CVX', 'DE', 'DHR', 'DIS', 'DUK', 'EMR', 'EXC', 'F', 'FDX', 'GD', 'GE', 'GILD', 'GM', 'GOOG', 'GOOGL', 'HD', 'HON', 'IBM', 'INTC', 'INTU', 'ISRG', 'JNJ', 'JPM', 'KHC', 'KMI', 'KO', 'LLY', 'LMT', 'LOW', 'MA', 'MCD', 'MDLZ', 'MET', 'META', 'MMM', 'MO', 'MRK', 'MS', 'MSFT', 'NEE', 'NFLX', 'NKE', 'NVDA', 'ORCL', 'PANW', 'PEP', 'PFE', 'PG', 'PLD', 'PM', 'PYPL', 'QCOM', 'RTX', 'SCHW', 'T', 'TGT', 'TMO', 'TRV', 'UNP', 'V']

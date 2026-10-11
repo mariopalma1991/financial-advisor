@@ -1,0 +1,2 @@
+cols: [Timestamp('2026-06-30 00:00:00'), Timestamp('2026-03-31 00:00:00'), Timestamp('2025-12-31 00:00:00')]
+rows: ['Tax Effect Of Unusual Items', 'Tax Rate For Calcs', 'Normalized EBITDA', 'Net Income From Continuing Operation Net Minority Interest', 'Reconciled Depreciation', 'Reconciled Cost Of Revenue', 'EBITDA', 'EBIT', 'Normalized Income', 'Net Income From Continuing And Discontinued Operation', 'Total Expenses', 'Total Operating Income As Reported', 'Diluted Average Shares', 'Basic Average Shares', 'Diluted EPS']

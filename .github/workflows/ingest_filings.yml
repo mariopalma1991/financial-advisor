@@ -1,11 +1,12 @@
 name: ingest_filings
 
-# EDGAR fundamentals + filing metadata. Independent of the price chain.
+# DISABLED — fundamentals now fetched via yfinance (no EDGAR needed).
+# To re-enable, uncomment schedule below and set EDGAR_USER_AGENT.
 
 on:
   # schedule:
-  #   - cron: "0 12 * * *"   # disabled — needs valid EDGAR_USER_AGENT with real email
-  workflow_dispatch: {}
+  #   - cron: "0 12 * * *"
+  workflow_dispatch: {}  # manual trigger only (disabled in practice)
 
 jobs:
   run:

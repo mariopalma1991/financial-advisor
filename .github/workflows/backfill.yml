@@ -1,10 +1,11 @@
 name: backfill
 
-# Manual only — backfills price history + indicators for all tickers.
-# One-time or occasional use; not scheduled.
+# DISABLED — backfill completed locally for the 16 curated tickers.
+# Re-enable by uncommenting the workflow_dispatch below.
 
 on:
-  workflow_dispatch: {}
+  # workflow_dispatch: {}
+  workflow_dispatch: {}  # disabled
 
 jobs:
   run:

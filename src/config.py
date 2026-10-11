@@ -59,7 +59,7 @@ class Ticker(BaseModel):
     symbol: str
     name: str
     exchange: str
-    currency: Literal["USD", "MXN"]
+    currency: str
     sector: str
     benchmark: str
     enabled: bool = True
@@ -166,6 +166,12 @@ def load_screening_universe() -> TickerUniverse:
 
 
 @lru_cache(maxsize=1)
+def load_curated_universe() -> TickerUniverse:
+    """Curated universe: tickers with market data + news + fundamentals."""
+    return TickerUniverse(**_load_yaml("curated_universe.yaml"))
+
+
+@lru_cache(maxsize=1)
 def load_screens() -> ScreensConfig:
     return ScreensConfig(**_load_yaml("screens.yaml"))
 
@@ -181,10 +187,8 @@ def load_cost_model() -> CostModel:
 
 
 def all_symbols() -> list[str]:
-    """Enabled symbols across both tiers (analysis first, then screening-only)."""
-    analysis = set(load_analysis_universe().symbols)
-    screening = [s for s in load_screening_universe().symbols if s not in analysis]
-    return load_analysis_universe().symbols + screening
+    """Enabled symbols from the curated universe (market data + news + fundamentals)."""
+    return load_curated_universe().symbols
 
 
 def tier_of(symbol: str) -> Literal["analysis", "screening"]:

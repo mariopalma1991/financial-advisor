@@ -1,11 +1,11 @@
-"""Streamlit dashboard — pipeline health, market data, news, screener.
+"""Streamlit dashboard — unified ticker view + pipeline health + screener.
 
 Run: streamlit run src/dashboard/app.py
 """
 
 import streamlit as st
 
-from src.dashboard import data_view, news_view, pipeline_view, screener_view
+from src.dashboard import pipeline_view, screener_view, ticker_view
 
 st.set_page_config(
     page_title="Financial Advisor — Dashboard",
@@ -15,18 +15,14 @@ st.set_page_config(
 
 st.title("📊 Financial Advisor — Data Platform")
 
-st.markdown("Pipeline health, market data, news sentiment, and screener results.")
-
 view = st.sidebar.radio(
     "Navigate",
-    ["📊 Pipeline", "📈 Market Data", "📰 News", "🎯 Screener"],
+    ["🔍 Ticker Overview", "📊 Pipeline", "🎯 Screener"],
 )
 
-if view == "📊 Pipeline":
+if view == "🔍 Ticker Overview":
+    ticker_view.render()
+elif view == "📊 Pipeline":
     pipeline_view.render()
-elif view == "📈 Market Data":
-    data_view.render()
-elif view == "📰 News":
-    news_view.render()
 elif view == "🎯 Screener":
     screener_view.render()

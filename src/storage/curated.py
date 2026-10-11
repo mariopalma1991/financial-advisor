@@ -18,7 +18,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Any
 
 from src.adapters.base import RawCorporateAction, RawPriceBar
-from src.config import load_analysis_universe, load_screening_universe
+from src.config import load_curated_universe
 from src.storage.supabase_client import _exec, _paginate, get_client
 
 
@@ -75,9 +75,9 @@ def _pit_rows(
 # ---------- dim_ticker sync (config -> DB, versioned) ----------
 
 def sync_dim_tickers() -> int:
-    """Upsert both universes into dim_ticker; new version row only on change."""
+    """Upsert the curated universe into dim_ticker; new version row only on change."""
     rows_in: list[dict[str, Any]] = []
-    for tier, universe in (("analysis", load_analysis_universe()), ("screening", load_screening_universe())):
+    for tier, universe in (("analysis", load_curated_universe()),):
         for t in universe.tickers:
             rows_in.append(
                 {

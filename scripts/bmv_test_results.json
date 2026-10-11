@@ -1,0 +1,6930 @@
+{
+  "working": {
+    "A": {
+      "name": "AGILENT TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AAL": {
+      "name": "AMERICAN AIRLINES GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AAON": {
+      "name": "AAON, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AAP": {
+      "name": "ADVANCE AUTO PARTS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AAPL": {
+      "name": "APPLE COMPUTER INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ABBV": {
+      "name": "ABBVIE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ABEV": {
+      "name": "AMBEV S.A.",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ABNB": {
+      "name": "AIRBNB, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ABT": {
+      "name": "ABBOTT LABORATORIES",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ACA": {
+      "name": "ARCOSA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ACAD": {
+      "name": "Acadia Pharmaceuticals Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ACGL": {
+      "name": "ARCH CAPITAL GROUP LTD.",
+      "country": "BERMUDA",
+      "exchange": "NASDAQ"
+    },
+    "ACHC": {
+      "name": "ACADIA HEALTHCARE COMPANY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ACHR": {
+      "name": "ARCHER AVIATION INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ACLS": {
+      "name": "AXCELIS TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ACM": {
+      "name": "AECOM",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ACMR": {
+      "name": "ACM RESEARCH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ACN": {
+      "name": "ACCENTURE PLC",
+      "country": "IRLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AD": {
+      "name": "KONINKLIJKE AHOLD DELHAIZE NV",
+      "country": "HOLANDA",
+      "exchange": "EURONEXT AMSTERDAM"
+    },
+    "ADBE": {
+      "name": "ADOBE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ADC": {
+      "name": "AGREE REALTY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ADI": {
+      "name": "ANALOG DEVICES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ADIG": {
+      "name": "ADI GLOBAL DISTRIBUTION INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ADM": {
+      "name": "ARCHER DANIELS MIDLAND CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ADP": {
+      "name": "AEROPORTS DE PARIS",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "ADSK": {
+      "name": "AUTODESK, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AEE": {
+      "name": "AMEREN CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AEG": {
+      "name": "AEGON LTD.",
+      "country": "BERMUDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AEM": {
+      "name": "AGNICO EAGLE MINES LIMITED",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AEP": {
+      "name": "AMERICAN ELECTRIC POWER COMPANY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AER": {
+      "name": "AERCAP HOLDINGS N.V.",
+      "country": "HOLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AERO": {
+      "name": "GRUPO AEROMÉXICO, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "AES": {
+      "name": "THE AES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AFL": {
+      "name": "AFLAC INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AFRM": {
+      "name": "AFFIRM HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AGCO": {
+      "name": "AGCO CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AGI": {
+      "name": "ALAMOS GOLD INC.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AGIO": {
+      "name": "AGIOS PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AGL": {
+      "name": "ANGLO AMERICAN PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "AGNC": {
+      "name": "AGNC INVESTMENT CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AGNT": {
+      "name": "AGNT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AGO": {
+      "name": "ASSURED GUARANTY LTD.",
+      "country": "BERMUDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AHR": {
+      "name": "AMERICAN HEALTHCARE REIT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AI": {
+      "name": "AIR LIQUIDE S.A.",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "AIG": {
+      "name": "AMERICAN INTERNATIONAL GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AIR": {
+      "name": "AIRBUS SE",
+      "country": "HOLANDA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "AIZ": {
+      "name": "ASSURANT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AJG": {
+      "name": "ARTHUR J. GALLAGHER & CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AKAM": {
+      "name": "AKAMAI TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ALAB": {
+      "name": "ASTERA LABS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ALB": {
+      "name": "ALBEMARLE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ALC": {
+      "name": "ALCON INC.",
+      "country": "SUIZA",
+      "exchange": "SIX SWISS EXCHANGE"
+    },
+    "ALG": {
+      "name": "ALAMO GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ALGM": {
+      "name": "ALLEGRO MICROSYSTEMS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ALGN": {
+      "name": "ALIGN TECHNOLOGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ALKT": {
+      "name": "ALKAMI TECHNOLOGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ALL": {
+      "name": "THE ALLSTATE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ALLE": {
+      "name": "ALLEGION PUBLIC LIMITED COMPANY",
+      "country": "IRLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ALNY": {
+      "name": "ALNYLAM PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ALV": {
+      "name": "ALLIANZ SE",
+      "country": "ALEMANIA",
+      "exchange": "FRANKFURT STOCK EXCHANGE"
+    },
+    "AM": {
+      "name": "DASSAULT AVIATION SA",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "AMAT": {
+      "name": "APPLIED MATERIALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AMBA": {
+      "name": "AMBARELLA, INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "AMC": {
+      "name": "AMC Entertainment Holdings, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMCR": {
+      "name": "AMCOR PLC",
+      "country": "JERSEY",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMD": {
+      "name": "ADVANCED MICRO DEVICES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AME": {
+      "name": "AMETEK, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMGN": {
+      "name": "AMGEN INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AMH": {
+      "name": "AMERICAN HOMES 4 RENT",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMKR": {
+      "name": "AMKOR TECHNOLOGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AMN": {
+      "name": "AMN HEALTHCARE SERVICES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMP": {
+      "name": "AMERIPRISE FINANCIAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMRZ": {
+      "name": "AMRIZE LTD",
+      "country": "SUIZA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMS": {
+      "name": "AMADEUS IT GROUP,  S.A.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "AMSC": {
+      "name": "AMERICAN SUPERCONDUCTOR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AMT": {
+      "name": "AMERICAN TOWER CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMTM": {
+      "name": "AMENTUM HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AMX": {
+      "name": "AMERICA MOVIL, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "AMZN": {
+      "name": "AMAZON. COM INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ANAB": {
+      "name": "ANAPTYSBIO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ANDR": {
+      "name": "ANDRITZ AG",
+      "country": "AUSTRIA",
+      "exchange": "VIENNA STOCK EXCHANGE"
+    },
+    "ANET": {
+      "name": "ARISTA NETWORKS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ANF": {
+      "name": "ABERCROMBIE & FITCH CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ANGI": {
+      "name": "ANGI INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ANGX": {
+      "name": "ANGEL STUDIOS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ANTA": {
+      "name": "ANTA SPORTS PRODUCTS LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "HONG KONG STOCK EXCHANGE"
+    },
+    "AON": {
+      "name": "AON PLC",
+      "country": "IRLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AOS": {
+      "name": "A.O. SMITH CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AOSL": {
+      "name": "ALPHA AND OMEGA SEMICONDUCTOR LIMITED",
+      "country": "BERMUDA",
+      "exchange": "NASDAQ"
+    },
+    "APA": {
+      "name": "APA CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "APAM": {
+      "name": "APERAM S.A.",
+      "country": "LUXEMBURGO",
+      "exchange": "EURONEXT AMSTERDAM"
+    },
+    "APD": {
+      "name": "AIR PRODUCTS AND CHEMICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "APEI": {
+      "name": "AMERICAN PUBLIC EDUCATION, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "APH": {
+      "name": "AMPHENOL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "API": {
+      "name": "AGORA, INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "APLE": {
+      "name": "APPLE HOSPITALITY REIT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "APP": {
+      "name": "APPLOVIN CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "APTV": {
+      "name": "APTIV PLC",
+      "country": "JERSEY",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AQN": {
+      "name": "ALGONQUIN POWER & UTILITIES CORP.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "AR": {
+      "name": "ANTERO RESOURCES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ARCO": {
+      "name": "ARCOS DORADOS HOLDINGS INC.",
+      "country": "ISLAS VÍRGENES (REINO UNIDO)",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ARDX": {
+      "name": "ARDELYX, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ARE": {
+      "name": "ALEXANDRIA REAL ESTATE EQUITIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ARES": {
+      "name": "ARES MANAGEMENT CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ARGX": {
+      "name": "ARGENX SE",
+      "country": "HOLANDA",
+      "exchange": "NASDAQ"
+    },
+    "ARM": {
+      "name": "ARM HOLDINGS PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NASDAQ"
+    },
+    "ARMK": {
+      "name": "ARAMARK",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ARR": {
+      "name": "ARMOUR RESIDENTIAL REIT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ARW": {
+      "name": "ARROW ELECTRONICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ARWR": {
+      "name": "ARROWHEAD PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ARX": {
+      "name": "ARC RESOURCES LTD.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "AS": {
+      "name": "AMER SPORTS, INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ASH": {
+      "name": "ASHLAND INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ASIX": {
+      "name": "ADVANSIX INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ASML": {
+      "name": "ASML HOLDING N.V.",
+      "country": "HOLANDA",
+      "exchange": "EURONEXT AMSTERDAM"
+    },
+    "ASND": {
+      "name": "ASCENDIS PHARMA A/S",
+      "country": "DINAMARCA",
+      "exchange": "NASDAQ"
+    },
+    "ASTS": {
+      "name": "AST SPACEMOBILE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ASUR": {
+      "name": "GRUPO AEROPORTUARIO DEL SURESTE, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "ATER": {
+      "name": "ATERIAN, INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ATHM": {
+      "name": "AUTOHOME INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ATI": {
+      "name": "ATI INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ATKR": {
+      "name": "ATKORE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ATO": {
+      "name": "ATMOS ENERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ATOS": {
+      "name": "ATOSSA THERAPEUTICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AU": {
+      "name": "ANGLOGOLD ASHANTI PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AUNA": {
+      "name": "AUNA S.A.",
+      "country": "LUXEMBURGO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AVAV": {
+      "name": "AEROVIRONMENT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AVGO": {
+      "name": "BROADCOM INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AVO": {
+      "name": "MISSION PRODUCE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AVTR": {
+      "name": "AVANTOR, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AVY": {
+      "name": "AVERY DENNISON CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AWK": {
+      "name": "American Water Works Company, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AWR": {
+      "name": "American States Water Company",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AXGN": {
+      "name": "AXOGEN, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AXON": {
+      "name": "AXON ENTERPRISE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AXP": {
+      "name": "AMERICAN EXPRESS COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AXSM": {
+      "name": "AXSOME THERAPEUTICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "AXTA": {
+      "name": "AXALTA COATING SYSTEMS LTD.",
+      "country": "BERMUDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "AZN": {
+      "name": "ASTRAZENECA GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NASDAQ"
+    },
+    "AZO": {
+      "name": "AUTOZONE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "B": {
+      "name": "BARRICK MINING CORPORATION",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BA": {
+      "name": "THE BOEING COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BABA": {
+      "name": "ALIBABA GROUP HOLDING LIMITED",
+      "country": "CHINA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BABB": {
+      "name": "BABCOCK INTERNATIONAL GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "BAC": {
+      "name": "BANK OF AMERICA CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BAH": {
+      "name": "Booz Allen Hamilton Holding Corp.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BAK": {
+      "name": "BRASKEM S.A.",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BALL": {
+      "name": "BALL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BAP": {
+      "name": "CREDICORP, LTD.",
+      "country": "PERU",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BATRK": {
+      "name": "ATLANTA BRAVES HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BAX": {
+      "name": "BAXTER INTERNATIONAL INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BB": {
+      "name": "BLACKBERRY LIMITED",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BBAI": {
+      "name": "BIGBEAR.AI HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BBAR": {
+      "name": "BANCO BBVA ARGENTINA S.A.",
+      "country": "ARGENTINA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BBD": {
+      "name": "BANCO BRADESCO, S.A.",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BBIO": {
+      "name": "BRIDGEBIO PHARMA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BBOT": {
+      "name": "BRIDGEBIO ONCOLOGY THERAPEUTICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BBVA": {
+      "name": "BANCO BILBAO VIZCAYA ARGENTARIA, S.A.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "BBWI": {
+      "name": "BATH & BODY WORKS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BBY": {
+      "name": "BEST BUY CO., INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BCE": {
+      "name": "BCE INC.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "BCPC": {
+      "name": "BALCHEM CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BCRX": {
+      "name": "BIOCRYST PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BCS": {
+      "name": "BARCLAYS PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BDX": {
+      "name": "BECTON, DICKINSON AND COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BE": {
+      "name": "BLOOM ENERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BEAM": {
+      "name": "BEAM THERAPEUTICS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BEKE": {
+      "name": "KE HOLDINGS INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BEN": {
+      "name": "FRANKLIN TEMPLETON, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BEZ": {
+      "name": "BEAZLEY PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "BFAM": {
+      "name": "BRIGHT HORIZONS FAMILY SOLUTIONS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BG": {
+      "name": "BUNGE GLOBAL SA",
+      "country": "SUIZA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BHC": {
+      "name": "BAUSCH HEALTH COMPANIES INC.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BHF": {
+      "name": "BRIGHTHOUSE FINANCIAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BHP": {
+      "name": "BHP GROUP LIMITED",
+      "country": "AUSTRALIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BHST": {
+      "name": "BIOHARVEST SCIENCES INC.",
+      "country": "CANADA",
+      "exchange": "NASDAQ"
+    },
+    "BIDU": {
+      "name": "BAIDU INC.",
+      "country": "CHINA",
+      "exchange": "NASDAQ"
+    },
+    "BIIB": {
+      "name": "BIOGEN INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BILI": {
+      "name": "BILIBILI INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "BIRK": {
+      "name": "BIRKENSTOCK HOLDING PLC",
+      "country": "JERSEY",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BJ": {
+      "name": "BJS WHOLESALE CLUB HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BKD": {
+      "name": "BROOKDALE SENIOR LIVING INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BKNG": {
+      "name": "BOOKING HOLDINGS INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BKR": {
+      "name": "BAKER HUGHES COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BKT": {
+      "name": "BANKINTER, S.A.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "BL": {
+      "name": "BLACKLINE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BLDR": {
+      "name": "BUILDERS FIRSTSOURCE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BLK": {
+      "name": "BLACKROCK, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BLND": {
+      "name": "THE BRITISH LAND COMPANY PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "BLNK": {
+      "name": "BLINK CHARGING CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BLX": {
+      "name": "BORALEX INC.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "BMA": {
+      "name": "BANCO MACRO S.A.",
+      "country": "ARGENTINA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BMBL": {
+      "name": "BUMBLE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BMNR": {
+      "name": "BITMINE IMMERSION TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BMO": {
+      "name": "BANK OF MONTREAL",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "BMRN": {
+      "name": "BIOMARIN PHARMACEUTICAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BMY": {
+      "name": "BRISTOL-MYERS SQUIBB CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BN": {
+      "name": "DANONE",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "BNGO": {
+      "name": "BIONANO GENOMICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BNR": {
+      "name": "BRENNTAG SE",
+      "country": "ALEMANIA",
+      "exchange": "FRANKFURT STOCK EXCHANGE"
+    },
+    "BNS": {
+      "name": "BANK OF NOVA SCOTIA",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BNTX": {
+      "name": "BIONTECH SE",
+      "country": "ALEMANIA",
+      "exchange": "NASDAQ"
+    },
+    "BNY": {
+      "name": "THE BANK OF NEW YORK MELLON CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BP": {
+      "name": "BP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BR": {
+      "name": "BROADRIDGE FINANCIAL SOLUTIONS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BRBR": {
+      "name": "BELLRING BRANDS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BRKR": {
+      "name": "BRUKER CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BRO": {
+      "name": "BROWN & BROWN, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BSBR": {
+      "name": "BANCO SANTANDER (BRASIL) S.A.",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BSX": {
+      "name": "BOSTON SCIENTIFIC CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BSY": {
+      "name": "BENTLEY SYSTEMS, INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BTA": {
+      "name": "BT GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "BTBT": {
+      "name": "BIT DIGITAL, INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "BTE": {
+      "name": "BAYTEX ENERGY CORP.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "BTG": {
+      "name": "B2GOLD CORP.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BUR": {
+      "name": "BURFORD CAPITAL LIMITED",
+      "country": "GUERNSEY",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BURL": {
+      "name": "BURLINGTON STORES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BVN": {
+      "name": "COMPAÑÍA DE MINAS BUENAVENTURA S.A.A.",
+      "country": "PERU",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BWA": {
+      "name": "BORGWARNER INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BWXT": {
+      "name": "BWX TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BX": {
+      "name": "BLACKSTONE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BXMT": {
+      "name": "Blackstone Mortgage Trust Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BXP": {
+      "name": "BXP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BY": {
+      "name": "BYLINE BANCORP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "BYD": {
+      "name": "BOYD GROUP SERVICES INC.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "BYND": {
+      "name": "BEYOND MEAT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "BZUN": {
+      "name": "BAOZUN INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "C": {
+      "name": "CITIGROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CAAP": {
+      "name": "CORPORACIÓN AMÉRICA AIRPORTS S.A.",
+      "country": "LUXEMBURGO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CABA": {
+      "name": "CABALETTA BIO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CACI": {
+      "name": "CACI INTERNATIONAL INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CAE": {
+      "name": "CAE INC.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "CAG": {
+      "name": "CONAGRA BRANDS INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CAH": {
+      "name": "CARDINAL HEALTH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CAI": {
+      "name": "CARIS LIFE SCIENCES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CAKE": {
+      "name": "THE CHEESECAKE FACTORY INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CAN": {
+      "name": "CANAAN INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "CAR": {
+      "name": "AVIS BUDGET GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CARR": {
+      "name": "CARRIER GLOBAL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CART": {
+      "name": "MAPLEBEAR INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CASH": {
+      "name": "PROSEGUR CASH, S.A.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "CASY": {
+      "name": "CASEY´S GENERAL STORES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CAT": {
+      "name": "CATERPILLAR INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CAVA": {
+      "name": "CAVA GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CB": {
+      "name": "CHUBB LIMITED",
+      "country": "SUIZA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CBK": {
+      "name": "COMMERZBANK AG",
+      "country": "ALEMANIA",
+      "exchange": "FRANKFURT STOCK EXCHANGE"
+    },
+    "CBOE": {
+      "name": "CBOE GLOBAL MARKETS INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CBRE": {
+      "name": "CBRE GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CBRS": {
+      "name": "CEREBRAS SYSTEMS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CC": {
+      "name": "THE CHEMOURS COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CCEP": {
+      "name": "COCA-COLA EUROPACIFIC PARTNERS PLC",
+      "country": "REINO UNIDO",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "CCJ": {
+      "name": "CAMECO CORPORATION",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CCK": {
+      "name": "CROWN HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CCOI": {
+      "name": "Cogent Communications Holdings, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CDE": {
+      "name": "COEUR MINING, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CDLX": {
+      "name": "Cardlytics, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CDNS": {
+      "name": "CADENCE DESIGN SYSTEMS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CDP": {
+      "name": "COPT DEFENSE PROPERTIES",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CDRO": {
+      "name": "CODERE ONLINE LUXEMBOURG, S.A.",
+      "country": "LUXEMBURGO",
+      "exchange": "NASDAQ"
+    },
+    "CDW": {
+      "name": "CDW CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CE": {
+      "name": "CELANESE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CEG": {
+      "name": "CONSTELLATION ENERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CELH": {
+      "name": "CELSIUS HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CEMEX": {
+      "name": "CEMEX, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "CERT": {
+      "name": "CERTARA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CEVA": {
+      "name": "CEVA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CF": {
+      "name": "CF INDUSTRIES HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CFG": {
+      "name": "CITIZENS FINANCIAL GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CG": {
+      "name": "THE CARLYLE GROUP L.P.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CGNX": {
+      "name": "COGNEX CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CHD": {
+      "name": "CHURCH & DWIGHT CO., INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CHE": {
+      "name": "CHEMED CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CHGG": {
+      "name": "CHEGG, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CHH": {
+      "name": "CHOICE HOTELS INTERNATIONAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CHKP": {
+      "name": "CHECK POINT SOFTWARE TECHNOLOGIES LTD.",
+      "country": "ISRAEL",
+      "exchange": "NASDAQ"
+    },
+    "CHPT": {
+      "name": "CHARGEPOINT HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CHRD": {
+      "name": "CHORD ENERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CHRW": {
+      "name": "C.H. ROBINSON WORLDWIDE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CHTR": {
+      "name": "CHARTER COMMUNICATIONS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CHWY": {
+      "name": "CHEWY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CI": {
+      "name": "THE CIGNA GROUP",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CIEN": {
+      "name": "CIENA CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CIFR": {
+      "name": "CIPHER DIGITAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CIG": {
+      "name": "COMPANHIA ENERGETICA DE MINAS GERAIS - CEMIG",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CIGI": {
+      "name": "COLLIERS INTERNATIONAL GROUP INC.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "CINF": {
+      "name": "CINCINNATI FINANCIAL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CL": {
+      "name": "COLGATE-PALMOLIVE CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CLF": {
+      "name": "CLEVELAND-CLIFFS INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CLS": {
+      "name": "CELESTICA INC.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CLSK": {
+      "name": "CLEANSPARK, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CLX": {
+      "name": "THE CLOROX COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CM": {
+      "name": "CANADIAN IMPERIAL BANK OF COMMERCE",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "CMCSA": {
+      "name": "COMCAST CORP",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CME": {
+      "name": "CME GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CMG": {
+      "name": "CHIPOTLE MEXICAN GRILL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CMI": {
+      "name": "CUMMINS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CMPS": {
+      "name": "COMPASS PATHWAYS PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NASDAQ"
+    },
+    "CNC": {
+      "name": "CENTENE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CNH": {
+      "name": "CNH INDUSTRIAL N.V.",
+      "country": "HOLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CNI": {
+      "name": "CANADIAN NATIONAL RAILWAY COMPANY",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CNK": {
+      "name": "CINEMARK HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CNM": {
+      "name": "CORE & MAIN, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CNMD": {
+      "name": "Conmed Corp",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CNP": {
+      "name": "CENTERPOINT ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CNQ": {
+      "name": "CANADIAN NATURAL RESOURCES LIMITED",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "CNTN": {
+      "name": "CANTON STRATEGIC HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "COF": {
+      "name": "CAPITAL ONE FINANCIAL CORPORATION.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "COHR": {
+      "name": "COHERENT CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "COIN": {
+      "name": "COINBASE GLOBAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "COLD": {
+      "name": "AMERICOLD REALTY TRUST, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "COLM": {
+      "name": "COLUMBIA SPORTSWEAR COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "COMP": {
+      "name": "COMPASS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CON": {
+      "name": "CONTINENTAL AG",
+      "country": "ALEMANIA",
+      "exchange": "XETRA"
+    },
+    "COO": {
+      "name": "THE COOPER COMPANIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "COP": {
+      "name": "CONOCOPHILLIPS",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "COR": {
+      "name": "CENCORA INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "COST": {
+      "name": "COSTCO WHOLESALE CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "COUR": {
+      "name": "COURSERA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CPA": {
+      "name": "COPA HOLDINGS SA",
+      "country": "PANAMÁ",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CPAY": {
+      "name": "CORPAY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CPB": {
+      "name": "THE CAMPBELL´S COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CPNG": {
+      "name": "COUPANG, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CPRI": {
+      "name": "CAPRI HOLDINGS LIMITED",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CPRT": {
+      "name": "COPART, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CPT": {
+      "name": "CAMDEN PROPERTY TRUST",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CR": {
+      "name": "CRANE COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CRBG": {
+      "name": "COREBRIDGE FINANCIAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CRCL": {
+      "name": "CIRCLE INTERNET GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CRDO": {
+      "name": "CREDO TECHNOLOGY GROUP HOLDING LTD",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "CRGY": {
+      "name": "CRESCENT ENERGY COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CRI": {
+      "name": "CARTER´S, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CRL": {
+      "name": "CHARLES RIVER LABORATORIES INTERNATIONAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CRM": {
+      "name": "SALESFORCE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CRNC": {
+      "name": "CERENCE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CROX": {
+      "name": "CROCS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CRS": {
+      "name": "CARPENTER TECHNOLOGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CRSP": {
+      "name": "CRISPR THERAPEUTICS AG",
+      "country": "SUIZA",
+      "exchange": "NASDAQ"
+    },
+    "CRSR": {
+      "name": "CORSAIR GAMING, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CRTO": {
+      "name": "CRITEO S.A.",
+      "country": "FRANCIA",
+      "exchange": "NASDAQ"
+    },
+    "CRUS": {
+      "name": "CIRRUS LOGIC, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CRWD": {
+      "name": "Crowdstrike Holdings, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CRWV": {
+      "name": "COREWEAVE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CSCO": {
+      "name": "CISCO SYSTEMS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CSGP": {
+      "name": "CoStar Group, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CSIQ": {
+      "name": "CANADIAN SOLAR INC.",
+      "country": "CANADA",
+      "exchange": "NASDAQ"
+    },
+    "CSL": {
+      "name": "CSL LIMITED",
+      "country": "AUSTRALIA",
+      "exchange": "AUSTRALIAN SECURITIES EXCHANGE"
+    },
+    "CSX": {
+      "name": "CSX CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CTAS": {
+      "name": "CINTAS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CTRE": {
+      "name": "CARETRUST REIT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CTSH": {
+      "name": "COGNIZANT TECHNOLOGY SOLUTIONS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CTVA": {
+      "name": "CORTEVA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CUBE": {
+      "name": "CUBESMART",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CUZ": {
+      "name": "COUSINS PROPERTIES INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CVE": {
+      "name": "CENOVUS ENERGY INC.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "CVLT": {
+      "name": "COMMVAULT SYSTEMS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "CVNA": {
+      "name": "CARVANA CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CVS": {
+      "name": "CVS HEALTH CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CVX": {
+      "name": "CHEVRON CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CW": {
+      "name": "CURTISS-WRIGHT CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CWEN": {
+      "name": "CLEARWAY ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "CXM": {
+      "name": "SPRINKLR, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "D": {
+      "name": "DOMINION ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DAL": {
+      "name": "DELTA AIR LINES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DAO": {
+      "name": "YOUDAO, INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DAR": {
+      "name": "DARLING INGREDIENTS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DASH": {
+      "name": "DOORDASH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DAVA": {
+      "name": "ENDAVA PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DAVE": {
+      "name": "DAVE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DB": {
+      "name": "DEUTSCHE BANK AG",
+      "country": "ALEMANIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DBX": {
+      "name": "DROPBOX, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DD": {
+      "name": "DUPONT DE NEMOURS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DDD": {
+      "name": "3D SYSTEMS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DDOG": {
+      "name": "Datadog, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DE": {
+      "name": "DEERE & COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DECK": {
+      "name": "DECKERS OUTDOOR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DEO": {
+      "name": "DIAGEO PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DFH": {
+      "name": "DREAM FINDERS HOMES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DG": {
+      "name": "VINCI SA",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "DGX": {
+      "name": "QUEST DIAGNOSTICS INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DHI": {
+      "name": "D.R. HORTON, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DHR": {
+      "name": "DANAHER CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DHT": {
+      "name": "DHT HOLDINGS, INC.",
+      "country": "ISLAS MARSHALL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DIM": {
+      "name": "SARTORIUS STEDIM BIOTECH SA",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT"
+    },
+    "DINE": {
+      "name": "DINE, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "DINO": {
+      "name": "HF SINCLAIR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DIS": {
+      "name": "THE WALT DISNEY COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DJT": {
+      "name": "Trump Media & Technology Group Corp.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DKS": {
+      "name": "DICK´S SPORTING GOODS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DLB": {
+      "name": "DOLBY LABORATORIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DLO": {
+      "name": "DLOCAL LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "DLR": {
+      "name": "DIGITAL REALTY TRUST, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DLTR": {
+      "name": "DOLLAR TREE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DNA": {
+      "name": "GINKGO BIOWORKS HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DNOW": {
+      "name": "DNOW INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DNUT": {
+      "name": "KRISPY KREME, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DOC": {
+      "name": "HEALTHPEAK PROPERTIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DOCN": {
+      "name": "DIGITALOCEAN HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DOCU": {
+      "name": "DOCUSIGN, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DOV": {
+      "name": "DOVER CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DOX": {
+      "name": "AMDOCS LIMITED",
+      "country": "GUERNSEY",
+      "exchange": "NASDAQ"
+    },
+    "DPZ": {
+      "name": "DOMINO´S PIZZA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DQ": {
+      "name": "DAQO NEW ENERGY CORP.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DRD": {
+      "name": "DRDGOLD LTD",
+      "country": "SUDÁFRICA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DRI": {
+      "name": "DARDEN RESTAURANTS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DRS": {
+      "name": "LEONARDO DRS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DRX": {
+      "name": "DRAX GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "DSY": {
+      "name": "DASSAULT SYSTEMES S.A.",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "DT": {
+      "name": "DYNATRACE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DTE": {
+      "name": "DEUTSCHE TELEKOM AG",
+      "country": "ALEMANIA",
+      "exchange": "FRANKFURT STOCK EXCHANGE"
+    },
+    "DTG": {
+      "name": "DAIMLER TRUCK HOLDING AG",
+      "country": "ALEMANIA",
+      "exchange": "FRANKFURT STOCK EXCHANGE"
+    },
+    "DUK": {
+      "name": "DUKE ENERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DUOL": {
+      "name": "DUOLINGO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DVA": {
+      "name": "DAVITA INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DVN": {
+      "name": "DEVON ENERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DXC": {
+      "name": "DXC TECHNOLOGY COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "DXCM": {
+      "name": "DEXCOM, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "DY": {
+      "name": "DYCOM INDUSTRIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "E": {
+      "name": "ENI-ENTE NAZIONALE IDROCARBURI SPA",
+      "country": "ITALIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EAF": {
+      "name": "GRAFTECH INTERNATIONAL LTD.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EAT": {
+      "name": "AMREST HOLDINGS, S.E.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "EBAY": {
+      "name": "EBAY INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EC": {
+      "name": "ECOPETROL S.A.",
+      "country": "COLOMBIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ECHO": {
+      "name": "ECHOSTAR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ECL": {
+      "name": "ECOLAB INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ED": {
+      "name": "CONSOLIDATED EDISON, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EDU": {
+      "name": "NEW ORIENTAL EDUCATION & TECHONOLOGY GROUP INC.",
+      "country": "CHINA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EEFT": {
+      "name": "EURONET WORLDWIDE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EFX": {
+      "name": "EQUIFAX INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EG": {
+      "name": "EVEREST GROUP, LTD",
+      "country": "BERMUDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EGO": {
+      "name": "ELDORADO GOLD CORPORATION",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EGP": {
+      "name": "EASTGROUP PROPERTIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EH": {
+      "name": "EHANG HOLDINGS LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "EHC": {
+      "name": "ENCOMPASS HEALTH CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EL": {
+      "name": "THE ESTÉE LAUDER COMPANIES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ELAN": {
+      "name": "ELANCO ANIMAL HEALTH INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ELPC": {
+      "name": "COMPANHIA PARANENSE DE ENERGIA - COPEL",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ELS": {
+      "name": "EQUITY LIFESTYLE PROPERTIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ELV": {
+      "name": "ELEVANCE HEALTH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EMA": {
+      "name": "EMERA INCORPORATED",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "EMBC": {
+      "name": "EMBECTA CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EMBJ": {
+      "name": "EMBRAER S.A.",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EME": {
+      "name": "EMCOR GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EMN": {
+      "name": "EASTMAN CHEMICAL COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EMR": {
+      "name": "EMERSON ELECTRIC CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ENB": {
+      "name": "ENBRIDGE INC.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ENIC": {
+      "name": "ENEL CHILE S.A.",
+      "country": "CHILE",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ENO": {
+      "name": "ELECNOR, S.A.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "ENPH": {
+      "name": "Enphase Energy, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ENR": {
+      "name": "SIEMENS ENERGY AG",
+      "country": "ALEMANIA",
+      "exchange": "FRANKFURT STOCK EXCHANGE"
+    },
+    "ENTG": {
+      "name": "Entegris, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EOG": {
+      "name": "EOG RESOURCES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EOSE": {
+      "name": "EOS ENERGY ENTERPRISES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EPAM": {
+      "name": "EPAM SYSTEMS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EQH": {
+      "name": "EQUITABLE HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EQIX": {
+      "name": "EQUINIX, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EQNR": {
+      "name": "EQUINOR ASA",
+      "country": "NORUEGA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EQT": {
+      "name": "EQT CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ERIC": {
+      "name": "TELEFONAKTIEBOLAGET LM ERICSSON",
+      "country": "SUECIA",
+      "exchange": "NASDAQ"
+    },
+    "ERIE": {
+      "name": "ERIE INDEMNITY COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ERO": {
+      "name": "ERO COPPER CORP.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "ES": {
+      "name": "EVERSOURCE ENERGY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ESAB": {
+      "name": "ESAB CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ESEA": {
+      "name": "EUROSEAS LTD.",
+      "country": "GRECIA",
+      "exchange": "NASDAQ"
+    },
+    "ESS": {
+      "name": "ESSEX PROPERTY TRUST, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ESTC": {
+      "name": "Elastic NV",
+      "country": "HOLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ETR": {
+      "name": "ENTERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ETSY": {
+      "name": "ETSY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EVER": {
+      "name": "EVERQUOTE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EVO": {
+      "name": "EVOLUTION AB",
+      "country": "SUECIA",
+      "exchange": "NASDAQ STOCKHOLM"
+    },
+    "EVR": {
+      "name": "EVERCORE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EVRG": {
+      "name": "EVERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EVTC": {
+      "name": "EVERTEC, INC.",
+      "country": "PUERTO RICO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EW": {
+      "name": "EDWARDS LIFESCIENCES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EWBC": {
+      "name": "EAST WEST BANCORP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EXC": {
+      "name": "EXELON CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EXE": {
+      "name": "EXPAND ENERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EXP": {
+      "name": "EAGLE MATERIALS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EXPD": {
+      "name": "EXPEDITORS INTERNATIONAL OF WASHINGTON, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "EXPE": {
+      "name": "EXPEDIA GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EXPN": {
+      "name": "EXPERIAN PLC",
+      "country": "IRLANDA",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "EXPO": {
+      "name": "EXPONENT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "EXR": {
+      "name": "EXTRA SPACE STORAGE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "F": {
+      "name": "FORD MOTOR CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FANG": {
+      "name": "DIAMONDBACK ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FAST": {
+      "name": "FASTENAL COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FBIN": {
+      "name": "FORTUNE BRANDS INNOVATIONS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FCEL": {
+      "name": "FUELCELL ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FCNCA": {
+      "name": "FIRST CITIZENS BANCSHARES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FCX": {
+      "name": "FREEPORT MCMORAN INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FDS": {
+      "name": "FACTSET RESEARCH SYSTEMS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FDX": {
+      "name": "FEDEX CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FDXF": {
+      "name": "FEDEX FREIGHT HOLDING COMPANY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FE": {
+      "name": "FIRSTENERGY CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FFIV": {
+      "name": "F5, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FG": {
+      "name": "F&G ANNUITIES & LIFE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FIGR": {
+      "name": "FIGURE TECHNOLOGY SOLUTIONS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FIRY": {
+      "name": "FIRY INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FIS": {
+      "name": "FIDELITY NATIONAL INFORMATION SERVICES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FISV": {
+      "name": "FISERV, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FITB": {
+      "name": "FIFTH THIRD BANCORP",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FIVE": {
+      "name": "FIVE BELOW, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FIVN": {
+      "name": "FIVE9 INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FIX": {
+      "name": "COMFORT SYSTEMS USA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FIZZ": {
+      "name": "NATIONAL BEVERAGE CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FLEX": {
+      "name": "FLEX LTD.",
+      "country": "SINGAPUR",
+      "exchange": "NASDAQ"
+    },
+    "FLGT": {
+      "name": "FULGENT GENETICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FLNA": {
+      "name": "FILANA THERAPEUTICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FLNC": {
+      "name": "FLUENCE ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FLO": {
+      "name": "FLOWERS FOODS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FLR": {
+      "name": "FLUOR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FLS": {
+      "name": "Flowserve Corporation",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FLWS": {
+      "name": "1-800-FLOWERS.COM, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FN": {
+      "name": "FABRINET",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FND": {
+      "name": "FLOOR & DECOR HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FNF": {
+      "name": "FIDELITY NATIONAL FINANCIAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FNV": {
+      "name": "FRANCO-NEVADA CORPORATION",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FOUR": {
+      "name": "SHIFT4 PAYMENTS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FOXA": {
+      "name": "FOX CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FPAFY": {
+      "name": "FIRST PACIFIC COMPANY LIMITED",
+      "country": "BERMUDA",
+      "exchange": "OVER THE COUNTER US"
+    },
+    "FR": {
+      "name": "FIRST INDUSTRIAL REALTY TRUST, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FRMM": {
+      "name": "FORUM MARKETS, INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FROG": {
+      "name": "JFROG LTD.",
+      "country": "ISRAEL",
+      "exchange": "NASDAQ"
+    },
+    "FRT": {
+      "name": "VALEO",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "FRVO": {
+      "name": "FERVO ENERGY COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FSLR": {
+      "name": "FIRST SOLAR INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FSLY": {
+      "name": "FASTLY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FSUN": {
+      "name": "FIRSTSUN CAPITAL BANCORP",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FSV": {
+      "name": "FIRSTSERVICE CORPORATION",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "FTFT": {
+      "name": "FUTURE FINTECH GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FTI": {
+      "name": "TECHNIPFMC PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FTNT": {
+      "name": "FORTINET, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "FTS": {
+      "name": "FORTIS INC.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FTV": {
+      "name": "FORTIVE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FUBO": {
+      "name": "FUBOTV INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FUTU": {
+      "name": "FUTU HOLDINGS LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "FVRR": {
+      "name": "FIVERR INTERNATIONAL LTD.",
+      "country": "ISRAEL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "FWDI": {
+      "name": "FORWARD INDUSTRIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GAP": {
+      "name": "GRUPO AEROPORTUARIO DEL PACIFICO, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "GBX": {
+      "name": "THE GREENBRIER COMPANIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GCC": {
+      "name": "GCC, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "GCT": {
+      "name": "GIGACLOUD TECHNOLOGY INC",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "GD": {
+      "name": "GENERAL DYNAMICS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GDDY": {
+      "name": "GODADDY INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GDS": {
+      "name": "GDS HOLDINGS LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "GE": {
+      "name": "GE AEROSPACE",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GEHC": {
+      "name": "GE HEALTHCARE TECHNOLOGIES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GEN": {
+      "name": "GEN DIGITAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GENB": {
+      "name": "GENERATE BIOMEDICINES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GEV": {
+      "name": "GE VERNOVA INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GEVO": {
+      "name": "GEVO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GFI": {
+      "name": "GOLD FIELDS LIMITED",
+      "country": "SUDÁFRICA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GFS": {
+      "name": "GLOBALFOUNDRIES INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "GGAL": {
+      "name": "GRUPO FINANCIERO GALICIA S.A.",
+      "country": "ARGENTINA",
+      "exchange": "NASDAQ"
+    },
+    "GGB": {
+      "name": "GERDAU, S.A.",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GGG": {
+      "name": "GRACO INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GH": {
+      "name": "Guardant Health Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GHC": {
+      "name": "GRAHAM HOLDINGS COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GIL": {
+      "name": "GILDAN ACTIVEWEAR INC.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "GILD": {
+      "name": "GILEAD SCIENCES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GIS": {
+      "name": "GENERAL MILLS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GLBE": {
+      "name": "GLOBAL-E ONLINE LTD.",
+      "country": "ISRAEL",
+      "exchange": "NASDAQ"
+    },
+    "GLE": {
+      "name": "SOCIETE GENERALE SA",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "GLNG": {
+      "name": "GOLAR LNG LIMITED",
+      "country": "BERMUDA",
+      "exchange": "NASDAQ"
+    },
+    "GLOB": {
+      "name": "GLOBANT SA",
+      "country": "LUXEMBURGO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GLPI": {
+      "name": "GAMING AND LEISURE PROPERTIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GLW": {
+      "name": "CORNING INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GLXY": {
+      "name": "GALAXY DIGITAL HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GM": {
+      "name": "GENERAL MOTORS COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GMAB": {
+      "name": "Genmab A/S",
+      "country": "DINAMARCA",
+      "exchange": "NASDAQ COPENHAGEN"
+    },
+    "GME": {
+      "name": "GAMESTOP CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GMED": {
+      "name": "GLOBUS MEDICAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GNRC": {
+      "name": "GENERAC HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GNW": {
+      "name": "GENWORTH FINANCIAL INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GOOG": {
+      "name": "ALPHABET INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GOOGL": {
+      "name": "ALPHABET INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GPC": {
+      "name": "GENUINE PARTS COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GPN": {
+      "name": "GLOBAL PAYMENTS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GPRO": {
+      "name": "GOPRO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GRAB": {
+      "name": "GRAB HOLDINGS LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "GRAL": {
+      "name": "GRAIL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GRF": {
+      "name": "GRIFOLS, S.A.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "GRMN": {
+      "name": "Garmin Ltd.",
+      "country": "SUIZA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GRPN": {
+      "name": "GROUPON, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GRWG": {
+      "name": "GROWGENERATION CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GS": {
+      "name": "GOLDMAN SACHS GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GSK": {
+      "name": "GSK PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GSM": {
+      "name": "FERROGLOBE PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NASDAQ"
+    },
+    "GT": {
+      "name": "THE GOODYEAR TIRE & RUBBER CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GTLB": {
+      "name": "GITLAB INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GTM": {
+      "name": "ZOOMINFO TECHNOLOGIES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GTX": {
+      "name": "GARRETT MOTION INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "GWRE": {
+      "name": "GUIDEWIRE SOFTWARE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GWW": {
+      "name": "W.W. GRAINGER, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "GXO": {
+      "name": "GXO LOGISTICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "H": {
+      "name": "HYDRO ONE LIMITED",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "HAL": {
+      "name": "HALLIBURTON COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HALO": {
+      "name": "HALOZYME THERAPEUTICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HAS": {
+      "name": "HASBRO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HBAN": {
+      "name": "HUNTINGTON BANCSHARES INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HCA": {
+      "name": "HCA HEALTHCARE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HCC": {
+      "name": "Warrior Met Coal, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HD": {
+      "name": "THE HOME DEPOT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HDB": {
+      "name": "HDFC BANK LIMITED",
+      "country": "INDIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HEI": {
+      "name": "HEIDELBERG MATERIALS AG",
+      "country": "ALEMANIA",
+      "exchange": "FRANKFURT STOCK EXCHANGE"
+    },
+    "HGV": {
+      "name": "HILTON GRAND VACATIONS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HHH": {
+      "name": "HOWARD HUGHES HOLDINGS INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HIG": {
+      "name": "THE HARTFORD INSURANCE GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HII": {
+      "name": "HUNTINGTON INGALLS INDUSTRIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HIMS": {
+      "name": "HIMS & HERS HEALTH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HL": {
+      "name": "HECLA MINING COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HLN": {
+      "name": "HALEON PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "HLT": {
+      "name": "HILTON WORLDWIDE HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HMC": {
+      "name": "HONDA MOTOR CO. LTD.",
+      "country": "JAPÓN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HMY": {
+      "name": "HARMONY GOLD MINING COMPANY LIMITED",
+      "country": "SUDÁFRICA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HOG": {
+      "name": "HARLEY-DAVIDSON, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HON": {
+      "name": "HONEYWELL INTERNATIONAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HONA": {
+      "name": "HONEYWELL AEROSPACE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HOOD": {
+      "name": "ROBINHOOD MARKETS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HPE": {
+      "name": "HEWLETT PACKARD ENTERPRISE COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HPQ": {
+      "name": "HP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HQY": {
+      "name": "HEALTHEQUITY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HRB": {
+      "name": "H&R BLOCK, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HRI": {
+      "name": "HERC HOLDING INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HRL": {
+      "name": "HORMEL FOODS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HRMY": {
+      "name": "HARMONY BIOSCIENCES HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HSAI": {
+      "name": "HESAI GROUP",
+      "country": "CHINA",
+      "exchange": "NASDAQ"
+    },
+    "HSDT": {
+      "name": "SOLANA COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HSIC": {
+      "name": "HENRY SCHEIN, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HST": {
+      "name": "HOST HOTELS & RESORTS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "HSY": {
+      "name": "THE HERSHEY COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HTHT": {
+      "name": "H WORLD GROUP LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "HTO": {
+      "name": "HELLENIC TELECOMMUNICATIONS ORGANIZATION S.A.",
+      "country": "GRECIA",
+      "exchange": "ATHENS STOCK EXCHANGE"
+    },
+    "HUBB": {
+      "name": "HUBBELL INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HUBS": {
+      "name": "HUBSPOT INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HUM": {
+      "name": "HUMANA INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HWM": {
+      "name": "HOWMET AEROSPACE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "HXL": {
+      "name": "HEXCEL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IAG": {
+      "name": "INTERNATIONAL CONSOLIDATED AIRLINES GROUP S.A.",
+      "country": "ESPAÑA",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "IBKR": {
+      "name": "INTERACTIVE BROKERS GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "IBM": {
+      "name": "INTERNATIONAL BUSINESS MACHINES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IBN": {
+      "name": "ICICI BANK LIMITED",
+      "country": "INDIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IBOC": {
+      "name": "INTERNATIONAL BANCSHARES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "IBP": {
+      "name": "INSTALLED BUILDING PRODUCTS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IBRX": {
+      "name": "IMMUNITYBIO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ICE": {
+      "name": "INTERCONTINENTAL EXCHANGE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ICLR": {
+      "name": "ICON PLC",
+      "country": "IRLANDA",
+      "exchange": "NASDAQ"
+    },
+    "IDA": {
+      "name": "IDACORP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IDR": {
+      "name": "INDRA SISTEMAS, S.A.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "IDXX": {
+      "name": "IDEXX LABORATORIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "IEX": {
+      "name": "IDEX CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IFF": {
+      "name": "INTERNATIONAL FLAVORS & FRAGRANCES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IFRX": {
+      "name": "INFLARX N.V.",
+      "country": "HOLANDA",
+      "exchange": "NASDAQ"
+    },
+    "IHG": {
+      "name": "INTERCONTINENTAL HOTELS GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "IIF": {
+      "name": "MORGAN STANLEY INDIA INVESTMENT FUND, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "III": {
+      "name": "3I GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "ILMN": {
+      "name": "ILLUMINA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "IMC": {
+      "name": "INMOCEMENTO, S.A.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "IMXI": {
+      "name": "INTERNATIONAL MONEY EXPRESS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "INCY": {
+      "name": "INCYTE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "INDV": {
+      "name": "INDIVIOR PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "INFY": {
+      "name": "INFOSYS LIMITED",
+      "country": "INDIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ING": {
+      "name": "ING GROUP",
+      "country": "HOLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "INGR": {
+      "name": "INGREDION INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "INMD": {
+      "name": "INMODE LTD.",
+      "country": "ISRAEL",
+      "exchange": "NASDAQ"
+    },
+    "INO": {
+      "name": "INOVIO PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "INSM": {
+      "name": "INSMED INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "INSW": {
+      "name": "INTERNATIONAL SEAWAYS, INC.",
+      "country": "ISLAS MARSHALL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "INTC": {
+      "name": "INTEL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "INTR": {
+      "name": "INTER & CO, INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "INTU": {
+      "name": "INTUIT INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "INVH": {
+      "name": "INVITATION HOMES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IONQ": {
+      "name": "IONQ, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IONS": {
+      "name": "IONIS PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "IOT": {
+      "name": "SAMSARA INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IP": {
+      "name": "INTERNATIONAL PAPER COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IPGP": {
+      "name": "IPG PHOTONICS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "IQV": {
+      "name": "IQVIA HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IR": {
+      "name": "INGERSOLL RAND INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IRS": {
+      "name": "IRSA INVERSIONES Y REPRESENTACIONES SOCIEDAD ANÓNIMA",
+      "country": "ARGENTINA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ISRG": {
+      "name": "INTUITIVE SURGICAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "IT": {
+      "name": "GARTNER, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ITRI": {
+      "name": "ITRON, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ITT": {
+      "name": "ITT INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ITUB": {
+      "name": "ITAU UNIBANCO BANCO HOLDING S.A.",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ITW": {
+      "name": "ILLINOIS TOOL WORKS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "IVZ": {
+      "name": "INVESCO LTD.",
+      "country": "BERMUDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "J": {
+      "name": "JACOBS SOLUTIONS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JACK": {
+      "name": "JACK IN THE BOX INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "JAZZ": {
+      "name": "JAZZ PHARMACEUTICALS PUBLIC LIMITED COMPANY",
+      "country": "IRLANDA",
+      "exchange": "NASDAQ"
+    },
+    "JBHT": {
+      "name": "J.B. HUNT TRANSPORT SERVICES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "JBL": {
+      "name": "JABIL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JBLU": {
+      "name": "JETBLUE AIRWAYS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "JBS": {
+      "name": "JBS N.V.",
+      "country": "HOLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JBTM": {
+      "name": "JBT MAREL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JD": {
+      "name": "JD.COM, INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "JEF": {
+      "name": "JEFFERIES FINANCIAL GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JKHY": {
+      "name": "JACK HENRY & ASSOCIATES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "JKS": {
+      "name": "JINKOSOLAR HOLDING COMPANY LIMITED",
+      "country": "CHINA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JLL": {
+      "name": "JONES LANG LASALLE INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JMIA": {
+      "name": "JUMIA TECHNOLOGIES AG",
+      "country": "ALEMANIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JNJ": {
+      "name": "JOHNSON & JOHNSON",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JOYY": {
+      "name": "JOYY INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "JPM": {
+      "name": "JP MORGAN CHASE & CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "JXN": {
+      "name": "JACKSON FINANCIAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KB": {
+      "name": "KB FINANCIAL GROUP INC.",
+      "country": "COREA (SUR)",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KBH": {
+      "name": "KB HOME",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KBR": {
+      "name": "KBR, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KD": {
+      "name": "KYNDRYL HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KDP": {
+      "name": "KEURIG DR PEPPER INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "KEEL": {
+      "name": "KEEL INFRASTRUCTURE CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "KEX": {
+      "name": "KIRBY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KEY": {
+      "name": "KEYENCE CORPORATION",
+      "country": "JAPÓN",
+      "exchange": "TOKIO STOCK EXCHANGE"
+    },
+    "KEYS": {
+      "name": "KEYSIGHT TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KFY": {
+      "name": "KORN FERRY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KGC": {
+      "name": "KINROSS GOLD CORPORATION",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KHC": {
+      "name": "THE KRAFT HEINZ COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KIM": {
+      "name": "KIMCO REALTY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KLAC": {
+      "name": "KLA CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "KLAR": {
+      "name": "KLARNA GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KMB": {
+      "name": "KIMBERLY-CLARK CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KMI": {
+      "name": "KINDER MORGAN, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KMT": {
+      "name": "KENNAMETAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KMX": {
+      "name": "CARMAX, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KNF": {
+      "name": "KNIFE RIVER CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KNSA": {
+      "name": "KINIKSA PHARMACEUTICALS INTERNATIONAL, PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NASDAQ"
+    },
+    "KNSL": {
+      "name": "KINSALE CAPITAL GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KO": {
+      "name": "THE COCA-COLA COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KOD": {
+      "name": "KODIAK SCIENCES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "KOF": {
+      "name": "COCA-COLA FEMSA, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "KOS": {
+      "name": "KOSMOS ENERGY LTD.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KR": {
+      "name": "THE KROGER CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KRC": {
+      "name": "KILROY REALTY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KRMN": {
+      "name": "KARMAN HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KRNT": {
+      "name": "KORNIT DIGITAL LTD.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "KSPI": {
+      "name": "JOINT STOCK COMPANY KASPI.KZ",
+      "country": "KAZAJISTÁN",
+      "exchange": "NASDAQ"
+    },
+    "KSS": {
+      "name": "KOHL´S CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KTOS": {
+      "name": "KRATOS DEFENSE & SECURITY SOLUTIONS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "KVUE": {
+      "name": "KENVUE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KVYO": {
+      "name": "KLAVIYO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "KYNB": {
+      "name": "KYNTRA BIO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "L": {
+      "name": "LOEWS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LAB": {
+      "name": "GENOMMA LAB INTERNACIONAL, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "LAMR": {
+      "name": "LAMAR ADVERTISING COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LAUR": {
+      "name": "LAUREATE EDUCATION, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LAZR": {
+      "name": "LUMINAR TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LBTYA": {
+      "name": "LIBERTY GLOBAL PLC",
+      "country": "BERMUDA",
+      "exchange": "NASDAQ"
+    },
+    "LCID": {
+      "name": "LUCID GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LDOS": {
+      "name": "LEIDOS HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LEA": {
+      "name": "LEAR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LECO": {
+      "name": "LINCOLN ELECTRIC HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LEN": {
+      "name": "LENNAR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LEVI": {
+      "name": "LEVI STRAUSS & CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LH": {
+      "name": "LABCORP HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LHX": {
+      "name": "L3HARRIS TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LI": {
+      "name": "KLEPIERRE SA",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "LII": {
+      "name": "LENNOX INTERNATIONAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LINE": {
+      "name": "LINEAGE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LITB": {
+      "name": "LIGHTINTHEBOX HOLDING CO., LTD.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LITE": {
+      "name": "LUMENTUM HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LKQ": {
+      "name": "LKQ CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LLY": {
+      "name": "ELI LILLY & CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LMND": {
+      "name": "LEMONADE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LMT": {
+      "name": "LOCKHEED MARTIN CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LNG": {
+      "name": "CHENIERE ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LNT": {
+      "name": "ALLIANT ENERGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LOAR": {
+      "name": "LOAR HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LOGC": {
+      "name": "CONTEXTLOGIC  INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "OVER THE COUNTER US"
+    },
+    "LOGI": {
+      "name": "LOGITECH INTERNATIONAL S.A.",
+      "country": "SUIZA",
+      "exchange": "NASDAQ"
+    },
+    "LOW": {
+      "name": "LOWE´S COMPANIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LPLA": {
+      "name": "LPL FINANCIAL HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LPX": {
+      "name": "LOUISIANA-PACIFIC CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LRCX": {
+      "name": "Lam Research Corporation",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LRN": {
+      "name": "STRIDE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LSCC": {
+      "name": "LATTICE SEMICONDUCTOR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LSE": {
+      "name": "LONDON STOCK EXCHANGE GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "LULU": {
+      "name": "LULULEMON ATHLETICA INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LUMN": {
+      "name": "LUMEN TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LUV": {
+      "name": "SOUTHWEST AIRLINES CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LVS": {
+      "name": "LAS VEGAS SANDS CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LW": {
+      "name": "LAMB WESTON HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LYB": {
+      "name": "LYONDELLBASELL INDUSTRIES N.V.",
+      "country": "HOLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LYFT": {
+      "name": "LYFT INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "LYG": {
+      "name": "LLOYDS BANKING GROUP PLC.",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "LYV": {
+      "name": "LIVE NATION ENTERTAINMENT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "M": {
+      "name": "MACY´S INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MA": {
+      "name": "MASTERCARD INCORPORATED.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MAA": {
+      "name": "Mid-America Apartment Communities Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MAC": {
+      "name": "THE MACERICH COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MAGN": {
+      "name": "MAGNERA CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MAIR": {
+      "name": "MADISON AIR SOLUTIONS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MANH": {
+      "name": "MANHATTAN ASSOCIATES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MANU": {
+      "name": "MANCHESTER UNITED PLC",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MAR": {
+      "name": "MARRIOTT INTERNATIONAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MARA": {
+      "name": "MARA HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MAS": {
+      "name": "MASCO CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MAT": {
+      "name": "MATTEL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MBGL": {
+      "name": "MOBILITY GLOBAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MBLY": {
+      "name": "MOBILEYE GLOBAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MC": {
+      "name": "LVMH MOËT HENNESSY - LOUIS VUITTON SE",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "MCD": {
+      "name": "MCDONALD'S CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MCHP": {
+      "name": "MICROCHIP TECHNOLOGY INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MCK": {
+      "name": "MCKESSON CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MCO": {
+      "name": "MOODY´S CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MD": {
+      "name": "PEDIATRIX MEDICAL GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MDB": {
+      "name": "MONGODB, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MDLN": {
+      "name": "MEDLINE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MDLZ": {
+      "name": "MONDELEZ INTERNATIONAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MDT": {
+      "name": "MEDTRONIC PLC",
+      "country": "IRLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MDU": {
+      "name": "MDU RESOURCES GROUP INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MED": {
+      "name": "MEDIFAST, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MEDP": {
+      "name": "MEDPACE HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MELI": {
+      "name": "MERCADOLIBRE INC.",
+      "country": "ARGENTINA",
+      "exchange": "NASDAQ"
+    },
+    "MEOH": {
+      "name": "METHANEX CORPORATION",
+      "country": "CANADA",
+      "exchange": "NASDAQ"
+    },
+    "MET": {
+      "name": "METLIFE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "META": {
+      "name": "META PLATFORMS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MFC": {
+      "name": "MANULIFE FINANCIAL CORPORATION",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "MGA": {
+      "name": "MAGNA INTERNATIONAL INC",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MGM": {
+      "name": "MGM RESORTS INTERNATIONAL",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MGNI": {
+      "name": "MAGNITE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MGRC": {
+      "name": "MCGRATH RENTCORP",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MHK": {
+      "name": "MOHAWK INDUSTRIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MIR": {
+      "name": "MIRION TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MIRM": {
+      "name": "MIRUM PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MKC": {
+      "name": "MCCORMICK & COMPANY, INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MKL": {
+      "name": "MARKEL GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MKSI": {
+      "name": "MKS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MKTW": {
+      "name": "MARKETWISE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MKTX": {
+      "name": "MARKETAXESS HOLDINGS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MLCO": {
+      "name": "MELCO RESORTS AND ENTERTAINMENT LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "MLI": {
+      "name": "MUELLER INDUSTRIES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MLM": {
+      "name": "MARTIN MARIETTA MATERIALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MLTX": {
+      "name": "MOONLAKE IMMUNOTHERAPEUTICS",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "MMM": {
+      "name": "3M COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MMS": {
+      "name": "MAXIMUS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MNDY": {
+      "name": "MONDAY.COM LTD.",
+      "country": "ISRAEL",
+      "exchange": "NASDAQ"
+    },
+    "MNSO": {
+      "name": "MINISO GROUP HOLDING LTD",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MNST": {
+      "name": "MONSTER BEVERAGE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MO": {
+      "name": "ALTRIA GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MOMO": {
+      "name": "HELLO GROUP INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "MORN": {
+      "name": "MORNINGSTAR, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MOS": {
+      "name": "THE MOSAIC COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MP": {
+      "name": "MP MATERIALS CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MPC": {
+      "name": "MARATHON PETROLEUM CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MPWR": {
+      "name": "MONOLITHIC POWER SYSTEMS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MQ": {
+      "name": "MARQETA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MRCY": {
+      "name": "MERCURY SYSTEMS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MRK": {
+      "name": "MERCK & CO., INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MRNA": {
+      "name": "MODERNA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MRP": {
+      "name": "MILLROSE PROPERTIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MRSH": {
+      "name": "MARSH & MCLENNAN COMPANIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MRVI": {
+      "name": "MARAVAI LIFESCIENCES HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MS": {
+      "name": "MORGAN STANLEY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MSA": {
+      "name": "MSA SAFETY INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MSCI": {
+      "name": "MSCI INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MSFT": {
+      "name": "MICROSOFT CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MSI": {
+      "name": "MOTOROLA SOLUTIONS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MSTR": {
+      "name": "STRATEGY INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MT": {
+      "name": "ARCELORMITTAL",
+      "country": "LUXEMBURGO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MTB": {
+      "name": "M&T BANK CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MTD": {
+      "name": "METTLER-TOLEDO INTERNATIONAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MTDR": {
+      "name": "MATADOR RESOURCES COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MTG": {
+      "name": "MGIC INVESTMENT CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MTLS": {
+      "name": "MATERIALISE NV",
+      "country": "BELGICA",
+      "exchange": "NASDAQ"
+    },
+    "MTN": {
+      "name": "VAIL RESORTS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MTSI": {
+      "name": "MACOM TECHNOLOGY SOLUTIONS HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MTZ": {
+      "name": "MASTEC, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MU": {
+      "name": "MICRON TECHNOLOGY INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "MUFG": {
+      "name": "MITSUBISHI UFJ FINANCIAL GROUP INC.",
+      "country": "JAPÓN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MUR": {
+      "name": "MURPHY OIL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MUX": {
+      "name": "MCEWEN INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "MXL": {
+      "name": "MAXLINEAR, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NBIS": {
+      "name": "NEBIUS GROUP N.V.",
+      "country": "HOLANDA",
+      "exchange": "NASDAQ"
+    },
+    "NBIX": {
+      "name": "NEUROCRINE BIOSCIENCES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NCLH": {
+      "name": "NORWEGIAN CRUISE LINE HOLDINGS LTD.",
+      "country": "BERMUDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NDAQ": {
+      "name": "Nasdaq, Inc.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NDSN": {
+      "name": "NORDSON CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NEE": {
+      "name": "NEXTERA ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NEM": {
+      "name": "NEWMONT CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NEO": {
+      "name": "NEOGENOMICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NET": {
+      "name": "CLOUDFLARE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NEXI": {
+      "name": "NEXI S.P.A.",
+      "country": "ITALIA",
+      "exchange": "BORSA ITALIANA"
+    },
+    "NFE": {
+      "name": "NEW FORTRESS ENERGY INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NFG": {
+      "name": "NATIONAL FUEL GAS COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NFLX": {
+      "name": "NETFLIX, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NG": {
+      "name": "NOVAGOLD RESOURCES INC.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NGG": {
+      "name": "NATIONAL GRID PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NGVT": {
+      "name": "INGEVITY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NHI": {
+      "name": "NATIONAL HEALTH INVESTORS INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NI": {
+      "name": "NISOURCE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NIO": {
+      "name": "NIO Inc",
+      "country": "CHINA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NIU": {
+      "name": "NIU TECHNOLOGIES",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "NJR": {
+      "name": "NEW JERSEY RESOURCES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NKE": {
+      "name": "NIKE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NKTR": {
+      "name": "NEKTAR THERAPEUTICS",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NLOP": {
+      "name": "NET LEASE OFFICE PROPERTIES",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NLY": {
+      "name": "ANNALY CAPITAL MANAGEMENT INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NNN": {
+      "name": "NNN REIT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NOC": {
+      "name": "NORTHROP GRUMMAN CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NOG": {
+      "name": "NORTHERN OIL AND GAS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NOK": {
+      "name": "NOKIA CORPORATION",
+      "country": "FINLANDIA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NOMD": {
+      "name": "NOMAD FOODS LIMITED",
+      "country": "ISLAS VÍRGENES (REINO UNIDO)",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NOV": {
+      "name": "NOV INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NOVT": {
+      "name": "NOVANTA INC.",
+      "country": "CANADA",
+      "exchange": "NASDAQ"
+    },
+    "NPKI": {
+      "name": "NPK INTERNATIONAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NRG": {
+      "name": "NRG ENERGY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NSANY": {
+      "name": "NISSAN MOTOR CO., LTD.",
+      "country": "JAPÓN",
+      "exchange": "OVER THE COUNTER US"
+    },
+    "NSC": {
+      "name": "NORFOLK SOUTHERN CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NSIT": {
+      "name": "INSIGHT ENTERPRISES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NTAP": {
+      "name": "NETAPP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NTDOY": {
+      "name": "NINTENDO CO., LTD.",
+      "country": "JAPÓN",
+      "exchange": "TOKIO STOCK EXCHANGE"
+    },
+    "NTES": {
+      "name": "NETEASE, INC.",
+      "country": "CHINA",
+      "exchange": "NASDAQ"
+    },
+    "NTNX": {
+      "name": "NUTANIX, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NTR": {
+      "name": "NUTRIEN LTD.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NTRA": {
+      "name": "NATERA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NTRS": {
+      "name": "NORTHERN TRUST CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NTST": {
+      "name": "NETSTREIT CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NU": {
+      "name": "NU HOLDINGS LTD.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NUE": {
+      "name": "NUCOR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NUS": {
+      "name": "NU SKIN ENTERPRISES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NVAX": {
+      "name": "NOVAVAX, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NVCR": {
+      "name": "NOVOCURE LIMITED",
+      "country": "JERSEY",
+      "exchange": "NASDAQ"
+    },
+    "NVDA": {
+      "name": "NVIDIA CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NVG": {
+      "name": "The Navigator Company, S.A.",
+      "country": "PORTUGAL",
+      "exchange": "BOLSA DE LISBOA"
+    },
+    "NVO": {
+      "name": "NOVO NORDISK A/S",
+      "country": "DINAMARCA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NVR": {
+      "name": "NVR, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NVS": {
+      "name": "NOVARTIS AG",
+      "country": "SUIZA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NVST": {
+      "name": "ENVISTA HOLDINGS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NVTS": {
+      "name": "NAVITAS SEMICONDUCTOR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "NWG": {
+      "name": "NATWEST GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "NWL": {
+      "name": "NEWELL BRANDS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NXH": {
+      "name": "BED BATH AND BEYOND, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "NXPI": {
+      "name": "NXP SEMICONDUCTORS N.V.",
+      "country": "HOLANDA",
+      "exchange": "NASDAQ"
+    },
+    "O": {
+      "name": "REALTY INCOME CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OCGN": {
+      "name": "OCUGEN, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ODFL": {
+      "name": "OLD DOMINION FREIGHT LINE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "OGC": {
+      "name": "OCEANAGOLD CORPORATION",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "OGE": {
+      "name": "OGE ENERGY CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OGN": {
+      "name": "ORGANON & CO.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OGS": {
+      "name": "ONE GAS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OHI": {
+      "name": "OMEGA HEALTHCARE INVESTORS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OI": {
+      "name": "O-I GLASS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OKE": {
+      "name": "ONEOK, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OKLO": {
+      "name": "OKLO INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OKTA": {
+      "name": "OKTA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "OLED": {
+      "name": "UNIVERSAL DISPLAY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "OLLI": {
+      "name": "OLLIES BARGAIN OUTLET HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "OMC": {
+      "name": "OMNICOM GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OMCL": {
+      "name": "OMNICELL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "OMF": {
+      "name": "ONEMAIN HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ON": {
+      "name": "ON SEMICONDUCTOR CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ONC": {
+      "name": "BEONE MEDICINES LTD.",
+      "country": "SUIZA",
+      "exchange": "NASDAQ"
+    },
+    "ONDS": {
+      "name": "ONDAS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ONL": {
+      "name": "ORION PROPERTIES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ONON": {
+      "name": "ON HOLDING AG",
+      "country": "SUIZA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ONTO": {
+      "name": "ONTO INNOVATION INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OPCH": {
+      "name": "OPTION CARE HEALTH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "OPK": {
+      "name": "OPKO HEALTH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "OPTU": {
+      "name": "OPTIMUM COMMUNICATIONS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OR": {
+      "name": "L´OREAL SA",
+      "country": "FRANCIA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "ORCL": {
+      "name": "ORACLE CORP",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ORIC": {
+      "name": "ORICA LIMITED",
+      "country": "AUSTRALIA",
+      "exchange": "AUSTRALIAN SECURITIES EXCHANGE"
+    },
+    "ORLY": {
+      "name": "O’REILLY AUTOMOTIVE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "OSCR": {
+      "name": "OSCAR HEALTH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OSG": {
+      "name": "OCTAVE SPECIALTY GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OSK": {
+      "name": "OSHKOSH CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OTEX": {
+      "name": "OPEN TEXT CORPORATION",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "OTIS": {
+      "name": "OTIS WORLDWIDE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OVV": {
+      "name": "OVINTIV INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OWL": {
+      "name": "BLUE OWL CAPITAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "OZK": {
+      "name": "BANK OZK",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "P": {
+      "name": "EVERPURE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PAAS": {
+      "name": "PAN AMERICAN SILVER CORP.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PACB": {
+      "name": "PACIFIC BIOSCIENCES OF CALIFORNIA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PANW": {
+      "name": "PALO ALTO NETWORKS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PAR": {
+      "name": "PAR TECHNOLOGY CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PARR": {
+      "name": "PAR PACIFIC HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PATH": {
+      "name": "UIPATH, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PAX": {
+      "name": "PATRIA INVESTMENTS LIMITED",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "PAYC": {
+      "name": "PAYCOM SOFTWARE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PAYX": {
+      "name": "PAYCHEX, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PBF": {
+      "name": "PBF ENERGY INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PBH": {
+      "name": "PREMIUM BRANDS HOLDINGS CORPORATION",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "PBR": {
+      "name": "PETRÓLEO BRASILEIRO S.A. – PETROBRAS",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PCAR": {
+      "name": "PACCAR INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PCG": {
+      "name": "PG&E CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PCOR": {
+      "name": "PROCORE TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PCT": {
+      "name": "PURECYCLE TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PCTY": {
+      "name": "PAYLOCITY HOLDING CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PDD": {
+      "name": "PDD HOLDINGS INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "PEG": {
+      "name": "PUBLIC SERVICE ENTERPRISE GROUP INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PEN": {
+      "name": "PENUMBRA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PENN": {
+      "name": "PENN ENTERTAINMENT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PEP": {
+      "name": "PEPSICO INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PFE": {
+      "name": "PFIZER INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PFG": {
+      "name": "PRINCIPAL FINANCIAL GROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PG": {
+      "name": "THE PROCTER & GAMBLE COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PGR": {
+      "name": "THE PROGRESSIVE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PGY": {
+      "name": "PAGAYA TECHNOLOGIES LTD.",
+      "country": "ISRAEL",
+      "exchange": "NASDAQ"
+    },
+    "PH": {
+      "name": "PARKER-HANNIFIN CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PHIN": {
+      "name": "PHINIA INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PHM": {
+      "name": "PULTEGROUP, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PHR": {
+      "name": "PHAROL, S.A.",
+      "country": "PORTUGAL",
+      "exchange": "BOLSA DE LISBOA"
+    },
+    "PI": {
+      "name": "IMPINJ, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PICS": {
+      "name": "PICS N.V.",
+      "country": "HOLANDA",
+      "exchange": "NASDAQ"
+    },
+    "PII": {
+      "name": "POLARIS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PINS": {
+      "name": "PINTEREST, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PK": {
+      "name": "PARK HOTELS & RESORTS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PKG": {
+      "name": "PACKAGING CORPORATION OF AMERICA",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PKX": {
+      "name": "POSCO HOLDINGS INC.",
+      "country": "COREA (SUR)",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PLD": {
+      "name": "PROLOGIS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PLMR": {
+      "name": "PALOMAR HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PLNT": {
+      "name": "PLANET FITNESS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PLTR": {
+      "name": "PALANTIR TECHNOLOGIES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PLUG": {
+      "name": "PLUG POWER INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PLX": {
+      "name": "PLUXEE N.V.",
+      "country": "HOLANDA",
+      "exchange": "EURONEXT PARIS"
+    },
+    "PLXS": {
+      "name": "PLEXUS CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PM": {
+      "name": "PHILIP MORRIS INTERNATIONAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PNC": {
+      "name": "THE PNC FINANCIAL SERVICES GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PNGAY": {
+      "name": "PING AN INSURANCE (GROUP) COMPANY OF CHINA, LTD.",
+      "country": "CHINA",
+      "exchange": "OVER THE COUNTER US"
+    },
+    "PNR": {
+      "name": "PENTAIR PLC",
+      "country": "IRLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PNW": {
+      "name": "PINNACLE WEST CAPITAL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PODD": {
+      "name": "INSULET CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PONY": {
+      "name": "PONY AI INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "POOL": {
+      "name": "Pool Corporation",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "POR": {
+      "name": "PORTLAND GENERAL ELECTRIC COMPANY",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "POST": {
+      "name": "POST HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "POW": {
+      "name": "POWER CORPORATION OF CANADA",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "PPG": {
+      "name": "PPG INDUSTRIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PPL": {
+      "name": "PEMBINA PIPELINE CORPORATION",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "PPLC": {
+      "name": "PPL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PPLI": {
+      "name": "PEOPLE INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PR": {
+      "name": "PERMIAN RESOURCES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PRCT": {
+      "name": "PROCEPT BIOROBOTICS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PRDO": {
+      "name": "PERDOCEO EDUCATION CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PRGO": {
+      "name": "PERRIGO COMPANY PLC",
+      "country": "IRLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PRGS": {
+      "name": "PROGRESS SOFTWARE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PRIM": {
+      "name": "PRIMORIS SERVICES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PRM": {
+      "name": "PERIMETER SOLUTIONS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PROK": {
+      "name": "PROKIDNEY CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PRQR": {
+      "name": "PROQR THERAPEUTICS, N.V.",
+      "country": "HOLANDA",
+      "exchange": "NASDAQ"
+    },
+    "PRS": {
+      "name": "PROMOTORA DE INFORMACIONES, S.A.",
+      "country": "ESPAÑA",
+      "exchange": "B Y M ESPAÑOLES"
+    },
+    "PRU": {
+      "name": "PRUDENTIAL FINANCIAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PS": {
+      "name": "PERSHING SQUARE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PSA": {
+      "name": "PUBLIC STORAGE",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PSUS": {
+      "name": "PERSHING SQUARE USA, LTD.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PSX": {
+      "name": "PHILLIPS 66",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PTC": {
+      "name": "PTC INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PTGX": {
+      "name": "PROTAGONIST THERAPEUTICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PTON": {
+      "name": "PELOTON INTERACTIVE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PUK": {
+      "name": "PRUDENTIAL PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PVH": {
+      "name": "PVH CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PWR": {
+      "name": "QUANTA SERVICES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "PXMD": {
+      "name": "PAXMEDICA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "PYPL": {
+      "name": "PAYPAL HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "Q": {
+      "name": "QUÁLITAS CONTROLADORA, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "QBTS": {
+      "name": "D-WAVE QUANTUM INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "QCOM": {
+      "name": "QUALCOMM INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "QFIN": {
+      "name": "QFIN HOLDINGS, INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "QLYS": {
+      "name": "QUALYS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "QS": {
+      "name": "QUANTUMSCAPE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "QSR": {
+      "name": "RESTAURANT BRANDS INTERNATIONAL INC",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "QTWO": {
+      "name": "Q2 HOLDINGS INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "QUBT": {
+      "name": "QUANTUM COMPUTING INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "QURE": {
+      "name": "UNIQURE N.V.",
+      "country": "HOLANDA",
+      "exchange": "NASDAQ"
+    },
+    "QXO": {
+      "name": "QXO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "R": {
+      "name": "REGIONAL, S.A.B. DE C.V.",
+      "country": "MEXICO",
+      "exchange": "BMV"
+    },
+    "RACE": {
+      "name": "FERRARI N.V.",
+      "country": "HOLANDA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RAIL": {
+      "name": "FREIGHTCAR AMERICA, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RAL": {
+      "name": "RALLIANT CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RARE": {
+      "name": "ULTRAGENYX PHARMACEUTICAL INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RB": {
+      "name": "RECKITT BENCKISER GROUP PLC",
+      "country": "REINO UNIDO",
+      "exchange": "LONDON STOCK EXCHANGE"
+    },
+    "RBA": {
+      "name": "RB GLOBAL, INC.",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "RBLX": {
+      "name": "ROBLOX CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RBRK": {
+      "name": "RUBRIK, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RCL": {
+      "name": "ROYAL CARIBBEAN GROUP",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RDDT": {
+      "name": "REDDIT, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RDNT": {
+      "name": "RADNET, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "REGN": {
+      "name": "REGENERON PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RELY": {
+      "name": "REMITLY GLOBAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "REXR": {
+      "name": "REXFORD INDUSTRIAL REALTY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "REZI": {
+      "name": "RESIDEO TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RF": {
+      "name": "REGIONS FINANCIAL CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RGA": {
+      "name": "REINSURANCE GROUP OF AMERICA, INCORPORATED",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RGLD": {
+      "name": "ROYAL GOLD, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RGTI": {
+      "name": "RIGETTI COMPUTING, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RH": {
+      "name": "RH",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RHI": {
+      "name": "ROBERT HALF INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RHP": {
+      "name": "RYMAN HOSPITALITY PROPERTIES INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RIG": {
+      "name": "TRANSOCEAN LTD.",
+      "country": "SUIZA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RIO": {
+      "name": "RIO TINTO PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RIOT": {
+      "name": "RIOT PLATFORMS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RITM": {
+      "name": "RITHM CAPITAL CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RIVN": {
+      "name": "RIVIAN AUTOMOTIVE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RJF": {
+      "name": "RAYMOND JAMES FINANCIAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RKLB": {
+      "name": "ROCKET LAB CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RKT": {
+      "name": "ROCKET COMPANIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RL": {
+      "name": "RALPH LAUREN CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RMBS": {
+      "name": "RAMBUS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RMD": {
+      "name": "RESMED INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RMR": {
+      "name": "THE RMR GROUP INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RNG": {
+      "name": "RINGCENTRAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ROG": {
+      "name": "ROCHE HOLDING AG",
+      "country": "SUIZA",
+      "exchange": "SIX SWISS EXCHANGE"
+    },
+    "ROK": {
+      "name": "ROCKWELL AUTOMATION, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ROKU": {
+      "name": "ROKU, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ROP": {
+      "name": "ROPER TECHNOLOGIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RPD": {
+      "name": "RAPID7, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RTX": {
+      "name": "RTX CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "RUN": {
+      "name": "SUNRUN INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RXRX": {
+      "name": "RECURSION PHARMACEUTICALS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "RY": {
+      "name": "ROYAL BANK OF CANADA",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "SACH": {
+      "name": "SACHEM CAPITAL CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "SAM": {
+      "name": "THE BOSTON BEER COMPANY, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "SCHW": {
+      "name": "THE CHARLES SCHWAB CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "SOLS": {
+      "name": "SOLSTICE ADVANCED MATERIALS INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ST": {
+      "name": "SENSATA TECHNOLOGIES HOLDING PLC",
+      "country": "REINO UNIDO",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "SUNB": {
+      "name": "SUNBELT RENTALS HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "SYF": {
+      "name": "SYNCHRONY FINANCIAL",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "T": {
+      "name": "AT&T INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TALO": {
+      "name": "TALOS ENERGY INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TD": {
+      "name": "TORONTO-DOMINION BANK",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TER": {
+      "name": "TERADYNE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TFPM": {
+      "name": "TRIPLE FLAG PRECIOUS METALS CORP.",
+      "country": "CANADA",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TGT": {
+      "name": "TARGET CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TILE": {
+      "name": "INTERFACE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "TIMB": {
+      "name": "TIM S.A.",
+      "country": "BRASIL",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TKO": {
+      "name": "TKO GROUP HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TME": {
+      "name": "TENCENT MUSIC ENTERTAINMENT GROUP",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TMO": {
+      "name": "THERMO FISHER SCIENTIFIC INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TNDM": {
+      "name": "TANDEM DIABETES CARE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "TOST": {
+      "name": "TOAST, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TRAX": {
+      "name": "FIRST TRACKS BIOTHERAPEUTICS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "TREE": {
+      "name": "LENDINGTREE, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "TRMB": {
+      "name": "TRIMBLE INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "TRN": {
+      "name": "TRINITY INDUSTRIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TRP": {
+      "name": "TC ENERGY CORPORATION",
+      "country": "CANADA",
+      "exchange": "TORONTO STOCK EXCHANGE"
+    },
+    "TRU": {
+      "name": "TRANSUNION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TRV": {
+      "name": "THE TRAVELERS COMPANIES, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TSM": {
+      "name": "TAIWAN SEMICONDUCTOR MANUFACTURING",
+      "country": "TAIWAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "TTAN": {
+      "name": "SERVICETITAN, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "TWST": {
+      "name": "TWIST BIOSCIENCE CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "UNP": {
+      "name": "UNION PACIFIC CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "UPST": {
+      "name": "UPSTART HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "UPWK": {
+      "name": "UPWORK INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "UTHR": {
+      "name": "UNITED THERAPEUTICS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "UTSI": {
+      "name": "UTSTARCOM HOLDINGS CORP.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NASDAQ"
+    },
+    "V": {
+      "name": "VISA INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "VRSK": {
+      "name": "VERISK ANALYTICS, INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "VSTS": {
+      "name": "VESTIS CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "VTR": {
+      "name": "VENTAS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "WCC": {
+      "name": "WESCO INTERNATIONAL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "XPO": {
+      "name": "XPO, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "XWEL": {
+      "name": "XWELL, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "YETI": {
+      "name": "YETI HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "YEXT": {
+      "name": "YEXT INC",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "YUM": {
+      "name": "YUM! BRANDS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ZBH": {
+      "name": "ZIMMER BIOMET HOLDINGS, INC.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ZBRA": {
+      "name": "ZEBRA TECHNOLOGIES CORPORATION",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NASDAQ"
+    },
+    "ZEPP": {
+      "name": "ZEPP HEALTH CORPORATION",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ZETA": {
+      "name": "ZETA GLOBAL HOLDINGS CORP.",
+      "country": "ESTADOS UNIDOS",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    },
+    "ZTO": {
+      "name": "ZTO EXPRESS (CAYMAN) INC.",
+      "country": "ISLAS CAYMAN",
+      "exchange": "NEW YORK STOCK EXCHANGE"
+    }
+  },
+  "failed": [
+    "0JN9",
+    "0QBO",
+    "0R87",
+    "1093",
+    "1109",
+    "1113",
+    "1179",
+    "1211",
+    "1276",
+    "1299",
+    "16",
+    "1605",
+    "1658",
+    "175",
+    "1801",
+    "1808",
+    "1810",
+    "1876",
+    "1913",
+    "1925",
+    "1COV",
+    "2282",
+    "2318",
+    "2319",
+    "2359",
+    "2382",
+    "241",
+    "270",
+    "28010",
+    "285A",
+    "2875",
+    "2897",
+    "300",
+    "3626",
+    "3673",
+    "3690",
+    "3750",
+    "3769",
+    "388",
+    "3932",
+    "3988",
+    "4062",
+    "4063",
+    "4503",
+    "4507",
+    "4516",
+    "4519",
+    "4523",
+    "4527",
+    "4528",
+    "4536",
+    "4543",
+    "4568",
+    "4578",
+    "4587",
+    "4689",
+    "4704",
+    "4716",
+    "4912",
+    "5108",
+    "5713",
+    "6086",
+    "6110",
+    "6146",
+    "6186",
+    "6301",
+    "6370",
+    "6501",
+    "6618",
+    "6702",
+    "6724",
+    "6841",
+    "6845",
+    "6856",
+    "6857",
+    "6869",
+    "6918",
+    "6920",
+    "6960",
+    "6965",
+    "6981",
+    "7182",
+    "7270",
+    "762",
+    "7701",
+    "7741",
+    "7747",
+    "7911",
+    "7912",
+    "7951",
+    "8031",
+    "8035",
+    "8058",
+    "8113",
+    "8411",
+    "8697",
+    "8766",
+    "8801",
+    "883",
+    "9022",
+    "941",
+    "9433",
+    "9503",
+    "9618",
+    "9697",
+    "9766",
+    "9880",
+    "9888",
+    "992",
+    "9961",
+    "9983",
+    "9988",
+    "9999",
+    "AA1",
+    "AAF",
+    "AALB",
+    "AAU",
+    "ABB",
+    "ABBN",
+    "AC",
+    "ACADE",
+    "ACAF",
+    "ACC",
+    "ACCELSA",
+    "ACOF",
+    "ACTINVR",
+    "ACX",
+    "ADAP",
+    "ADM1",
+    "ADS",
+    "ADYEN",
+    "AED",
+    "AENA",
+    "AENZ",
+    "AFX",
+    "AG1",
+    "AGRIEXP",
+    "AGRON",
+    "AGS",
+    "AGUA",
+    "AGUILAS",
+    "AHMSA",
+    "AI1",
+    "AIF",
+    "AIR1",
+    "AKE",
+    "ALA1",
+    "ALFALAV",
+    "ALLFG",
+    "ALLY1",
+    "ALO",
+    "ALPEK",
+    "ALQ",
+    "ALSEA",
+    "ALT1",
+    "ALTERNA",
+    "AMV0",
+    "ANA",
+    "ANB",
+    "ANTO",
+    "APM",
+    "APO1",
+    "APPS1",
+    "ARA",
+    "ARCAD",
+    "ARISTOS",
+    "ARYN",
+    "ASAI",
+    "ASEH",
+    "ASM1",
+    "ASML1",
+    "ASND1",
+    "ASX1",
+    "ATAI",
+    "ATD",
+    "ATH",
+    "ATRL",
+    "AUTLAN",
+    "AVB",
+    "AXA",
+    "AXDX",
+    "AXTEL",
+    "AZE",
+    "AZN1",
+    "BA1",
+    "BACS",
+    "BAMI",
+    "BANB",
+    "BARN",
+    "BAS",
+    "BATS",
+    "BAYN",
+    "BBAJIO",
+    "BBDB",
+    "BCPPL",
+    "BEI",
+    "BESI",
+    "BEVIDES",
+    "BFA",
+    "BFB",
+    "BFIT1",
+    "BFSA",
+    "BG1",
+    "BHP1",
+    "BILL1",
+    "BIMBO",
+    "BIMX",
+    "BKG",
+    "BKI",
+    "BLD",
+    "BLU",
+    "BLUE",
+    "BLX1",
+    "BME1",
+    "BMWM5",
+    "BN1",
+    "BNP",
+    "BNZL",
+    "BOL",
+    "BOLI",
+    "BOLSA",
+    "BOSS",
+    "BP1",
+    "BRBY",
+    "BRE",
+    "BRFS",
+    "BRKA",
+    "BRKB",
+    "BRX1",
+    "CA",
+    "CABK",
+    "CABLE",
+    "CADU",
+    "CAFE",
+    "CAN1",
+    "CAPG",
+    "CARUN",
+    "CBA",
+    "CBD",
+    "CCH1",
+    "CCI1",
+    "CCL1",
+    "CCLB",
+    "CDR",
+    "CFLT",
+    "CFRI",
+    "CGEO",
+    "CGX",
+    "CHDRAUI",
+    "CHU",
+    "CIB1",
+    "CIDMEGA",
+    "CIE",
+    "CIEA",
+    "CLH1",
+    "CLNX",
+    "CMC1",
+    "CMOCTEZ",
+    "CMR",
+    "CMS1",
+    "COH",
+    "COL",
+    "COLLADO",
+    "CONVER",
+    "COXG",
+    "CPE",
+    "CPG",
+    "CPKC",
+    "CPR",
+    "CREAL",
+    "CRH1",
+    "CRTO1",
+    "CSC",
+    "CSL1",
+    "CSU",
+    "CTAXTEL",
+    "CTEC1",
+    "CTRA",
+    "CTT",
+    "CUERVO",
+    "CUK",
+    "CULTIBA",
+    "CVC",
+    "CYDSASA",
+    "CZR1",
+    "DAIF",
+    "DAY",
+    "DB1",
+    "DELLC",
+    "DEMANT",
+    "DFY",
+    "DGE",
+    "DGG",
+    "DHL",
+    "DIA1",
+    "DIABLOS",
+    "DIS1",
+    "DKNG1",
+    "DM",
+    "DOCS1",
+    "DOL1",
+    "DOW1",
+    "DPLM",
+    "DSFIR",
+    "DSG",
+    "DTE1",
+    "DWNI",
+    "EA",
+    "EBO",
+    "EDOARDO",
+    "EDP",
+    "EDPR",
+    "EHLDV",
+    "EIX1",
+    "ELE1",
+    "ELI",
+    "ELIS",
+    "ELISA",
+    "ELU",
+    "EMPA1",
+    "ENEL",
+    "ENGH",
+    "ENGI",
+    "ENI1",
+    "ENX",
+    "EOAN",
+    "EPIA",
+    "EQB",
+    "EQT1",
+    "ERF",
+    "ERICB",
+    "ESENTIA",
+    "ESSITYB",
+    "ETEG",
+    "ETL",
+    "ETN1",
+    "EUROB",
+    "EXO1",
+    "EXTO",
+    "FANU",
+    "FCC",
+    "FCFS1",
+    "FDR",
+    "FEC",
+    "FEMSA",
+    "FER1",
+    "FERG1",
+    "FFH",
+    "FICO1",
+    "FIG1",
+    "FIHU",
+    "FINAMEX",
+    "FINDEP",
+    "FL",
+    "FLTR1",
+    "FM1",
+    "FMC1",
+    "FME",
+    "FMG1",
+    "FOLD",
+    "FOM",
+    "FOX1",
+    "FRAGUA",
+    "FRE",
+    "FRES",
+    "FRO1",
+    "FRT1",
+    "FRVIA",
+    "FTAV",
+    "FTRE1",
+    "FVI",
+    "FWONK1",
+    "G1A",
+    "GALD",
+    "GALP",
+    "GAP1",
+    "GASI",
+    "GAV",
+    "GBLB",
+    "GBM",
+    "GCARSO",
+    "GEBN",
+    "GENTERA",
+    "GEO1",
+    "GEST",
+    "GET",
+    "GFAMSA",
+    "GFINBUR",
+    "GFMULTI",
+    "GFNORTE",
+    "GGA",
+    "GIBA",
+    "GICSA",
+    "GIGANTE",
+    "GISSA",
+    "GIVN",
+    "GLB",
+    "GLEN",
+    "GMAB1",
+    "GMD",
+    "GMEXICO",
+    "GNP",
+    "GOLD1N",
+    "GOLF1",
+    "GOMO",
+    "GPH",
+    "GPROFUT",
+    "GRE",
+    "GRFP",
+    "GRUMA",
+    "GSK1",
+    "GSX",
+    "GXI",
+    "HAG",
+    "HASI1",
+    "HBC",
+    "HCITY",
+    "HEE",
+    "HEIA",
+    "HEIA1",
+    "HEICO",
+    "HEN3",
+    "HER",
+    "HERDEZ",
+    "HEXAB",
+    "HHC",
+    "HIK",
+    "HIMEXSA",
+    "HLMA",
+    "HLN1",
+    "HLUNB",
+    "HO",
+    "HOC",
+    "HOLN",
+    "HOLX",
+    "HOME",
+    "HOMEX",
+    "HOTEL",
+    "HR1",
+    "HTWS",
+    "HTZ1",
+    "HUH1V",
+    "HUT1",
+    "IAG1",
+    "IASASA",
+    "IBE",
+    "ICH",
+    "ICOS",
+    "IDEAL",
+    "IFC",
+    "IFX",
+    "IGO",
+    "IMB",
+    "IMCD",
+    "INDV1",
+    "INF",
+    "INGA",
+    "INVEB",
+    "INVEX",
+    "INW",
+    "IPN",
+    "IRM1",
+    "ISP",
+    "ITRK",
+    "ITV",
+    "ITX",
+    "IVN",
+    "JARA",
+    "JCI1",
+    "JDEP",
+    "JMT",
+    "JUVE",
+    "KBC1",
+    "KBX",
+    "KER",
+    "KEY1",
+    "KEYE",
+    "KGF",
+    "KGH",
+    "KGX",
+    "KIMBER",
+    "KINVB",
+    "KKRC",
+    "KNEBV",
+    "KPN",
+    "KUO",
+    "KXS",
+    "KYGA",
+    "LACOMER",
+    "LAMOSA",
+    "LASEG",
+    "LASITE",
+    "LDA",
+    "LDO",
+    "LEG",
+    "LEG1",
+    "LENB",
+    "LGEN",
+    "LIA",
+    "LICY",
+    "LIGHT",
+    "LIN1",
+    "LISP",
+    "LIVEPOL",
+    "LLOY",
+    "LLYVA1",
+    "LLYVK1",
+    "LOG",
+    "LONN",
+    "LPSN",
+    "LR",
+    "LUN",
+    "LVGO",
+    "LYC",
+    "MAERSKB",
+    "MAREL",
+    "MASI",
+    "MBG",
+    "MCM",
+    "MEDICA",
+    "MEGA",
+    "MEIJI",
+    "MEL",
+    "METSO",
+    "MFEA",
+    "MFRISCO",
+    "MICC1",
+    "MINSA",
+    "MITS",
+    "MKS",
+    "ML",
+    "MNDI",
+    "MOG",
+    "MONC",
+    "MPW",
+    "MPX",
+    "MRK1",
+    "MRL",
+    "MRNS",
+    "MROS",
+    "MRU",
+    "MRVL1",
+    "MSGE1",
+    "MTCH1",
+    "MTX1",
+    "MUSA1",
+    "MUV2",
+    "NABCO",
+    "NBSE",
+    "NCNO1",
+    "NDA",
+    "NEMAK",
+    "NESN",
+    "NEXTD",
+    "NGD",
+    "NGR",
+    "NIDEC",
+    "NIKON",
+    "NOKIA",
+    "NOVN",
+    "NOVOB",
+    "NOWW",
+    "NSA",
+    "NSIS",
+    "NUTRISA",
+    "NXT1",
+    "OBSN",
+    "OCDO",
+    "OCI",
+    "OCTVSDB",
+    "ODP",
+    "OHL",
+    "OMA",
+    "OMRN",
+    "OPEN1",
+    "OPL",
+    "OPTIMA",
+    "ORAN",
+    "ORAN1",
+    "ORBIA",
+    "ORG",
+    "ORNBV",
+    "ORSTED",
+    "ORY",
+    "OXY1",
+    "P911",
+    "PAH3",
+    "PAMP",
+    "PASA",
+    "PBRA",
+    "PE&OLES",
+    "PET",
+    "PGE",
+    "PGHN",
+    "PHIA",
+    "PIA",
+    "PINFRA",
+    "PKN",
+    "PLANI",
+    "PLS",
+    "PME",
+    "POCHTEC",
+    "POSADAS",
+    "PROCORP",
+    "PROX",
+    "PRU1",
+    "PRX",
+    "PRY",
+    "PSG",
+    "PSHD",
+    "PSON",
+    "PTRAQ",
+    "PUB",
+    "PUIG",
+    "PUM",
+    "PV",
+    "PWFL",
+    "Q1",
+    "QBINDUS",
+    "QBRB",
+    "QDEL1",
+    "QIA",
+    "QIBRD",
+    "QQ",
+    "QRVO",
+    "QUMMA",
+    "QVCGA",
+    "R1",
+    "R3NK",
+    "RBREW",
+    "RBT",
+    "RCENTRO",
+    "RCIB",
+    "RCO1",
+    "RCRIT",
+    "REC",
+    "REE",
+    "REG1",
+    "REL",
+    "RENE",
+    "REPS",
+    "RHM",
+    "RI",
+    "RIO1",
+    "RIOO",
+    "RLH",
+    "RMS",
+    "RMV",
+    "RNEC",
+    "RNO",
+    "ROL",
+    "ROP1",
+    "ROST",
+    "ROVI",
+    "RPM",
+    "RPRX",
+    "RR",
+    "RRCO",
+    "RRX",
+    "RS",
+    "RS1",
+    "RSGA",
+    "RTO",
+    "RUSHA",
+    "RVLV",
+    "RVMD",
+    "RVTY",
+    "RWE",
+    "RXO",
+    "RYAAY",
+    "RYAN",
+    "RYN",
+    "RYTM",
+    "S1",
+    "SA",
+    "SAABB",
+    "SABE",
+    "SAF",
+    "SAIA",
+    "SAMPO",
+    "SAN",
+    "SAN1",
+    "SAND",
+    "SAP",
+    "SAP1",
+    "SAP2",
+    "SARE",
+    "SAVIA",
+    "SBAC",
+    "SBET",
+    "SBRA",
+    "SBS",
+    "SBSW",
+    "SBUX",
+    "SCA",
+    "SCCO",
+    "SCHP",
+    "SCI",
+    "SCMN",
+    "SCZM",
+    "SDF",
+    "SDZ",
+    "SE",
+    "SECT",
+    "SEDG",
+    "SEG",
+    "SEI",
+    "SEIC",
+    "SEK",
+    "SEZL",
+    "SFM",
+    "SGI",
+    "SGO",
+    "SGRO",
+    "SHA",
+    "SHAK",
+    "SHEL",
+    "SHEL1",
+    "SHG",
+    "SHL",
+    "SHL1",
+    "SHOP",
+    "SHW",
+    "SID",
+    "SIE",
+    "SIGMAF",
+    "SIKA",
+    "SILV",
+    "SIMEC",
+    "SIMO",
+    "SIND",
+    "SION",
+    "SIRI1",
+    "SITE",
+    "SITES1",
+    "SITM",
+    "SJM",
+    "SKFB",
+    "SKHY",
+    "SKM",
+    "SKY1",
+    "SKYD",
+    "SLAB",
+    "SLAI",
+    "SLB",
+    "SLF",
+    "SLG",
+    "SLM",
+    "SLVM",
+    "SMC",
+    "SMCI",
+    "SMCP",
+    "SMFG",
+    "SMHI",
+    "SMMT",
+    "SMSN",
+    "SMT",
+    "SMTC",
+    "SN1",
+    "SNA",
+    "SNAP",
+    "SNBR",
+    "SNDK1",
+    "SNEX",
+    "SNI",
+    "SNOW",
+    "SNPS",
+    "SNX1",
+    "SNY",
+    "SO",
+    "SOBI",
+    "SOFI",
+    "SOFT",
+    "SOL",
+    "SOLV",
+    "SOND",
+    "SONY",
+    "SOON",
+    "SOP",
+    "SORIANA",
+    "SOUN",
+    "SPB",
+    "SPCE",
+    "SPCX",
+    "SPG",
+    "SPGI",
+    "SPHR",
+    "SPORT",
+    "SPOT",
+    "SPRO",
+    "SPT",
+    "SPX",
+    "SRE",
+    "SREN",
+    "SRGS",
+    "SRPT",
+    "SSEP",
+    "SSNC",
+    "SSYS",
+    "STA",
+    "STAG",
+    "STAN",
+    "STCK",
+    "STE",
+    "STEP",
+    "STERV",
+    "STLA",
+    "STLD",
+    "STM",
+    "STM1",
+    "STMN",
+    "STN",
+    "STNE",
+    "STNG",
+    "STO1",
+    "STT",
+    "STVN",
+    "STWD",
+    "STX",
+    "STZ",
+    "SU",
+    "SUI",
+    "SUNN",
+    "SUPV",
+    "SUU",
+    "SUZ",
+    "SVT",
+    "SW",
+    "SW1",
+    "SWK",
+    "SWKS",
+    "SXGC",
+    "SXT",
+    "SY1",
+    "SYK",
+    "SYM",
+    "SYY",
+    "TAK",
+    "TAL",
+    "TAP1",
+    "TBBB",
+    "TCEHY",
+    "TCOM",
+    "TDG",
+    "TDOC",
+    "TDW",
+    "TDY",
+    "TE",
+    "TEAK",
+    "TEAM",
+    "TECH",
+    "TECK",
+    "TECN1",
+    "TEF",
+    "TEF1",
+    "TEKCHEM",
+    "TEL1",
+    "TEL2B",
+    "TEM",
+    "TEMN",
+    "TENB",
+    "TENCH",
+    "TEO",
+    "TEP",
+    "TEVA",
+    "TEVA1",
+    "TEX",
+    "TFC",
+    "TFII",
+    "TFX",
+    "TGA",
+    "TGS",
+    "THC",
+    "THO",
+    "THS",
+    "THULE",
+    "TIGR",
+    "TIT",
+    "TJX",
+    "TK",
+    "TKC",
+    "TKR",
+    "TLEVISA",
+    "TLS",
+    "TLX1",
+    "TM",
+    "TMDX",
+    "TMHC",
+    "TMM",
+    "TMUS",
+    "TNE1",
+    "TNK",
+    "TOL",
+    "TOU",
+    "TOYT",
+    "TPG",
+    "TPGI",
+    "TPH",
+    "TPL",
+    "TPR",
+    "TRAXION",
+    "TRE",
+    "TREX1",
+    "TRGP",
+    "TRI",
+    "TRIP",
+    "TRN1",
+    "TROW",
+    "TRUP",
+    "TS",
+    "TSCO",
+    "TSCO1",
+    "TSEM",
+    "TSLA",
+    "TSN",
+    "TSU",
+    "TT",
+    "TTC",
+    "TTD",
+    "TTE",
+    "TTEK",
+    "TTEN",
+    "TTMI",
+    "TTWO",
+    "TU",
+    "TUB",
+    "TVE",
+    "TW",
+    "TWLO",
+    "TX",
+    "TXG",
+    "TXG1",
+    "TXN",
+    "TXNM",
+    "TXRH",
+    "TXT",
+    "TYL",
+    "U",
+    "UAA",
+    "UAAC",
+    "UAL",
+    "UAMY",
+    "UBER",
+    "UBI",
+    "UBS",
+    "UCB",
+    "UCG",
+    "UDR",
+    "UGP",
+    "UHAL",
+    "UHR",
+    "UHS",
+    "UI",
+    "UL",
+    "ULS",
+    "ULTA",
+    "ULVR",
+    "UMC",
+    "UMG",
+    "UMI",
+    "UNFI",
+    "UNH",
+    "UNI",
+    "UNIFIN",
+    "UPBD",
+    "UPM",
+    "UPS",
+    "URBN",
+    "URI",
+    "URW",
+    "USAR",
+    "USB",
+    "USFD",
+    "USPH",
+    "UTG",
+    "UU",
+    "UUUU",
+    "VAC",
+    "VAL",
+    "VALE",
+    "VALUEGF",
+    "VASCONI",
+    "VEEV",
+    "VER",
+    "VESTA",
+    "VFC",
+    "VG",
+    "VGNT",
+    "VIAV",
+    "VICI",
+    "VICR",
+    "VID",
+    "VIE",
+    "VIK",
+    "VINTE",
+    "VIPS",
+    "VIR",
+    "VIRI",
+    "VIRT",
+    "VISC",
+    "VISTA",
+    "VITRO",
+    "VIV1",
+    "VIVEN",
+    "VLO",
+    "VLTO",
+    "VMC",
+    "VMI",
+    "VMM",
+    "VMRK",
+    "VMW",
+    "VNA",
+    "VNO",
+    "VNT1",
+    "VOD",
+    "VOD1",
+    "VOLAR",
+    "VOLVO",
+    "VOW3",
+    "VRLA",
+    "VRM",
+    "VRNS",
+    "VRSN",
+    "VRT",
+    "VRTX",
+    "VSNT",
+    "VST",
+    "VSXY",
+    "VTGN",
+    "VTRS",
+    "VTS",
+    "VWS",
+    "VXRT",
+    "VYGR",
+    "VYLR",
+    "VZ",
+    "W",
+    "WAB",
+    "WAL",
+    "WALMEX",
+    "WAT",
+    "WB",
+    "WBA",
+    "WBD",
+    "WCN",
+    "WCP",
+    "WDAY",
+    "WDC",
+    "WDS",
+    "WDS1",
+    "WEC",
+    "WEIR",
+    "WELL",
+    "WES",
+    "WFC",
+    "WFG",
+    "WHC",
+    "WHR",
+    "WIHL",
+    "WIT",
+    "WIX",
+    "WKHS",
+    "WKL",
+    "WLK",
+    "WLN",
+    "WMB",
+    "WMG",
+    "WMI",
+    "WMS",
+    "WMT",
+    "WNC",
+    "WOLF1",
+    "WOOF",
+    "WOR",
+    "WPC",
+    "WPK",
+    "WPM",
+    "WPP",
+    "WRB",
+    "WRBY",
+    "WRD",
+    "WS",
+    "WSC",
+    "WSM",
+    "WSO",
+    "WSP",
+    "WST",
+    "WSU",
+    "WTRG",
+    "WTS",
+    "WTW",
+    "WU",
+    "WULF",
+    "WWD",
+    "WY",
+    "WYNN",
+    "XEL",
+    "XENE",
+    "XOM",
+    "XP",
+    "XPEV",
+    "XRO",
+    "XRX",
+    "XYL",
+    "XYZ",
+    "YASKY",
+    "YMM",
+    "YPF",
+    "YRD",
+    "YUMC",
+    "Z",
+    "ZAL",
+    "ZEG",
+    "ZENA",
+    "ZGN",
+    "ZLAB",
+    "ZM",
+    "ZS",
+    "ZTS",
+    "ZURN",
+    "nan"
+  ],
+  "total_tested": 2281,
+  "working_count": 1160,
+  "failed_count": 1121
+}
