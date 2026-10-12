@@ -17,7 +17,7 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
 
-from src.adapters.base import RawCorporateAction, RawPriceBar
+from src.adapters.base import RawPriceBar
 from src.config import load_curated_universe
 from src.storage.supabase_client import _exec, _paginate, get_client
 
@@ -149,32 +149,6 @@ def upsert_price_bars(bars: list[RawPriceBar]) -> int:
         )
     if rows:
         get_client().table("price_bars_daily").insert(rows).execute()
-    return len(rows)
-
-
-def upsert_corporate_actions(actions: list[RawCorporateAction]) -> int:
-    if not actions:
-        return 0
-    tickers = sorted({a.ticker for a in actions})
-    current = _current_map("current_corporate_actions", ["ticker", "ex_date", "action_type"], tickers)
-    now = _now()
-    rows = []
-    for a in actions:
-        if (a.ticker, a.ex_date.isoformat(), a.action_type) in current:
-            continue
-        rows.append(
-            {
-                "ticker": a.ticker,
-                "ex_date": a.ex_date.isoformat(),
-                "action_type": a.action_type,
-                "amount": a.amount,
-                "ratio": a.ratio,
-                "valid_from": f"{a.ex_date.isoformat()}T00:00:00+00:00",
-                "ingested_at": now,
-            }
-        )
-    if rows:
-        get_client().table("corporate_actions").insert(rows).execute()
     return len(rows)
 
 

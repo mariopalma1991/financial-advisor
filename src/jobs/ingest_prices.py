@@ -31,7 +31,6 @@ def main() -> None:
         raw.insert_corporate_actions(actions)
 
         n_bars = curated.upsert_price_bars(bars)
-        n_acts = curated.upsert_corporate_actions(actions)
         em.emit(
             "INFO",
             "rows_written",
@@ -39,7 +38,7 @@ def main() -> None:
             payload={
                 "dim_tickers_synced": synced,
                 "price_bars_new": n_bars,
-                "corp_actions_new": n_acts,
+                "corp_actions_new": len(actions),
             },
         )
 
