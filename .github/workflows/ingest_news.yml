@@ -1,7 +1,7 @@
 name: ingest_news
 
-# Runs 2-3x daily (plan §11): 13:00, 19:00, 23:00 UTC.
-# Independent of the main daily pipeline; news is time-sensitive.
+# News is time-sensitive: runs 3x daily (13:00, 19:00, 23:00 UTC).
+# Independent of the main daily pipeline.
 
 on:
   schedule:
@@ -24,10 +24,11 @@ jobs:
       - name: Install dependencies
         run: pip install -e .
 
-      - name: Ingest news (RSS feeds -> ticker linking -> FinBERT sentiment)
+      - name: Ingest news (Finnhub)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: python -m src.jobs.ingest_news

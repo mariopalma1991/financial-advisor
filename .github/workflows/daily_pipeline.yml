@@ -1,11 +1,21 @@
 name: daily_pipeline
 
-# Ordered chain: prices -> indicators -> screener -> feeds.
-# 01:00 UTC Tue-Sat (after US market close). Manual dispatch supported.
+# Derived data pipeline: indicators → screener → feeds.
+# Runs daily at 10:00 UTC (~4am Mexico City), after all source ingestion jobs
+# (prices, news, filings, financials, earnings, earncal) have completed.
+#
+# Source-specific pipelines are separate:
+#   - ingest_prices (02:00 UTC Mon-Sat)
+#   - ingest_news (13:00, 19:00, 23:00 UTC daily)
+#   - ingest_filings (14:00 UTC Mon-Sat)
+#   - ingest_financials (16:00 UTC Monday)
+#   - ingest_earnings (17:00 UTC Monday)
+#   - ingest_earncal (18:00 UTC Monday)
+#   - ingest_visa (12:00 UTC 1st of month)
 
 on:
   schedule:
-    - cron: "0 7 * * *"   # 1 AM Mexico City (UTC-6) daily
+    - cron: "0 10 * * *"
   workflow_dispatch: {}
 
 jobs:
@@ -23,14 +33,6 @@ jobs:
 
       - name: Install dependencies
         run: pip install -e .
-
-      - name: Ingest prices (yfinance + Stooq cross-check)
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
-        run: python -m src.jobs.ingest_prices
 
       - name: Compute indicators
         env:

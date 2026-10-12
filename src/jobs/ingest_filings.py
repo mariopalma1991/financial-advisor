@@ -1,34 +1,53 @@
-"""Daily filings ingestion: EDGAR XBRL fundamentals + recent filing metadata."""
+"""Daily filings ingestion: Finnhub SEC filing metadata (10-K, 10-Q, 8-K).
+
+Idempotent: raw upserts ignore duplicates on accession_no.
+
+Rate limit: 60 Finnhub calls/min → 1.1s between calls.
+"""
+
 from __future__ import annotations
 
-from src.adapters.edgar_filings import EdgarAdapter
+import time
+
+from src.adapters.finnhub_filings import FinnhubFilingsAdapter
 from src.config import all_symbols
 from src.quality.run_metadata import job_run
 from src.storage import curated, raw
-from src.transforms.fundamentals import to_quarterly_rows
+
+_CALL_DELAY = 1.1
 
 
 def main() -> None:
     with job_run("ingest_filings") as em:
+        synced = curated.sync_dim_tickers()
         symbols = all_symbols()
-        edgar = EdgarAdapter()
 
-        facts = edgar.fetch_fundamentals(symbols)
-        em.emit("INFO", "source_fetched", "edgar company facts", payload={"facts": len(facts)})
+        adapter = FinnhubFilingsAdapter()
+        all_filings = []
+        for i, symbol in enumerate(symbols):
+            try:
+                filings = adapter.fetch_filings([symbol])
+                all_filings.extend(filings)
+            except Exception:
+                pass
+            if i < len(symbols) - 1:
+                time.sleep(_CALL_DELAY)
 
-        filings = edgar.fetch_recent_filings(symbols)
-        em.emit("INFO", "source_fetched", "edgar recent filings", payload={"rows": len(filings)})
-
-        raw.insert_filings(filings)
-
-        rows = to_quarterly_rows(facts)
-        n = curated.upsert_fundamentals(rows)
         em.emit(
             "INFO",
-            "rows_written",
-            "fundamentals consolidated",
-            payload={"quarters_shaped": len(rows), "rows_new": n},
+            "source_fetched",
+            "finnhub filings",
+            payload={"filings": len(all_filings), "symbols": len(symbols)},
         )
+
+        if all_filings:
+            n = raw.insert_filings(all_filings)
+            em.emit(
+                "INFO",
+                "rows_written",
+                "raw_filings",
+                payload={"rows": n, "dim_tickers_synced": synced},
+            )
 
 
 if __name__ == "__main__":

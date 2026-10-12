@@ -1,17 +1,17 @@
 name: ingest_filings
 
-# DISABLED — fundamentals now fetched via yfinance (no EDGAR needed).
-# To re-enable, uncomment schedule below and set EDGAR_USER_AGENT.
+# Daily SEC filing metadata ingestion from Finnhub (10-K, 10-Q, 8-K).
+# Runs 14:00 UTC Mon-Sat (~8am Mexico City).
 
 on:
-  # schedule:
-  #   - cron: "0 12 * * *"
-  workflow_dispatch: {}  # manual trigger only (disabled in practice)
+  schedule:
+    - cron: "0 14 * * 1-6"
+  workflow_dispatch: {}
 
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -24,11 +24,11 @@ jobs:
       - name: Install dependencies
         run: pip install -e .
 
-      - name: Ingest filings (SEC EDGAR)
+      - name: Ingest filings (Finnhub SEC)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
-          EDGAR_USER_AGENT: ${{ vars.EDGAR_USER_AGENT }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: python -m src.jobs.ingest_filings

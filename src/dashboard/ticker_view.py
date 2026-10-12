@@ -3,6 +3,7 @@ from datetime import date
 
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import streamlit as st
 
 from src.storage import curated
@@ -39,15 +40,20 @@ def _news_sentiment(ticker: str, days: int = 30):
 
 
 def _price_chart(bars: list[dict], inds: list[dict], days: int) -> None:
-    """Candlestick chart with SMA overlays."""
+    """Candlestick chart with SMA overlays and volume subplot."""
     df = pd.DataFrame(bars)
     df["bar_date"] = pd.to_datetime(df["bar_date"])
 
-    fig = go.Figure()
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=True,
+        row_heights=[0.7, 0.3], vertical_spacing=0.03,
+    )
+
+    # ── Row 1: candlestick + SMA overlays ──
     fig.add_trace(go.Candlestick(
         x=df["bar_date"], open=df["open"], high=df["high"],
         low=df["low"], close=df["close"], name="OHLC",
-    ))
+    ), row=1, col=1)
 
     if inds:
         idf = pd.DataFrame(inds)
@@ -57,15 +63,33 @@ def _price_chart(bars: list[dict], inds: list[dict], days: int) -> None:
                 fig.add_trace(go.Scatter(
                     x=idf["bar_date"], y=idf[ma], mode="lines",
                     name=ma.upper(), line=dict(width=1, color=color),
-                ))
+                ), row=1, col=1)
+
+    # ── Row 2: volume bars ──
+    colors = ["red" if o > c else "green" for o, c in zip(df["open"], df["close"])]
+    fig.add_trace(go.Bar(
+        x=df["bar_date"], y=df["volume"], name="Volume",
+        marker_color=colors, showlegend=False,
+    ), row=2, col=1)
 
     fig.update_layout(
-        height=450, margin=dict(l=0, r=0, t=0, b=0),
-        template="plotly_dark", xaxis_title="", yaxis_title="Price",
+        height=550, margin=dict(l=0, r=0, t=0, b=0),
+        template="plotly_dark",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
     )
-    fig.update_xaxes(rangeslider_visible=False)
+    fig.update_xaxes(rangeslider_visible=False, row=1, col=1)
+    fig.update_xaxes(rangeslider_visible=False, row=2, col=1)
+    fig.update_yaxes(title_text="Price", row=1, col=1)
+    fig.update_yaxes(title_text="Volume", row=2, col=1)
     st.plotly_chart(fig, width="stretch")
+
+
+def _safe_num(val, default: float = 0.0) -> float:
+    """Coerce *val* to float, returning *default* on any failure.  Never returns None."""
+    try:
+        return float(val)
+    except (TypeError, ValueError):
+        return default
 
 
 def _indicator_gauges(inds: list[dict], bars: list[dict]) -> None:
@@ -77,14 +101,12 @@ def _indicator_gauges(inds: list[dict], bars: list[dict]) -> None:
     latest_bar = bars[-1]
 
     cols = st.columns(6)
-    cols[0].metric("Close", f"${latest_bar.get('close', 0):.2f}")
-    cols[1].metric("RSI(14)", f"{latest_ind.get('rsi_14', 0):.1f}")
-    cols[2].metric("MACD", f"{latest_ind.get('macd', 0):.3f}")
-    cols[3].metric("ATR(14)", f"{latest_ind.get('atr_14', 0):.2f}")
-    vol = latest_ind.get('volume_ma_20') or 0
-    cols[4].metric("Vol MA20", f"{vol:,.0f}")
-    rs = latest_ind.get('rel_strength_21d') or 0
-    cols[5].metric("Rel Str 21d", f"{rs:.2%}")
+    cols[0].metric("Close", f"${_safe_num(latest_bar.get('close')):.2f}")
+    cols[1].metric("RSI(14)", f"{_safe_num(latest_ind.get('rsi_14')):.1f}")
+    cols[2].metric("MACD", f"{_safe_num(latest_ind.get('macd')):.3f}")
+    cols[3].metric("ATR(14)", f"{_safe_num(latest_ind.get('atr_14')):.2f}")
+    cols[4].metric("Vol MA20", f"{_safe_num(latest_ind.get('volume_ma_20')):,.0f}")
+    cols[5].metric("Rel Str 21d", f"{_safe_num(latest_ind.get('rel_strength_21d')):.2%}")
 
 
 def _fundamentals_table(funds: list[dict]) -> None:

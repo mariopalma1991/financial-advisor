@@ -6,10 +6,18 @@ change detection (src/storage/curated.py), preserving the audit trail there.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
-from src.adapters.base import RawCorporateAction, RawNewsArticle, RawPriceBar
-from src.adapters.edgar_filings import RawFiling
+from src.adapters.base import (
+    RawCorporateAction,
+    RawEarningsCalendar,
+    RawEarningsSurprise,
+    RawFiling,
+    RawFinancialReport,
+    RawNewsArticle,
+    RawPriceBar,
+    RawVisaApplication,
+)
 from src.storage.supabase_client import get_client
 
 
@@ -70,7 +78,7 @@ def insert_filings(filings: list[RawFiling]) -> int:
         return 0
     rows = [
         {
-            "source": "sec_edgar",
+            "source": f.source,
             "accession_no": f.accession_no,
             "ticker": f.ticker,
             "form_type": f.form_type,
@@ -107,5 +115,126 @@ def insert_news_articles(articles: list[RawNewsArticle]) -> int:
     ]
     get_client().table("raw_news_articles").upsert(
         rows, on_conflict="source,article_id", ignore_duplicates=True
+    ).execute()
+    return len(rows)
+
+
+def insert_financial_reports(reports: list[RawFinancialReport]) -> int:
+    """Insert raw financial reports; idempotent on (source, ticker, access_number)."""
+    if not reports:
+        return 0
+    rows = [
+        {
+            "source": r.source,
+            "ticker": r.ticker,
+            "cik": r.cik,
+            "access_number": r.access_number,
+            "form": r.form,
+            "year": r.year,
+            "quarter": r.quarter,
+            "start_date": r.start_date.isoformat() if r.start_date else None,
+            "end_date": r.end_date.isoformat() if r.end_date else None,
+            "filed_date": r.filed_date.isoformat() if r.filed_date else None,
+            "report_json": r.report,
+            "payload_json": r.payload,
+            "valid_from": (r.filed_date or datetime.now(timezone.utc)).isoformat(),
+            "ingested_at": _now(),
+        }
+        for r in reports
+    ]
+    get_client().table("raw_financial_reports").upsert(
+        rows, on_conflict="source,ticker,access_number", ignore_duplicates=True
+    ).execute()
+    return len(rows)
+
+
+def insert_earnings_surprises(surprises: list[RawEarningsSurprise]) -> int:
+    """Insert raw earnings surprises; idempotent on (source, ticker, period)."""
+    if not surprises:
+        return 0
+    rows = [
+        {
+            "source": s.source,
+            "ticker": s.ticker,
+            "period": s.period.isoformat(),
+            "quarter": s.quarter,
+            "year": s.year,
+            "actual": s.actual,
+            "estimate": s.estimate,
+            "surprise": s.surprise,
+            "surprise_pct": s.surprise_pct,
+            "payload_json": s.payload,
+            "valid_from": s.period.isoformat(),
+            "ingested_at": _now(),
+        }
+        for s in surprises
+    ]
+    get_client().table("raw_earnings_surprises").upsert(
+        rows, on_conflict="source,ticker,period", ignore_duplicates=True
+    ).execute()
+    return len(rows)
+
+
+def insert_earnings_calendar(events: list[RawEarningsCalendar]) -> int:
+    """Insert raw earnings calendar events; idempotent on (source, ticker, event_date, quarter)."""
+    if not events:
+        return 0
+    rows = [
+        {
+            "source": e.source,
+            "ticker": e.ticker,
+            "event_date": e.date.isoformat(),
+            "quarter": e.quarter,
+            "year": e.year,
+            "hour": e.hour,
+            "eps_actual": e.eps_actual,
+            "eps_estimate": e.eps_estimate,
+            "revenue_actual": e.revenue_actual,
+            "revenue_estimate": e.revenue_estimate,
+            "payload_json": e.payload,
+            "valid_from": e.date.isoformat(),
+            "ingested_at": _now(),
+        }
+        for e in events
+    ]
+    get_client().table("raw_earnings_calendar").upsert(
+        rows, on_conflict="source,ticker,event_date,quarter", ignore_duplicates=True
+    ).execute()
+    return len(rows)
+
+
+def insert_visa_applications(apps: list[RawVisaApplication]) -> int:
+    """Insert raw visa applications; idempotent on (source, ticker, case_number)."""
+    if not apps:
+        return 0
+    rows = [
+        {
+            "source": a.source,
+            "ticker": a.ticker,
+            "case_number": a.case_number,
+            "job_title": a.job_title,
+            "visa_class": a.visa_class,
+            "case_status": a.case_status,
+            "employer_name": a.employer_name,
+            "begin_date": a.begin_date.isoformat() if a.begin_date else None,
+            "end_date": a.end_date.isoformat() if a.end_date else None,
+            "received_date": a.received_date.isoformat() if a.received_date else None,
+            "quarter": a.quarter,
+            "year": a.year,
+            "wage_range_from": a.wage_range_from,
+            "wage_range_to": a.wage_range_to,
+            "wage_unit": a.wage_unit,
+            "worksite_city": a.worksite_city,
+            "worksite_state": a.worksite_state,
+            "full_time": a.full_time,
+            "h1b_dependent": a.h1b_dependent,
+            "payload_json": a.payload,
+            "valid_from": (a.received_date or datetime.now(timezone.utc)).isoformat(),
+            "ingested_at": _now(),
+        }
+        for a in apps
+    ]
+    get_client().table("raw_visa_applications").upsert(
+        rows, on_conflict="source,ticker,case_number", ignore_duplicates=True
     ).execute()
     return len(rows)

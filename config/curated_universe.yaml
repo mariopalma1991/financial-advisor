@@ -1,22 +1,1150 @@
 # CURATED UNIVERSE
-# Tickers with market data + news articles + fundamentals. This is the analysis-tier universe — used for deep research and feed building. Symbols are EXACTLY as listed on BMV (no .MX suffix). 16 tickers.
-# Total: 16 tickers
+# Tickers with market data + Finnhub news + SEC filings.
+# Total: 1141 tickers
 
 tickers:
-  # --- ESTADOS UNIDOS (USD, benchmark SPY) ---
-  - { symbol: "AAPL", name: "APPLE COMPUTER INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
-  - { symbol: "AVGO", name: "BROADCOM INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  # --- NYSE ---
+  - { symbol: "A", name: "AGILENT TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AAP", name: "ADVANCE AUTO PARTS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ABBV", name: "ABBVIE INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ABEV", name: "AMBEV S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "ABT", name: "ABBOTT LABORATORIES", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ACHR", name: "ARCHER AVIATION INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ACM", name: "AECOM", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ACN", name: "ACCENTURE PLC", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ADC", name: "AGREE REALTY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ADIG", name: "ADI GLOBAL DISTRIBUTION INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ADM", name: "ARCHER DANIELS MIDLAND CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AEE", name: "AMEREN CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AEG", name: "AEGON LTD.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AEM", name: "AGNICO EAGLE MINES LIMITED", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "AEP", name: "AMERICAN ELECTRIC POWER COMPANY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AER", name: "AERCAP HOLDINGS N.V.", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AES", name: "THE AES CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AFL", name: "AFLAC INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AGCO", name: "AGCO CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AGI", name: "ALAMOS GOLD INC.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "AGO", name: "ASSURED GUARANTY LTD.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AHR", name: "AMERICAN HEALTHCARE REIT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AIG", name: "AMERICAN INTERNATIONAL GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AIZ", name: "ASSURANT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AJG", name: "ARTHUR J. GALLAGHER & CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ALB", name: "ALBEMARLE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ALG", name: "ALAMO GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ALL", name: "THE ALLSTATE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ALLE", name: "ALLEGION PUBLIC LIMITED COMPANY", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMC", name: "AMC Entertainment Holdings, Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMCR", name: "AMCOR PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMH", name: "AMERICAN HOMES 4 RENT", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMN", name: "AMN HEALTHCARE SERVICES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMP", name: "AMERIPRISE FINANCIAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMRZ", name: "AMRIZE LTD", exchange: NYSE, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "AMT", name: "AMERICAN TOWER CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMTM", name: "AMENTUM HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ANET", name: "ARISTA NETWORKS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ANF", name: "ABERCROMBIE & FITCH CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ANGX", name: "ANGEL STUDIOS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AON", name: "AON PLC", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "APA", name: "APA CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "APD", name: "AIR PRODUCTS AND CHEMICALS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "APH", name: "AMPHENOL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AR", name: "ANTERO RESOURCES CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ARCO", name: "ARCOS DORADOS HOLDINGS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ARE", name: "ALEXANDRIA REAL ESTATE EQUITIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ARES", name: "ARES MANAGEMENT CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ARMK", name: "ARAMARK", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ARR", name: "ARMOUR RESIDENTIAL REIT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ARW", name: "ARROW ELECTRONICS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ASH", name: "ASHLAND INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ASIX", name: "ADVANSIX INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ATHM", name: "AUTOHOME INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ATI", name: "ATI INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ATO", name: "ATMOS ENERGY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AU", name: "ANGLOGOLD ASHANTI PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "AVTR", name: "AVANTOR, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AVY", name: "AVERY DENNISON CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AWK", name: "American Water Works Company, Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AWR", name: "American States Water Company", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "AXP", name: "AMERICAN EXPRESS COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AXTA", name: "AXALTA COATING SYSTEMS LTD.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AZO", name: "AUTOZONE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BA", name: "THE BOEING COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BABA", name: "ALIBABA GROUP HOLDING LIMITED", exchange: NYSE, currency: USD, sector: Equity, benchmark: FXI, enabled: true }
   - { symbol: "BAC", name: "BANK OF AMERICA CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BAK", name: "BRASKEM S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "BALL", name: "BALL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BAP", name: "CREDICORP, LTD.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BAX", name: "BAXTER INTERNATIONAL INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BB", name: "BLACKBERRY LIMITED", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "BBAI", name: "BIGBEAR.AI HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BBAR", name: "BANCO BBVA ARGENTINA S.A.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BBD", name: "BANCO BRADESCO, S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "BBWI", name: "BATH & BODY WORKS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BBY", name: "BEST BUY CO., INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BCS", name: "BARCLAYS PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "BDX", name: "BECTON, DICKINSON AND COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BE", name: "BLOOM ENERGY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BEKE", name: "KE HOLDINGS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BEN", name: "FRANKLIN TEMPLETON, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BFAM", name: "BRIGHT HORIZONS FAMILY SOLUTIONS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BG", name: "BUNGE GLOBAL SA", exchange: NYSE, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "BHC", name: "BAUSCH HEALTH COMPANIES INC.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "BHP", name: "BHP GROUP LIMITED", exchange: NYSE, currency: AUD, sector: Equity, benchmark: EWA, enabled: true }
+  - { symbol: "BIRK", name: "BIRKENSTOCK HOLDING PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BJ", name: "BJS WHOLESALE CLUB HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BKD", name: "BROOKDALE SENIOR LIVING INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BLDR", name: "BUILDERS FIRSTSOURCE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BLK", name: "BLACKROCK, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BMA", name: "BANCO MACRO S.A.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BMNR", name: "BITMINE IMMERSION TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BMY", name: "BRISTOL-MYERS SQUIBB CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BNS", name: "BANK OF NOVA SCOTIA", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "BNY", name: "THE BANK OF NEW YORK MELLON CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BP", name: "BP PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "BR", name: "BROADRIDGE FINANCIAL SOLUTIONS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BRBR", name: "BELLRING BRANDS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BRO", name: "BROWN & BROWN, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BSBR", name: "BANCO SANTANDER (BRASIL) S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "BSX", name: "BOSTON SCIENTIFIC CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BTG", name: "B2GOLD CORP.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "BURL", name: "BURLINGTON STORES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BWA", name: "BORGWARNER INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BWXT", name: "BWX TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BX", name: "BLACKSTONE INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BXMT", name: "Blackstone Mortgage Trust Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BXP", name: "BXP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BY", name: "BYLINE BANCORP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "C", name: "CITIGROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CACI", name: "CACI INTERNATIONAL INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CAG", name: "CONAGRA BRANDS INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CAH", name: "CARDINAL HEALTH, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CARR", name: "CARRIER GLOBAL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CAT", name: "CATERPILLAR INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CAVA", name: "CAVA GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CB", name: "CHUBB LIMITED", exchange: NYSE, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "CC", name: "THE CHEMOURS COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CCJ", name: "CAMECO CORPORATION", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "CCK", name: "CROWN HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CDE", name: "COEUR MINING, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CE", name: "CELANESE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CF", name: "CF INDUSTRIES HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CFG", name: "CITIZENS FINANCIAL GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHD", name: "CHURCH & DWIGHT CO., INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHE", name: "CHEMED CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHGG", name: "CHEGG, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHH", name: "CHOICE HOTELS INTERNATIONAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHPT", name: "CHARGEPOINT HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHWY", name: "CHEWY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CI", name: "THE CIGNA GROUP", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CIEN", name: "CIENA CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CIG", name: "COMPANHIA ENERGETICA DE MINAS GERAIS - CEMIG", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "CL", name: "COLGATE-PALMOLIVE CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CLF", name: "CLEVELAND-CLIFFS INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CLS", name: "CELESTICA INC.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "CLX", name: "THE CLOROX COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CMG", name: "CHIPOTLE MEXICAN GRILL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CMI", name: "CUMMINS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CNC", name: "CENTENE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CNK", name: "CINEMARK HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CNM", name: "CORE & MAIN, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CNP", name: "CENTERPOINT ENERGY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "COF", name: "CAPITAL ONE FINANCIAL CORPORATION.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COHR", name: "COHERENT CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COLD", name: "AMERICOLD REALTY TRUST, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COMP", name: "COMPASS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COP", name: "CONOCOPHILLIPS", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COR", name: "CENCORA INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COUR", name: "COURSERA, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CPA", name: "COPA HOLDINGS SA", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CPNG", name: "COUPANG, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CPRI", name: "CAPRI HOLDINGS LIMITED", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "CR", name: "CRANE COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRBG", name: "COREBRIDGE FINANCIAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRCL", name: "CIRCLE INTERNET GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRGY", name: "CRESCENT ENERGY COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRI", name: "CARTER´S, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRL", name: "CHARLES RIVER LABORATORIES INTERNATIONAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRM", name: "SALESFORCE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRS", name: "CARPENTER TECHNOLOGY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CTRE", name: "CARETRUST REIT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CTVA", name: "CORTEVA, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CUBE", name: "CUBESMART", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CVNA", name: "CARVANA CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CVX", name: "CHEVRON CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CW", name: "CURTISS-WRIGHT CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CWEN", name: "CLEARWAY ENERGY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CXM", name: "SPRINKLR, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "D", name: "DOMINION ENERGY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DAL", name: "DELTA AIR LINES INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DAR", name: "DARLING INGREDIENTS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DASH", name: "DOORDASH, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DB", name: "DEUTSCHE BANK AG", exchange: NYSE, currency: EUR, sector: Equity, benchmark: EWG, enabled: true }
+  - { symbol: "DD", name: "DUPONT DE NEMOURS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DDD", name: "3D SYSTEMS CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "DE", name: "DEERE & COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DECK", name: "DECKERS OUTDOOR CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DEO", name: "DIAGEO PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "DGX", name: "QUEST DIAGNOSTICS INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DHI", name: "D.R. HORTON, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DHR", name: "DANAHER CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DHT", name: "DHT HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DINO", name: "HF SINCLAIR CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DIS", name: "THE WALT DISNEY COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DKS", name: "DICK´S SPORTING GOODS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DLB", name: "DOLBY LABORATORIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DLR", name: "DIGITAL REALTY TRUST, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DNA", name: "GINKGO BIOWORKS HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DOCN", name: "DIGITALOCEAN HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DRD", name: "DRDGOLD LTD", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DRI", name: "DARDEN RESTAURANTS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DT", name: "DYNATRACE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DUK", name: "DUKE ENERGY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DVA", name: "DAVITA INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DVN", name: "DEVON ENERGY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DXC", name: "DXC TECHNOLOGY COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DY", name: "DYCOM INDUSTRIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "E", name: "ENI-ENTE NAZIONALE IDROCARBURI SPA", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EC", name: "ECOPETROL S.A.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ECL", name: "ECOLAB INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ED", name: "CONSOLIDATED EDISON, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EDU", name: "NEW ORIENTAL EDUCATION & TECHONOLOGY GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: FXI, enabled: true }
+  - { symbol: "EFX", name: "EQUIFAX INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EG", name: "EVEREST GROUP, LTD", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EGO", name: "ELDORADO GOLD CORPORATION", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "EGP", name: "EASTGROUP PROPERTIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EHC", name: "ENCOMPASS HEALTH CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EL", name: "THE ESTÉE LAUDER COMPANIES INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ELAN", name: "ELANCO ANIMAL HEALTH INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ELS", name: "EQUITY LIFESTYLE PROPERTIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ELV", name: "ELEVANCE HEALTH, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EMBJ", name: "EMBRAER S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "EMN", name: "EASTMAN CHEMICAL COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ENB", name: "ENBRIDGE INC.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "EOG", name: "EOG RESOURCES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EPAM", name: "EPAM SYSTEMS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EQH", name: "EQUITABLE HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EQNR", name: "EQUINOR ASA", exchange: NYSE, currency: NOK, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EQT", name: "EQT CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ESAB", name: "ESAB CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ESS", name: "ESSEX PROPERTY TRUST, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ESTC", name: "Elastic NV", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ETR", name: "ENTERGY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ETSY", name: "ETSY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EVTC", name: "EVERTEC, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EW", name: "EDWARDS LIFESCIENCES CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EXC", name: "EXELON CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EXPD", name: "EXPEDITORS INTERNATIONAL OF WASHINGTON, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "F", name: "FORD MOTOR CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FBIN", name: "FORTUNE BRANDS INNOVATIONS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FCX", name: "FREEPORT MCMORAN INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FDS", name: "FACTSET RESEARCH SYSTEMS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FDX", name: "FEDEX CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FDXF", name: "FEDEX FREIGHT HOLDING COMPANY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FE", name: "FIRSTENERGY CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FG", name: "F&G ANNUITIES & LIFE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FIRY", name: "FIRY INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FITB", name: "FIFTH THIRD BANCORP", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FLO", name: "FLOWERS FOODS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FLS", name: "Flowserve Corporation", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FN", name: "FABRINET", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FNF", name: "FIDELITY NATIONAL FINANCIAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FNV", name: "FRANCO-NEVADA CORPORATION", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "FTI", name: "TECHNIPFMC PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "FTS", name: "FORTIS INC.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "FTV", name: "FORTIVE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FVRR", name: "FIVERR INTERNATIONAL LTD.", exchange: NYSE, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GBX", name: "THE GREENBRIER COMPANIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GD", name: "GENERAL DYNAMICS CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GDDY", name: "GODADDY INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GE", name: "GE AEROSPACE", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GFI", name: "GOLD FIELDS LIMITED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GGB", name: "GERDAU, S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "GGG", name: "GRACO INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GHC", name: "GRAHAM HOLDINGS COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GIS", name: "GENERAL MILLS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GLOB", name: "GLOBANT SA", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GLW", name: "CORNING INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GME", name: "GAMESTOP CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GMED", name: "GLOBUS MEDICAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GNRC", name: "GENERAC HOLDINGS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GNW", name: "GENWORTH FINANCIAL INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GPC", name: "GENUINE PARTS COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GS", name: "GOLDMAN SACHS GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GSK", name: "GSK PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "GWRE", name: "GUIDEWIRE SOFTWARE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GWW", name: "W.W. GRAINGER, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GXO", name: "GXO LOGISTICS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HAL", name: "HALLIBURTON COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HCA", name: "HCA HEALTHCARE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HCC", name: "Warrior Met Coal, Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "HD", name: "THE HOME DEPOT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
-  - { symbol: "INTC", name: "INTEL CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HDB", name: "HDFC BANK LIMITED", exchange: NYSE, currency: INR, sector: Equity, benchmark: INDA, enabled: true }
+  - { symbol: "HGV", name: "HILTON GRAND VACATIONS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HHH", name: "HOWARD HUGHES HOLDINGS INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HIG", name: "THE HARTFORD INSURANCE GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HII", name: "HUNTINGTON INGALLS INDUSTRIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HIMS", name: "HIMS & HERS HEALTH, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HL", name: "HECLA MINING COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HLT", name: "HILTON WORLDWIDE HOLDINGS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HMC", name: "HONDA MOTOR CO. LTD.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HMY", name: "HARMONY GOLD MINING COMPANY LIMITED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HOG", name: "HARLEY-DAVIDSON, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HPE", name: "HEWLETT PACKARD ENTERPRISE COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HPQ", name: "HP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HRB", name: "H&R BLOCK, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HRI", name: "HERC HOLDING INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HRL", name: "HORMEL FOODS CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HSY", name: "THE HERSHEY COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HUBB", name: "HUBBELL INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HUBS", name: "HUBSPOT INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HUM", name: "HUMANA INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HWM", name: "HOWMET AEROSPACE INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HXL", name: "HEXCEL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IBM", name: "INTERNATIONAL BUSINESS MACHINES CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IBN", name: "ICICI BANK LIMITED", exchange: NYSE, currency: INR, sector: Equity, benchmark: INDA, enabled: true }
+  - { symbol: "IBP", name: "INSTALLED BUILDING PRODUCTS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ICE", name: "INTERCONTINENTAL EXCHANGE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IEX", name: "IDEX CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IFF", name: "INTERNATIONAL FLAVORS & FRAGRANCES INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IIF", name: "MORGAN STANLEY INDIA INVESTMENT FUND, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ING", name: "ING GROUP", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INGR", name: "INGREDION INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INSW", name: "INTERNATIONAL SEAWAYS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INVH", name: "INVITATION HOMES INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IONQ", name: "IONQ, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IOT", name: "SAMSARA INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IP", name: "INTERNATIONAL PAPER COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IQV", name: "IQVIA HOLDINGS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IT", name: "GARTNER, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ITT", name: "ITT INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ITUB", name: "ITAU UNIBANCO BANCO HOLDING S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "IVZ", name: "INVESCO LTD.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "J", name: "JACOBS SOLUTIONS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JBS", name: "JBS N.V.", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JEF", name: "JEFFERIES FINANCIAL GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JKS", name: "JINKOSOLAR HOLDING COMPANY LIMITED", exchange: NYSE, currency: USD, sector: Equity, benchmark: FXI, enabled: true }
+  - { symbol: "JLL", name: "JONES LANG LASALLE INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JNJ", name: "JOHNSON & JOHNSON", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "JPM", name: "JP MORGAN CHASE & CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
-  - { symbol: "MSFT", name: "MICROSOFT CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
-  - { symbol: "NVDA", name: "NVIDIA CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JXN", name: "JACKSON FINANCIAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KBH", name: "KB HOME", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KBR", name: "KBR, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KD", name: "KYNDRYL HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KEX", name: "KIRBY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KEYS", name: "KEYSIGHT TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KFY", name: "KORN FERRY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KGC", name: "KINROSS GOLD CORPORATION", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "KHC", name: "THE KRAFT HEINZ COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KLAR", name: "KLARNA GROUP PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "KMB", name: "KIMBERLY-CLARK CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KMI", name: "KINDER MORGAN, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KMT", name: "KENNAMETAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KMX", name: "CARMAX, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KNF", name: "KNIFE RIVER CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KO", name: "THE COCA-COLA COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KOS", name: "KOSMOS ENERGY LTD.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KR", name: "THE KROGER CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KRMN", name: "KARMAN HOLDINGS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KSS", name: "KOHL´S CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KVUE", name: "KENVUE INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KVYO", name: "KLAVIYO, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LDOS", name: "LEIDOS HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LEA", name: "LEAR CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LEN", name: "LENNAR CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LEVI", name: "LEVI STRAUSS & CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LH", name: "LABCORP HOLDINGS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LHX", name: "L3HARRIS TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LII", name: "LENNOX INTERNATIONAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LLY", name: "ELI LILLY & CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LMND", name: "LEMONADE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LMT", name: "LOCKHEED MARTIN CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LNG", name: "CHENIERE ENERGY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LOW", name: "LOWE´S COMPANIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LPX", name: "LOUISIANA-PACIFIC CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LRN", name: "STRIDE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LUV", name: "SOUTHWEST AIRLINES CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LVS", name: "LAS VEGAS SANDS CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LW", name: "LAMB WESTON HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LYB", name: "LYONDELLBASELL INDUSTRIES N.V.", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LYG", name: "LLOYDS BANKING GROUP PLC.", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "LYV", name: "LIVE NATION ENTERTAINMENT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "M", name: "MACY´S INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MA", name: "MASTERCARD INCORPORATED.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MAA", name: "Mid-America Apartment Communities Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MAC", name: "THE MACERICH COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MANU", name: "MANCHESTER UNITED PLC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MBGL", name: "MOBILITY GLOBAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MCD", name: "MCDONALD'S CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MCK", name: "MCKESSON CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MCO", name: "MOODY´S CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MD", name: "PEDIATRIX MEDICAL GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MDT", name: "MEDTRONIC PLC", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MED", name: "MEDIFAST, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MET", name: "METLIFE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MGM", name: "MGM RESORTS INTERNATIONAL", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MHK", name: "MOHAWK INDUSTRIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MIR", name: "MIRION TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MKC", name: "MCCORMICK & COMPANY, INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MKL", name: "MARKEL GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MLM", name: "MARTIN MARIETTA MATERIALS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MMM", name: "3M COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MMS", name: "MAXIMUS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MNSO", name: "MINISO GROUP HOLDING LTD", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MO", name: "ALTRIA GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MOS", name: "THE MOSAIC COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MPC", name: "MARATHON PETROLEUM CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MRK", name: "MERCK & CO., INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MRP", name: "MILLROSE PROPERTIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MRSH", name: "MARSH & MCLENNAN COMPANIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MS", name: "MORGAN STANLEY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MSA", name: "MSA SAFETY INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MSCI", name: "MSCI INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MSI", name: "MOTOROLA SOLUTIONS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MT", name: "ARCELORMITTAL", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MTB", name: "M&T BANK CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MTD", name: "METTLER-TOLEDO INTERNATIONAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MTDR", name: "MATADOR RESOURCES COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MTG", name: "MGIC INVESTMENT CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MTN", name: "VAIL RESORTS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MUFG", name: "MITSUBISHI UFJ FINANCIAL GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MUR", name: "MURPHY OIL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MUX", name: "MCEWEN INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NEE", name: "NEXTERA ENERGY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NEM", name: "NEWMONT CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NET", name: "CLOUDFLARE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NFG", name: "NATIONAL FUEL GAS COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NG", name: "NOVAGOLD RESOURCES INC.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "NGG", name: "NATIONAL GRID PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "NGVT", name: "INGEVITY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NIO", name: "NIO Inc", exchange: NYSE, currency: USD, sector: Equity, benchmark: FXI, enabled: true }
+  - { symbol: "NJR", name: "NEW JERSEY RESOURCES CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NKE", name: "NIKE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NLY", name: "ANNALY CAPITAL MANAGEMENT INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NNN", name: "NNN REIT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NOC", name: "NORTHROP GRUMMAN CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NOG", name: "NORTHERN OIL AND GAS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NOK", name: "NOKIA CORPORATION", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NOMD", name: "NOMAD FOODS LIMITED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NPKI", name: "NPK INTERNATIONAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NRG", name: "NRG ENERGY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NSC", name: "NORFOLK SOUTHERN CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NTR", name: "NUTRIEN LTD.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "NTST", name: "NETSTREIT CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NU", name: "NU HOLDINGS LTD.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NVO", name: "NOVO NORDISK A/S", exchange: NYSE, currency: DKK, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NVS", name: "NOVARTIS AG", exchange: NYSE, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "NVST", name: "ENVISTA HOLDINGS CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NWL", name: "NEWELL BRANDS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NXH", name: "BED BATH AND BEYOND, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "O", name: "REALTY INCOME CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OGE", name: "OGE ENERGY CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OGS", name: "ONE GAS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OHI", name: "OMEGA HEALTHCARE INVESTORS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OI", name: "O-I GLASS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OKE", name: "ONEOK, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OKLO", name: "OKLO INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OMC", name: "OMNICOM GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OMF", name: "ONEMAIN HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ONON", name: "ON HOLDING AG", exchange: NYSE, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "ONTO", name: "ONTO INNOVATION INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OPTU", name: "OPTIMUM COMMUNICATIONS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "ORCL", name: "ORACLE CORP", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OSCR", name: "OSCAR HEALTH, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OSG", name: "OCTAVE SPECIALTY GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OSK", name: "OSHKOSH CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OTIS", name: "OTIS WORLDWIDE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OVV", name: "OVINTIV INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OWL", name: "BLUE OWL CAPITAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "P", name: "EVERPURE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PAAS", name: "PAN AMERICAN SILVER CORP.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "PAR", name: "PAR TECHNOLOGY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PARR", name: "PAR PACIFIC HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PATH", name: "UIPATH, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PAYC", name: "PAYCOM SOFTWARE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PBF", name: "PBF ENERGY INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PBR", name: "PETRÓLEO BRASILEIRO S.A. – PETROBRAS", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "PCG", name: "PG&E CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PCOR", name: "PROCORE TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PEG", name: "PUBLIC SERVICE ENTERPRISE GROUP INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PEN", name: "PENUMBRA, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PFE", name: "PFIZER INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PG", name: "THE PROCTER & GAMBLE COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PGR", name: "THE PROGRESSIVE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PH", name: "PARKER-HANNIFIN CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PHIN", name: "PHINIA INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PHM", name: "PULTEGROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PII", name: "POLARIS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PINS", name: "PINTEREST, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PK", name: "PARK HOTELS & RESORTS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PKX", name: "POSCO HOLDINGS INC.", exchange: NYSE, currency: KRW, sector: Equity, benchmark: EWY, enabled: true }
+  - { symbol: "PLD", name: "PROLOGIS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PLNT", name: "PLANET FITNESS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PM", name: "PHILIP MORRIS INTERNATIONAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PNC", name: "THE PNC FINANCIAL SERVICES GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PNR", name: "PENTAIR PLC", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PNW", name: "PINNACLE WEST CAPITAL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "POR", name: "PORTLAND GENERAL ELECTRIC COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "POST", name: "POST HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PPG", name: "PPG INDUSTRIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PR", name: "PERMIAN RESOURCES CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PRIM", name: "PRIMORIS SERVICES CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PRU", name: "PRUDENTIAL FINANCIAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PSA", name: "PUBLIC STORAGE", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PSX", name: "PHILLIPS 66", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PVH", name: "PVH CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PWR", name: "QUANTA SERVICES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QSR", name: "RESTAURANT BRANDS INTERNATIONAL INC", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "QTWO", name: "Q2 HOLDINGS INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QXO", name: "QXO, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RACE", name: "FERRARI N.V.", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RAL", name: "RALLIANT CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RBLX", name: "ROBLOX CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RBRK", name: "RUBRIK, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RCL", name: "ROYAL CARIBBEAN GROUP", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RDDT", name: "REDDIT, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "REXR", name: "REXFORD INDUSTRIAL REALTY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "REZI", name: "RESIDEO TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RF", name: "REGIONS FINANCIAL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RGA", name: "REINSURANCE GROUP OF AMERICA, INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RH", name: "RH", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RIG", name: "TRANSOCEAN LTD.", exchange: NYSE, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "RIO", name: "RIO TINTO PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "RITM", name: "RITHM CAPITAL CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RJF", name: "RAYMOND JAMES FINANCIAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RKT", name: "ROCKET COMPANIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RL", name: "RALPH LAUREN CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RMD", name: "RESMED INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RNG", name: "RINGCENTRAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ROK", name: "ROCKWELL AUTOMATION, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ROL", name: "ROLLINS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RPM", name: "RPM INTERNATIONAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RRX", name: "REGAL REXNORD CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RTX", name: "RTX CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RVTY", name: "REVVITY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RXO", name: "RXO, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RY", name: "ROYAL BANK OF CANADA", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "RYAN", name: "RYAN SPECIALTY HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RYN", name: "RAYONIER INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SA", name: "SEABRIDGE GOLD INC.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "SBS", name: "COMPANHIA DE SANEAMENTO BÁSICO DO ESTADO DE SÃO PAUL...", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "SBSW", name: "SIBANYE STILLWATER LIMITED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SCCO", name: "SOUTHERN COPPER CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SCHW", name: "THE CHARLES SCHWAB CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SE", name: "Sea Limited", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SEG", name: "SEAPORT ENTERTAINMENT GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SEI", name: "SOLARIS ENERGY INFRASTRUCTURE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SGI", name: "SOMNIGROUP INTERNATIONAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SHG", name: "SHINHAN FINANCIAL GROUP CO., LTD.", exchange: NYSE, currency: KRW, sector: Equity, benchmark: EWY, enabled: true }
+  - { symbol: "SHW", name: "THE SHERWIN-WILLIAMS COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SID", name: "COMPANHIA SIDERURGICA NACIONAL", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "SJM", name: "THE J. M. SMUCKER COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SKM", name: "SK TELECOM CO., LTD.", exchange: NYSE, currency: KRW, sector: Equity, benchmark: EWY, enabled: true }
+  - { symbol: "SKYD", name: "SKYDANCE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SLB", name: "SLB N.V.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SLG", name: "SL GREEN REALTY CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SLVM", name: "SYLVAMO CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SNA", name: "SNAP-ON INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SNAP", name: "SNAP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SNOW", name: "SNOWFLAKE INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SNY", name: "SANOFI", exchange: NYSE, currency: EUR, sector: Equity, benchmark: EWQ, enabled: true }
+  - { symbol: "SO", name: "THE SOUTHERN COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SOLV", name: "SOLVENTUM CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SONY", name: "SONY GROUP CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SPCE", name: "Virgin Galactic Holdings, Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SPG", name: "SIMON PROPERTY GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SPGI", name: "S AND P GLOBAL INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SPHR", name: "SPHERE ENTERTAINMENT CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SPOT", name: "SPOTIFY TECHNOLOGY S.A.", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SRE", name: "SEMPRA", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ST", name: "SENSATA TECHNOLOGIES HOLDING PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "STE", name: "STERIS PLC", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STM", name: "STMICROELECTRONICS N.V.", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STNG", name: "SCORPIO TANKERS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STT", name: "STATE STREET CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STWD", name: "STARWOOD PROPERTY TRUST, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STZ", name: "CONSTELLATION BRANDS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SUI", name: "SUN COMMUNITIES INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SUPV", name: "GRUPO SUPERVIELLE S.A.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SUZ", name: "SUZANO SA", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "SWK", name: "STANLEY BLACK & DECKER, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SYF", name: "SYNCHRONY FINANCIAL", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SYK", name: "STRYKER CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SYY", name: "SYSCO CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "T", name: "AT&T INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
-  - { symbol: "TMUS", name: "T-MOBILE US, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TAK", name: "TAKEDA PHARMACEUTICAL COMPANY LIMITED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TALO", name: "TALOS ENERGY INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TBBB", name: "BBB FOODS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TD", name: "TORONTO-DOMINION BANK", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "TDG", name: "TRANSDIGM GROUP INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TDOC", name: "TELADOC HEALTH INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TDW", name: "TIDEWATER INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TDY", name: "TELEDYNE TECHNOLOGIES INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TE", name: "T1 ENERGY INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TECK", name: "TECK RESOURCES LIMITED", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "TEO", name: "TELECOM ARGENTINA S.A.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TER", name: "TERADYNE, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TEX", name: "TEREX CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TFC", name: "TRUIST FINANCIAL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TFPM", name: "TRIPLE FLAG PRECIOUS METALS CORP.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "TFX", name: "TELEFLEX INCORPORATED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TGS", name: "TRANSPORTADORA DE GAS DEL SUR S.A.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TGT", name: "TARGET CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "THC", name: "TENET HEALTHCARE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "THO", name: "THOR INDUSTRIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TIMB", name: "TIM S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "TJX", name: "THE TJX COMPANIES INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TKC", name: "TURKCELL ILETISIM HIZMETLERI A.S.", exchange: NYSE, currency: TRY, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TKO", name: "TKO GROUP HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TKR", name: "THE TIMKEN COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TM", name: "TOYOTA MOTOR CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TME", name: "TENCENT MUSIC ENTERTAINMENT GROUP", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TMO", name: "THERMO FISHER SCIENTIFIC INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TOL", name: "TOLL BROTHERS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TOST", name: "TOAST, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TPL", name: "TEXAS PACIFIC LAND CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TPR", name: "TAPESTRY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TRGP", name: "TARGA RESOURCES CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TRN", name: "TRINITY INDUSTRIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TRU", name: "TRANSUNION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TRV", name: "THE TRAVELERS COMPANIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TSN", name: "TYSON FOODS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TT", name: "TRANE TECHNOLOGIES PLC", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TTC", name: "THE TORO COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TWLO", name: "TWILIO INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TX", name: "TERNIUM, S.A.", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TXNM", name: "TXNM ENERGY, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TYL", name: "Tyler Technologies, Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "U", name: "UNITY SOFTWARE INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UAA", name: "UNDER ARMOUR, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UBER", name: "UBER TECHNOLOGIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UBS", name: "UBS GROUP AG", exchange: NYSE, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "UDR", name: "UDR, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UGP", name: "ULTRAPAR PARTICIPACOES S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "UHS", name: "UNIVERSAL HEALTH SERVICES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UL", name: "UNILEVER PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "ULS", name: "UL SOLUTIONS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UMC", name: "UNITED MICROELECTRONICS CORPORATION", exchange: NYSE, currency: TWD, sector: Equity, benchmark: EWT, enabled: true }
+  - { symbol: "UNFI", name: "UNITED NATURAL FOODS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UNH", name: "UNITEDHEALTH GROUP INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UNP", name: "UNION PACIFIC CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UPS", name: "UNITED PARCEL SERVICE INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "URI", name: "UNITED RENTALS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "USB", name: "US BANCORP", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "USFD", name: "US FOODS HOLDING CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UUUU", name: "ENERGY FUELS INC.", exchange: NYSE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
   - { symbol: "V", name: "VISA INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VAC", name: "MARRIOTT VACATIONS WORLDWIDE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VAL", name: "VALARIS LIMITED", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VALE", name: "VALE S.A.", exchange: NYSE, currency: BRL, sector: Equity, benchmark: EWZ, enabled: true }
+  - { symbol: "VEEV", name: "VEEVA SYSTEMS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VFC", name: "V.F. CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VG", name: "VENTURE GLOBAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VGNT", name: "VERSIGENT PLC", exchange: NYSE, currency: GBP, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VICI", name: "VICI PROPERTIES INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VIK", name: "VIKING HOLDINGS LTD", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VLO", name: "VALERO ENERGY CORP", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VMC", name: "VULCAN MATERIALS COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VMI", name: "Valmont Industries Inc", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VMRK", name: "VIVMARK RESIDENTIAL", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VRT", name: "VERTIV HOLDINGS CO", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VST", name: "VISTRA CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VSTS", name: "VESTIS CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VSXY", name: "VICTORIA´S SECRET & CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VTR", name: "VENTAS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VYLR", name: "VYLOR INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "VZ", name: "VERIZON COMMUNICATIONS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "W", name: "Wayfair Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WAB", name: "WESTINGHOUSE AIR BRAKE TECHNOLOGIES CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WAL", name: "WESTERN ALLIANCE BANCORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WAT", name: "WATERS CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WCC", name: "WESCO INTERNATIONAL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WEC", name: "WEC ENERGY GROUP, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WFC", name: "WELLS FARGO & CO.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WLK", name: "WESTLAKE CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WMB", name: "THE WILLIAMS COMPANIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WMS", name: "Advanced Drainage Systems, Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WNC", name: "WABASH NATIONAL CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WPC", name: "W. P. CAREY INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WRB", name: "W. R. BERKLEY CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WRBY", name: "WARBY PARKER INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WS", name: "WORTHINGTON STEEL, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WSM", name: "WILLIAMS-SONOMA, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WSO", name: "WATSCO, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WST", name: "WEST PHARMACEUTICAL SERVICES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WTRG", name: "ESSENTIAL UTILITIES, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WTS", name: "Watts Water Technologies Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WU", name: "THE WESTERN UNION COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WY", name: "WEYERHAEUSER COMPANY", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "XOM", name: "EXXONMOBIL HOLDINGS CORPORATION", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "XPEV", name: "XPENG INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "XPO", name: "XPO, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "XYL", name: "Xylem Inc.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "XYZ", name: "BLOCK, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "YETI", name: "YETI HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "YEXT", name: "YEXT INC", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "YPF", name: "YPF SOCIEDAD ANONIMA", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "YUM", name: "YUM! BRANDS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "YUMC", name: "YUM CHINA HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ZBH", name: "ZIMMER BIOMET HOLDINGS, INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ZETA", name: "ZETA GLOBAL HOLDINGS CORP.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ZGN", name: "ERMENEGILDO ZEGNA NV", exchange: NYSE, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ZTO", name: "ZTO EXPRESS (CAYMAN) INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ZTS", name: "ZOETIS INC.", exchange: NYSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  # --- NASDAQ ---
+  - { symbol: "AAL", name: "AMERICAN AIRLINES GROUP INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AAON", name: "AAON, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AAPL", name: "APPLE COMPUTER INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ABNB", name: "AIRBNB, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ACAD", name: "Acadia Pharmaceuticals Inc.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ACGL", name: "ARCH CAPITAL GROUP LTD.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ACHC", name: "ACADIA HEALTHCARE COMPANY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ACLS", name: "AXCELIS TECHNOLOGIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ACMR", name: "ACM RESEARCH, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ADBE", name: "ADOBE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ADI", name: "ANALOG DEVICES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ADSK", name: "AUTODESK, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AFRM", name: "AFFIRM HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AGNC", name: "AGNC INVESTMENT CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AGNT", name: "AGNT, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AKAM", name: "AKAMAI TECHNOLOGIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ALAB", name: "ASTERA LABS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ALGM", name: "ALLEGRO MICROSYSTEMS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ALKT", name: "ALKAMI TECHNOLOGY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ALNY", name: "ALNYLAM PHARMACEUTICALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMAT", name: "APPLIED MATERIALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMBA", name: "AMBARELLA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMD", name: "ADVANCED MICRO DEVICES INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMGN", name: "AMGEN INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMKR", name: "AMKOR TECHNOLOGY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMSC", name: "AMERICAN SUPERCONDUCTOR CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AMZN", name: "AMAZON. COM INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ANAB", name: "ANAPTYSBIO, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ANGI", name: "ANGI INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AOSL", name: "ALPHA AND OMEGA SEMICONDUCTOR LIMITED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "APEI", name: "AMERICAN PUBLIC EDUCATION, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "API", name: "AGORA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ARGX", name: "ARGENX SE", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ARM", name: "ARM HOLDINGS PLC", exchange: NASDAQ, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "ASTS", name: "AST SPACEMOBILE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ATOS", name: "ATOSSA THERAPEUTICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AVAV", name: "AEROVIRONMENT, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AVGO", name: "BROADCOM INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AVO", name: "MISSION PRODUCE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AXGN", name: "AXOGEN, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AXON", name: "AXON ENTERPRISE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "AXSM", name: "AXSOME THERAPEUTICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BBIO", name: "BRIDGEBIO PHARMA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BCPC", name: "BALCHEM CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BCRX", name: "BIOCRYST PHARMACEUTICALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BHF", name: "BRIGHTHOUSE FINANCIAL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BHST", name: "BIOHARVEST SCIENCES INC.", exchange: NASDAQ, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "BIDU", name: "BAIDU INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: FXI, enabled: true }
+  - { symbol: "BIIB", name: "BIOGEN INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BILI", name: "BILIBILI INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BKNG", name: "BOOKING HOLDINGS INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BKR", name: "BAKER HUGHES COMPANY", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BL", name: "BLACKLINE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BMBL", name: "BUMBLE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BMRN", name: "BIOMARIN PHARMACEUTICAL INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BNTX", name: "BIONTECH SE", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: EWG, enabled: true }
+  - { symbol: "BRKR", name: "BRUKER CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BSY", name: "BENTLEY SYSTEMS, INCORPORATED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BTBT", name: "BIT DIGITAL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BYND", name: "BEYOND MEAT, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "BZUN", name: "BAOZUN INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CABA", name: "CABALETTA BIO, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CAI", name: "CARIS LIFE SCIENCES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CAKE", name: "THE CHEESECAKE FACTORY INCORPORATED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CAN", name: "CANAAN INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CAR", name: "AVIS BUDGET GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CART", name: "MAPLEBEAR INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CASY", name: "CASEY´S GENERAL STORES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CBOE", name: "CBOE GLOBAL MARKETS INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CBRS", name: "CEREBRAS SYSTEMS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CCOI", name: "Cogent Communications Holdings, Inc.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CDLX", name: "Cardlytics, Inc.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CDNS", name: "CADENCE DESIGN SYSTEMS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CDW", name: "CDW CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CEG", name: "CONSTELLATION ENERGY CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CELH", name: "CELSIUS HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CERT", name: "CERTARA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CG", name: "THE CARLYLE GROUP L.P.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CGNX", name: "COGNEX CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHKP", name: "CHECK POINT SOFTWARE TECHNOLOGIES LTD.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHRD", name: "CHORD ENERGY CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHRW", name: "C.H. ROBINSON WORLDWIDE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CHTR", name: "CHARTER COMMUNICATIONS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CIFR", name: "CIPHER DIGITAL INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CINF", name: "CINCINNATI FINANCIAL CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CLSK", name: "CLEANSPARK, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CMCSA", name: "COMCAST CORP", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CME", name: "CME GROUP INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COIN", name: "COINBASE GLOBAL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COLM", name: "COLUMBIA SPORTSWEAR COMPANY", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COO", name: "THE COOPER COMPANIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "COST", name: "COSTCO WHOLESALE CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CPB", name: "THE CAMPBELL´S COMPANY", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CPRT", name: "COPART, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRDO", name: "CREDO TECHNOLOGY GROUP HOLDING LTD", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRNC", name: "CERENCE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CROX", name: "CROCS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRSP", name: "CRISPR THERAPEUTICS AG", exchange: NASDAQ, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "CRUS", name: "CIRRUS LOGIC, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRWD", name: "Crowdstrike Holdings, Inc.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CRWV", name: "COREWEAVE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CSCO", name: "CISCO SYSTEMS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CSIQ", name: "CANADIAN SOLAR INC.", exchange: NASDAQ, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "CSX", name: "CSX CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CTAS", name: "CINTAS CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CTSH", name: "COGNIZANT TECHNOLOGY SOLUTIONS CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "CVLT", name: "COMMVAULT SYSTEMS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DAVE", name: "DAVE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DBX", name: "DROPBOX, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DDOG", name: "Datadog, Inc.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DJT", name: "Trump Media & Technology Group Corp.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DLTR", name: "DOLLAR TREE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DOCU", name: "DOCUSIGN, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DPZ", name: "DOMINO´S PIZZA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DRS", name: "LEONARDO DRS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DUOL", name: "DUOLINGO, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "DXCM", name: "DEXCOM, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EBAY", name: "EBAY INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ECHO", name: "ECHOSTAR CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EMBC", name: "EMBECTA CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EOSE", name: "EOS ENERGY ENTERPRISES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EQIX", name: "EQUINIX, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ERIC", name: "TELEFONAKTIEBOLAGET LM ERICSSON", exchange: NASDAQ, currency: SEK, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ESEA", name: "EUROSEAS LTD.", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EVER", name: "EVERQUOTE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EVRG", name: "EVERGY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EWBC", name: "EAST WEST BANCORP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EXE", name: "EXPAND ENERGY CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EXPE", name: "EXPEDIA GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "EXPO", name: "EXPONENT, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FANG", name: "DIAMONDBACK ENERGY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FCEL", name: "FUELCELL ENERGY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FCNCA", name: "FIRST CITIZENS BANCSHARES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FFIV", name: "F5, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FIGR", name: "FIGURE TECHNOLOGY SOLUTIONS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FISV", name: "FISERV, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FIVE", name: "FIVE BELOW, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FIVN", name: "FIVE9 INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FIZZ", name: "NATIONAL BEVERAGE CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FLEX", name: "FLEX LTD.", exchange: NASDAQ, currency: SGD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FLNA", name: "FILANA THERAPEUTICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FLNC", name: "FLUENCE ENERGY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FLWS", name: "1-800-FLOWERS.COM, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FOXA", name: "FOX CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FRMM", name: "FORUM MARKETS, INCORPORATED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FROG", name: "JFROG LTD.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FRVO", name: "FERVO ENERGY COMPANY", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FSLR", name: "FIRST SOLAR INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FSLY", name: "FASTLY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FTNT", name: "FORTINET, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "FWDI", name: "FORWARD INDUSTRIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GCT", name: "GIGACLOUD TECHNOLOGY INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GDS", name: "GDS HOLDINGS LIMITED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GEHC", name: "GE HEALTHCARE TECHNOLOGIES INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GEN", name: "GEN DIGITAL INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GENB", name: "GENERATE BIOMEDICINES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GEVO", name: "GEVO, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GFS", name: "GLOBALFOUNDRIES INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GGAL", name: "GRUPO FINANCIERO GALICIA S.A.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GH", name: "Guardant Health Inc.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GILD", name: "GILEAD SCIENCES INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GLNG", name: "GOLAR LNG LIMITED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GLXY", name: "GALAXY DIGITAL HOLDINGS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GPRO", name: "GOPRO, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GRAB", name: "GRAB HOLDINGS LIMITED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GRAL", name: "GRAIL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GRPN", name: "GROUPON, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GRWG", name: "GROWGENERATION CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GT", name: "THE GOODYEAR TIRE & RUBBER CO.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GTLB", name: "GITLAB INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GTM", name: "ZOOMINFO TECHNOLOGIES INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "GTX", name: "GARRETT MOTION INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HALO", name: "HALOZYME THERAPEUTICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HAS", name: "HASBRO, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HBAN", name: "HUNTINGTON BANCSHARES INCORPORATED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HON", name: "HONEYWELL INTERNATIONAL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HONA", name: "HONEYWELL AEROSPACE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HOOD", name: "ROBINHOOD MARKETS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HQY", name: "HEALTHEQUITY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HRMY", name: "HARMONY BIOSCIENCES HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HSDT", name: "SOLANA COMPANY", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HSIC", name: "HENRY SCHEIN, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "HTHT", name: "H WORLD GROUP LIMITED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IBKR", name: "INTERACTIVE BROKERS GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IBOC", name: "INTERNATIONAL BANCSHARES CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IBRX", name: "IMMUNITYBIO, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ICLR", name: "ICON PLC", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IDXX", name: "IDEXX LABORATORIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ILMN", name: "ILLUMINA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INCY", name: "INCYTE CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INO", name: "INOVIO PHARMACEUTICALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INSM", name: "INSMED INCORPORATED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INTR", name: "INTER & CO, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "INTU", name: "INTUIT INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IONS", name: "IONIS PHARMACEUTICALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "IPGP", name: "IPG PHOTONICS CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ISRG", name: "INTUITIVE SURGICAL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ITRI", name: "ITRON, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JACK", name: "JACK IN THE BOX INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JAZZ", name: "JAZZ PHARMACEUTICALS PUBLIC LIMITED COMPANY", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JBLU", name: "JETBLUE AIRWAYS CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JD", name: "JD.COM, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "JKHY", name: "JACK HENRY & ASSOCIATES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KDP", name: "KEURIG DR PEPPER INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KLAC", name: "KLA CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KOD", name: "KODIAK SCIENCES INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KSPI", name: "JOINT STOCK COMPANY KASPI.KZ", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "KTOS", name: "KRATOS DEFENSE & SECURITY SOLUTIONS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LAUR", name: "LAUREATE EDUCATION, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LBTYA", name: "LIBERTY GLOBAL PLC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LCID", name: "LUCID GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LECO", name: "LINCOLN ELECTRIC HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LINE", name: "LINEAGE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LITE", name: "LUMENTUM HOLDINGS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LKQ", name: "LKQ CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LOGI", name: "LOGITECH INTERNATIONAL S.A.", exchange: NASDAQ, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "LPLA", name: "LPL FINANCIAL HOLDINGS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LRCX", name: "Lam Research Corporation", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LSCC", name: "LATTICE SEMICONDUCTOR CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LULU", name: "LULULEMON ATHLETICA INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LUMN", name: "LUMEN TECHNOLOGIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "LYFT", name: "LYFT INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MAR", name: "MARRIOTT INTERNATIONAL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MARA", name: "MARA HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MAT", name: "MATTEL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MBLY", name: "MOBILEYE GLOBAL INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MCHP", name: "MICROCHIP TECHNOLOGY INCORPORATED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MDB", name: "MONGODB, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MDLN", name: "MEDLINE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MDLZ", name: "MONDELEZ INTERNATIONAL INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MEDP", name: "MEDPACE HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MELI", name: "MERCADOLIBRE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MEOH", name: "METHANEX CORPORATION", exchange: NASDAQ, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "META", name: "META PLATFORMS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MGNI", name: "MAGNITE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MGRC", name: "MCGRATH RENTCORP", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MIRM", name: "MIRUM PHARMACEUTICALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MKSI", name: "MKS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MKTW", name: "MARKETWISE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MKTX", name: "MARKETAXESS HOLDINGS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MNDY", name: "MONDAY.COM LTD.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MNST", name: "MONSTER BEVERAGE CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MOMO", name: "HELLO GROUP INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MORN", name: "MORNINGSTAR, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MPWR", name: "MONOLITHIC POWER SYSTEMS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MQ", name: "MARQETA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MRCY", name: "MERCURY SYSTEMS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MRNA", name: "MODERNA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MRVI", name: "MARAVAI LIFESCIENCES HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MSFT", name: "MICROSOFT CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MSTR", name: "STRATEGY INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MTSI", name: "MACOM TECHNOLOGY SOLUTIONS HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MU", name: "MICRON TECHNOLOGY INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "MXL", name: "MAXLINEAR, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NBIS", name: "NEBIUS GROUP N.V.", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NBIX", name: "NEUROCRINE BIOSCIENCES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NDAQ", name: "Nasdaq, Inc.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NDSN", name: "NORDSON CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NEO", name: "NEOGENOMICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NFLX", name: "NETFLIX, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NIU", name: "NIU TECHNOLOGIES", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NKTR", name: "NEKTAR THERAPEUTICS", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NOVT", name: "NOVANTA INC.", exchange: NASDAQ, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "NSIT", name: "INSIGHT ENTERPRISES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NTAP", name: "NETAPP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NTES", name: "NETEASE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: FXI, enabled: true }
+  - { symbol: "NTNX", name: "NUTANIX, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NTRA", name: "NATERA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NTRS", name: "NORTHERN TRUST CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NVCR", name: "NOVOCURE LIMITED", exchange: NASDAQ, currency: GBP, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NVDA", name: "NVIDIA CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NVTS", name: "NAVITAS SEMICONDUCTOR CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "NXPI", name: "NXP SEMICONDUCTORS N.V.", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OCGN", name: "OCUGEN, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ODFL", name: "OLD DOMINION FREIGHT LINE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OKTA", name: "OKTA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OLED", name: "UNIVERSAL DISPLAY CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OLLI", name: "OLLIES BARGAIN OUTLET HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ON", name: "ON SEMICONDUCTOR CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ONC", name: "BEONE MEDICINES LTD.", exchange: NASDAQ, currency: CHF, sector: Equity, benchmark: EWL, enabled: true }
+  - { symbol: "ONDS", name: "ONDAS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OPCH", name: "OPTION CARE HEALTH, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "OPK", name: "OPKO HEALTH, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ORLY", name: "O’REILLY AUTOMOTIVE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PACB", name: "PACIFIC BIOSCIENCES OF CALIFORNIA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PANW", name: "PALO ALTO NETWORKS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PAX", name: "PATRIA INVESTMENTS LIMITED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PAYX", name: "PAYCHEX, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PCAR", name: "PACCAR INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PCT", name: "PURECYCLE TECHNOLOGIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PCTY", name: "PAYLOCITY HOLDING CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PDD", name: "PDD HOLDINGS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PEP", name: "PEPSICO INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PFG", name: "PRINCIPAL FINANCIAL GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PGY", name: "PAGAYA TECHNOLOGIES LTD.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PI", name: "IMPINJ, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PLMR", name: "PALOMAR HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PLTR", name: "PALANTIR TECHNOLOGIES INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PLUG", name: "PLUG POWER INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PLXS", name: "PLEXUS CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PODD", name: "INSULET CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PONY", name: "PONY AI INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "POOL", name: "Pool Corporation", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PPLI", name: "PEOPLE INCORPORATED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PRCT", name: "PROCEPT BIOROBOTICS CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PRGS", name: "PROGRESS SOFTWARE CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PTC", name: "PTC INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PTGX", name: "PROTAGONIST THERAPEUTICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PTON", name: "PELOTON INTERACTIVE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "PYPL", name: "PAYPAL HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QBTS", name: "D-WAVE QUANTUM INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QCOM", name: "QUALCOMM INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QFIN", name: "QFIN HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QLYS", name: "QUALYS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QS", name: "QUANTUMSCAPE CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QUBT", name: "QUANTUM COMPUTING INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "QURE", name: "UNIQURE N.V.", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RARE", name: "ULTRAGENYX PHARMACEUTICAL INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "REGN", name: "REGENERON PHARMACEUTICALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RELY", name: "REMITLY GLOBAL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RGLD", name: "ROYAL GOLD, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RGTI", name: "RIGETTI COMPUTING, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RIOT", name: "RIOT PLATFORMS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RIVN", name: "RIVIAN AUTOMOTIVE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RKLB", name: "ROCKET LAB CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RMBS", name: "RAMBUS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RMR", name: "THE RMR GROUP INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ROKU", name: "ROKU, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ROP", name: "ROPER TECHNOLOGIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ROST", name: "ROSS STORES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RPD", name: "RAPID7, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RPRX", name: "ROYALTY PHARMA PLC", exchange: NASDAQ, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "RUN", name: "SUNRUN INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RVMD", name: "REVOLUTION MEDICINES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RXRX", name: "RECURSION PHARMACEUTICALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RYAAY", name: "RYANAIR HOLDINGS PLC", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "RYTM", name: "RHYTHM PHARMACEUTICALS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SAIA", name: "SAIA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SBAC", name: "SBA COMMUNICATIONS CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SBET", name: "SHARPLINK, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SBUX", name: "STARBUCKS CORP", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SCZM", name: "SANTACRUZ SILVER MINING LTD.", exchange: NASDAQ, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "SEDG", name: "SolarEdge Technologies, Inc.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SEIC", name: "SEI INVESTMEST CO.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SEZL", name: "SEZZLE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SFM", name: "SPROUTS FARMERS MARKET, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SHOP", name: "SHOPIFY INC.", exchange: NASDAQ, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "SIMO", name: "SILICON MOTION TECHNOLOGY CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SION", name: "SIONNA THERAPEUTICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SITM", name: "SITIME CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SKHY", name: "SK HYNIX INC.", exchange: NASDAQ, currency: KRW, sector: Equity, benchmark: EWY, enabled: true }
+  - { symbol: "SLM", name: "SLM CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SMCI", name: "SUPER MICRO COMPUTER, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SMMT", name: "SUMMIT THERAPEUTICS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SMTC", name: "SEMTECH CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SNEX", name: "STONEX GROUP INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SNPS", name: "SYNOPSYS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SOFI", name: "SOFI TECHNOLOGIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SOLS", name: "SOLSTICE ADVANCED MATERIALS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SOUN", name: "SOUNDHOUND AI, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SPCX", name: "SPACE EXPLORATION TECHNOLOGIES CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SPT", name: "SPROUT SOCIAL, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SRPT", name: "SAREPTA THERAPEUTICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SSYS", name: "STRATASYS LTD.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STEP", name: "STEPSTONE GROUP INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STLD", name: "STEEL DYNAMICS", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STNE", name: "STONECO LTD.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "STX", name: "SEAGATE TECHNOLOGY PUBLIC LIMITED COMPANY", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SWKS", name: "SKYWORKS SOLUTIONS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SYM", name: "SYMBOTIC INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TCOM", name: "TRIP.COM GROUP LIMITED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: FXI, enabled: true }
+  - { symbol: "TEAM", name: "ATLASSIAN CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TECH", name: "BIO-TECHNE CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TEM", name: "TEMPUS AI, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TENB", name: "TENABLE HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TILE", name: "INTERFACE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TMDX", name: "TRANSMEDICS GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TMUS", name: "T-MOBILE US, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TNDM", name: "TANDEM DIABETES CARE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TREE", name: "LENDINGTREE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TRIP", name: "TRIPADVISOR, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TRMB", name: "TRIMBLE INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TRUP", name: "TRUPANION, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TSEM", name: "TOWER SEMICONDUCTOR LTD.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TSLA", name: "TESLA, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TTAN", name: "SERVICETITAN, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TTD", name: "THE TRADE DESK, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TTEK", name: "Tetra Tech Inc.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TTMI", name: "TTM TECHNOLOGIES, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TTWO", name: "TAKE-TWO INTERACTIVE SOFTWARE, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TW", name: "TRADEWEB MARKETS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TWST", name: "TWIST BIOSCIENCE CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TXG", name: "10X GENOMICS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "TXN", name: "TEXAS INSTRUMENTS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UAL", name: "UNITED AIRLINES HOLDINGS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ULTA", name: "ULTA BEAUTY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UPBD", name: "UPBOUND GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UPST", name: "UPSTART HOLDINGS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UPWK", name: "UPWORK INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "URBN", name: "URBAN OUTFITTERS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "USAR", name: "USA RARE EARTH, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "UTHR", name: "UNITED THERAPEUTICS CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VIAV", name: "VIAVI SOLUTIONS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VICR", name: "VICOR CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VIR", name: "VIR BIOTECHNOLOGY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VOD", name: "VODAFONE GROUP PLC", exchange: NASDAQ, currency: GBP, sector: Equity, benchmark: EWU, enabled: true }
+  - { symbol: "VRSK", name: "VERISK ANALYTICS, INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VRSN", name: "VERISIGN, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VRTX", name: "VERTEX PHARMACEUTICALS INCORPORATED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VSNT", name: "VERSANT MEDIA GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VTRS", name: "VIATRIS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "VXRT", name: "VAXART, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WBD", name: "WARNER BROS. DISCOVERY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WDAY", name: "WORKDAY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WDC", name: "WESTERN DIGITAL CORPORATION.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WIX", name: "WIX.COM LTD.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WKHS", name: "WORKHORSE GROUP INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WMG", name: "WARNER MUSIC GROUP CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WMT", name: "WALMART INC", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WOOF", name: "PETCO HEALTH AND WELLNESS COMPANY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WSC", name: "WILLSCOT MOBILE MINI HOLDINGS CORP.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WTW", name: "WILLIS TOWERS WATSON PUBLIC LIMITED COMPANY", exchange: NASDAQ, currency: EUR, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WULF", name: "TERAWULF INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WWD", name: "WOODWARD, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "WYNN", name: "Wynn Resorts Limited", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "XEL", name: "XCEL ENERGY INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "XENE", name: "XENON PHARMACEUTICALS INC.", exchange: NASDAQ, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "XP", name: "XP INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "XRX", name: "XEROX HOLDINGS CORPORATION", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ZENA", name: "ZENATECH, INC.", exchange: NASDAQ, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "ZLAB", name: "ZAI LAB LIMITED", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ZM", name: "ZOOM COMMUNICATIONS, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "ZS", name: "ZSCALER, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  # --- TORONTO STOCK EXCHANGE ---
+  - { symbol: "AQN", name: "ALGONQUIN POWER & UTILITIES CORP.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "BMO", name: "BANK OF MONTREAL", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "CIGI", name: "COLLIERS INTERNATIONAL GROUP INC.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "CM", name: "CANADIAN IMPERIAL BANK OF COMMERCE", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "CVE", name: "CENOVUS ENERGY INC.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "EMA", name: "EMERA INCORPORATED", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "ERO", name: "ERO COPPER CORP.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "FSV", name: "FIRSTSERVICE CORPORATION", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "H", name: "HYDRO ONE LIMITED", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "MFC", name: "MANULIFE FINANCIAL CORPORATION", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "OGC", name: "OCEANAGOLD CORPORATION", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "OTEX", name: "OPEN TEXT CORPORATION", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "PPL", name: "PEMBINA PIPELINE CORPORATION", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "RBA", name: "RB GLOBAL, INC.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "SLF", name: "SUN LIFE FINANCIAL INC.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "TFII", name: "TFI INTERNATIONAL INC.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "TRI", name: "THOMSON REUTERS CORPORATION", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "TRP", name: "TC ENERGY CORPORATION", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "WFG", name: "WEST FRASER TIMBER CO. LTD.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  - { symbol: "WPM", name: "WHEATON PRECIOUS METALS CORP.", exchange: TORONTO STOCK EXCHANGE, currency: CAD, sector: Equity, benchmark: EWC, enabled: true }
+  # --- TSE ---
+  - { symbol: "KEY", name: "KEYENCE CORPORATION", exchange: TSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  - { symbol: "SMC", name: "SMC CORPORATION", exchange: TSE, currency: USD, sector: Equity, benchmark: SPY, enabled: true }

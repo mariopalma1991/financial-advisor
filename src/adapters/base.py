@@ -50,8 +50,96 @@ class RawNewsArticle:
     payload: dict[str, Any] = field(default_factory=dict)
 
 
+@dataclass
+class RawFiling:
+    """SEC filing metadata — shared by edgar and finnhub adapters."""
+    source: str
+    ticker: str
+    accession_no: str
+    form_type: str
+    filed_at: datetime
+    url: str
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class RawFinancialReport:
+    """Finnhub financials-reported — balance sheet, cash flow, income statement."""
+    source: str
+    ticker: str
+    cik: str
+    access_number: str
+    form: str
+    year: int
+    quarter: int
+    start_date: date | None
+    end_date: date | None
+    filed_date: datetime | None
+    report: dict[str, dict[str, float]]  # {"bs": {...}, "cf": {...}, "ic": {...}}
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class RawEarningsSurprise:
+    """Finnhub company-earnings — historical quarterly earnings surprises."""
+    source: str
+    ticker: str
+    period: date
+    quarter: int
+    year: int
+    actual: float | None
+    estimate: float | None
+    surprise: float | None
+    surprise_pct: float | None
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class RawEarningsCalendar:
+    """Finnhub earnings-calendar — upcoming and historical earnings releases."""
+    source: str
+    ticker: str
+    date: date
+    quarter: int
+    year: int
+    hour: str  # "bmo", "amc", "dmh"
+    eps_actual: float | None
+    eps_estimate: float | None
+    revenue_actual: float | None
+    revenue_estimate: float | None
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class RawVisaApplication:
+    """Finnhub visa-application — H1-B and Permanent visa applications from DOL."""
+    source: str
+    ticker: str
+    case_number: str
+    job_title: str
+    visa_class: str
+    case_status: str
+    employer_name: str
+    begin_date: date | None
+    end_date: date | None
+    received_date: date | None
+    quarter: int
+    year: int
+    wage_range_from: float | None
+    wage_range_to: float | None
+    wage_unit: str
+    worksite_city: str
+    worksite_state: str
+    full_time: bool
+    h1b_dependent: bool
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
 class PriceAdapter(Protocol):
-    """Contract for price sources (yfinance, Stooq, Tiingo later...)."""
+    """Contract for price sources (yfinance)."""
 
     name: str
 

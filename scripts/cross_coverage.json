@@ -1,0 +1,14 @@
+{
+  "total_screening": 2079,
+  "na_tickers": 1615,
+  "market_data": 2079,
+  "finnhub_news": 1276,
+  "finnhub_sec": 1203,
+  "news_and_sec": 1141,
+  "news_and_market": 1276,
+  "sec_and_market": 1203,
+  "all_three": 1141,
+  "news_only": 135,
+  "sec_only": 62,
+  "neither": 277
+}

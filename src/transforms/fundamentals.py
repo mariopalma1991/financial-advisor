@@ -18,7 +18,10 @@ from collections import defaultdict
 from datetime import date
 from typing import Any
 
-from src.adapters.edgar_filings import RawFundamentalFact
+# NOTE: RawFundamentalFact was removed with edgar_filings.py.
+# Fundamentals now come from FinnhubFinancialsAdapter (RawFinancialReport).
+# The to_quarterly_rows() transform needs to be adapted for the new data model.
+from src.adapters.base import RawFinancialReport
 
 _YOY_TOLERANCE_DAYS = 20
 _FLOW_METRICS = {"revenue", "net_income", "eps", "gross_profit"}
