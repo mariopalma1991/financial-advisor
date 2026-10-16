@@ -75,6 +75,37 @@ def test_rate_limit_backs_off_and_retries_once(monkeypatch):
     assert res.processed == ["A"] and res.rate_limited == 1 and res.errors == 0
 
 
+def test_rejected_api_key_aborts_the_loop(monkeypatch):
+    monkeypatch.delenv("GITHUB_RUN_NUMBER", raising=False)
+    calls = []
+
+    def fetch(s):
+        calls.append(s)
+        raise _HTTPError(401)
+
+    with pytest.raises(_symbol_loop.SourceAuthError, match="401"):
+        _symbol_loop.fetch_symbols(
+            ["A", "B", "C"], fetch, em=MagicMock(), label="t",
+            delay_s=0, max_symbols=10, budget_s=60,
+        )
+    assert calls == ["A"]
+
+
+def test_all_symbols_failing_fails_the_job(monkeypatch):
+    monkeypatch.delenv("GITHUB_RUN_NUMBER", raising=False)
+
+    def fetch(s):
+        raise _HTTPError(500)
+
+    em = MagicMock()
+    with pytest.raises(_symbol_loop.AllSymbolsFailedError, match="all 2"):
+        _symbol_loop.fetch_symbols(
+            ["A", "B"], fetch, em=em, label="t", delay_s=0, max_symbols=10, budget_s=60
+        )
+    level, event, *_ = em.emit.call_args.args
+    assert level == "WARN" and event == "symbol_loop"
+
+
 def test_budget_stops_loop(monkeypatch):
     monkeypatch.delenv("GITHUB_RUN_NUMBER", raising=False)
     res = _symbol_loop.fetch_symbols(

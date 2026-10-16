@@ -3,7 +3,7 @@
 Finnhub's /stock/financials-reported endpoint returns GAAP financial statements
 as reported to the SEC. Supports annual and quarterly frequency.
 
-Rate limit: 60 calls/min (shared across all Finnhub adapters).
+Rate limit: 30 calls/min on our Finnhub plan (shared across all Finnhub adapters).
 """
 
 from __future__ import annotations
@@ -78,12 +78,14 @@ class FinnhubFinancialsAdapter:
         self,
         symbols: list[str],
         freq: str = "quarterly",
+        strict: bool = False,
     ) -> list[RawFinancialReport]:
         """Fetch financials as reported for multiple symbols.
 
         Args:
             symbols: List of ticker symbols.
             freq: "annual" or "quarterly". Default "quarterly".
+            strict: Raise fetch errors instead of skipping the symbol.
 
         Returns:
             List of RawFinancialReport objects.
@@ -94,6 +96,8 @@ class FinnhubFinancialsAdapter:
             try:
                 raw = self._fetch_one(symbol, freq=freq)
             except Exception:
+                if strict:
+                    raise
                 continue
 
             cik = raw.get("cik", "")

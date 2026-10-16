@@ -9,10 +9,17 @@ on:
     - cron: "0 12 1 * *"
   workflow_dispatch: {}
 
+# Finnhub allows 30 calls/min for the whole account, so Finnhub workflows run
+# one at a time: a run queues while another holds the group. GitHub keeps only
+# the newest pending run per group; an older pending one is cancelled.
+concurrency:
+  group: finnhub-api
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
 

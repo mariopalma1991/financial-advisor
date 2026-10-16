@@ -3,7 +3,7 @@
 Finnhub's /stock/filings endpoint returns SEC filings (8-K, 10-K, 10-Q, etc.)
 for US-listed companies. Tests each NA ticker with a recent date window.
 
-Rate limit: 60 calls/min → 1.1s between calls.
+Rate limit: 30 calls/min → 2.1s between calls.
 Progress is saved incrementally.
 """
 
@@ -34,7 +34,7 @@ NA_EXCHANGES: set[str] = {
     "OVER THE COUNTER US",
 }
 
-CALL_DELAY = 1.1  # seconds between calls
+CALL_DELAY = 2.1  # Finnhub plan: 30 calls/min
 OUTPUT_FILE = Path(__file__).resolve().parent / "finnhub_sec_coverage.json"
 PROGRESS_FILE = Path(__file__).resolve().parent / "finnhub_sec_coverage_progress.json"
 

@@ -3,7 +3,7 @@
 Finnhub's /calendar/earnings endpoint returns EPS and revenue actuals/estimates
 with bmo/amc timing. Free tier: 1 month of historical + new updates.
 
-Rate limit: 60 calls/min (shared across all Finnhub adapters).
+Rate limit: 30 calls/min on our Finnhub plan (shared across all Finnhub adapters).
 """
 
 from __future__ import annotations
@@ -69,6 +69,7 @@ class FinnhubEarningsCalendarAdapter:
         _from: str,
         to: str,
         symbols: list[str] | None = None,
+        strict: bool = False,
     ) -> list[RawEarningsCalendar]:
         """Fetch earnings calendar events.
 
@@ -76,6 +77,7 @@ class FinnhubEarningsCalendarAdapter:
             _from: Start date YYYY-MM-DD.
             to: End date YYYY-MM-DD.
             symbols: Optional list of tickers to filter. If None, fetches all.
+            strict: Raise fetch errors instead of skipping the symbol.
 
         Returns:
             List of RawEarningsCalendar objects.
@@ -87,6 +89,8 @@ class FinnhubEarningsCalendarAdapter:
                 try:
                     raw = self._fetch(_from=_from, to=to, symbol=symbol)
                 except Exception:
+                    if strict:
+                        raise
                     continue
                 events.extend(self._parse(raw))
         else:

@@ -3,7 +3,7 @@
 Finnhub's /stock/earnings endpoint returns actual vs estimate earnings data
 going back to 2000. Free tier: last 4 quarters.
 
-Rate limit: 60 calls/min (shared across all Finnhub adapters).
+Rate limit: 30 calls/min on our Finnhub plan (shared across all Finnhub adapters).
 """
 
 from __future__ import annotations
@@ -63,12 +63,14 @@ class FinnhubEarningsAdapter:
         self,
         symbols: list[str],
         limit: int = 5,
+        strict: bool = False,
     ) -> list[RawEarningsSurprise]:
         """Fetch earnings surprises for multiple symbols.
 
         Args:
             symbols: List of ticker symbols.
             limit: Max quarters per symbol. Default 5.
+            strict: Raise fetch errors instead of skipping the symbol.
 
         Returns:
             List of RawEarningsSurprise objects.
@@ -79,6 +81,8 @@ class FinnhubEarningsAdapter:
             try:
                 raw = self._fetch_one(symbol, limit=limit)
             except Exception:
+                if strict:
+                    raise
                 continue
 
             for item in raw:
