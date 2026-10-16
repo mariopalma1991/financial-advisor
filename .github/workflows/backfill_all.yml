@@ -14,9 +14,10 @@ on:
         default: news
         options: [news, filings, financials, earnings, earncal, visa, price, all]
 
-# Finnhub's rate limit is per API key: never run two backfills at once.
+# Finnhub's rate limit is per API key: share the ingest_* group so a backfill
+# never runs alongside another Finnhub job.
 concurrency:
-  group: backfill_all
+  group: finnhub-api
   cancel-in-progress: false
 
 jobs:

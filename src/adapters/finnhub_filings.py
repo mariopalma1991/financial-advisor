@@ -1,7 +1,7 @@
 """Finnhub SEC filings adapter — fetches filing metadata from Finnhub API.
 
 Finnhub's /stock/filings endpoint returns SEC filing metadata (8-K, 10-K,
-10-Q, etc.) for US-listed companies. Free tier: same 60 calls/min limit.
+10-Q, etc.) for US-listed companies. Same 30 calls/min plan limit.
 
 Returns RawFiling objects for the ingest_filings pipeline.
 """

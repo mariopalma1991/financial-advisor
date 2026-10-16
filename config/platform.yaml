@@ -11,16 +11,18 @@ ingestion:
     backfill_years_screening: 1
   filings:
     schedule_cron: "0 12 * * *"
-    # Finnhub: 60 calls/min, one call per symbol. Budget must fit the workflow timeout.
-    call_delay_s: 1.1
-    max_symbols_per_run: 1200
+    # Finnhub plan: 30 calls/min, one call per symbol (2.1 s apart = ~28/min).
+    # 900 x 2.1 s = 31.5 min fits the budget, which must fit the workflow timeout.
+    call_delay_s: 2.1
+    max_symbols_per_run: 900
     fetch_budget_min: 35
     lookback_days: 30
   news: # Phase 2
     schedule_cron: "0 13,19,23 * * *"
-    # 3 runs/day x 400 symbols covers the whole universe once a day (rotating).
-    call_delay_s: 1.1
-    max_symbols_per_run: 400
+    # 3 runs/day x 300 symbols rotates through the universe about every 1.3 days.
+    # Finnhub plan: 30 calls/min -> 2.1 s apart; 300 x 2.1 s = 10.5 min < budget.
+    call_delay_s: 2.1
+    max_symbols_per_run: 300
     fetch_budget_min: 12
     lookback_days: 3
 

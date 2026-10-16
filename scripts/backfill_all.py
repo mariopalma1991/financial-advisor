@@ -1,6 +1,6 @@
 """Backfill all raw tables with 5 years of data for the curated universe.
 
-Rate limit: 60 Finnhub calls/min → 1.1s between calls.
+Rate limit: Finnhub plan allows 30 calls/min → 2.1s between calls.
 Estimated runtime: ~2.5 hours for 1,141 tickers × 7 adapters.
 
 Usage:
@@ -32,7 +32,7 @@ from src.config import load_curated_universe
 from src.storage import raw
 from src.storage.supabase_client import get_client, pg_connection
 
-CALL_DELAY = 1.1  # seconds
+CALL_DELAY = 2.1  # Finnhub plan: 30 calls/min
 PROGRESS_FILE = Path(__file__).resolve().parent / "backfill_progress.json"
 
 SYMBOLS = load_curated_universe().symbols

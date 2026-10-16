@@ -3,7 +3,7 @@
 Finnhub's /stock/visa-application endpoint returns DOL visa application data
 updated quarterly. Useful for tracking corporate hiring patterns.
 
-Rate limit: 60 calls/min (shared across all Finnhub adapters).
+Rate limit: 30 calls/min on our Finnhub plan (shared across all Finnhub adapters).
 """
 
 from __future__ import annotations
@@ -72,6 +72,7 @@ class FinnhubVisaAdapter:
         symbols: list[str],
         _from: str,
         to: str,
+        strict: bool = False,
     ) -> list[RawVisaApplication]:
         """Fetch visa applications for multiple symbols.
 
@@ -79,6 +80,7 @@ class FinnhubVisaAdapter:
             symbols: List of ticker symbols.
             _from: Start date YYYY-MM-DD.
             to: End date YYYY-MM-DD.
+            strict: Raise fetch errors instead of skipping the symbol.
 
         Returns:
             List of RawVisaApplication objects.
@@ -89,6 +91,8 @@ class FinnhubVisaAdapter:
             try:
                 raw = self._fetch_one(symbol, _from=_from, to=to)
             except Exception:
+                if strict:
+                    raise
                 continue
 
             for item in raw.get("data", []):

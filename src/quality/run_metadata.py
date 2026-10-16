@@ -13,6 +13,8 @@ Observability must never break the pipeline — persistence is best-effort.
 from __future__ import annotations
 
 import os
+import time
+import traceback
 import uuid
 from contextlib import contextmanager
 from typing import Any, Iterator, Literal
@@ -87,6 +89,9 @@ class EventEmitter:
         self._client = client
         self._summary: dict[str, str] = {}
         self._error_count = 0
+        self._warn_count = 0
+        # WARN/ERROR events of this run, for the end-of-job summary.
+        self._issues: list[tuple[str, str, str]] = []
 
     def emit(
         self,
@@ -120,11 +125,16 @@ class EventEmitter:
         if level == "ERROR":
             self._error_count += 1
             send_alert(message, title=f"🚨 [{self.job_name}] {event_type}")
+        elif level == "WARN":
+            self._warn_count += 1
+        if level != "INFO":
+            self._issues.append((level, event_type, message))
 
-        # Track summary stats from rows_written events
+        # Track summary stats from rows_written events, keyed by table so two
+        # tables written in one run don't overwrite each other's counts.
         if event_type == "rows_written" and payload:
             for k, v in payload.items():
-                self._summary[k] = str(v)
+                self._summary[f"{message}.{k}" if message else k] = str(v)
         if event_type == "source_fetched" and payload:
             self._summary[message] = f"{payload.get('rows', '?')} rows"
 
@@ -142,18 +152,90 @@ def _gha_error_annotation(job_name: str, exc: BaseException) -> None:
     print(f"::error title={job_name} failed::{text}", flush=True)
 
 
+def _failure_site(exc: BaseException) -> str:
+    """Innermost project frame of the exception, e.g. `src/storage/raw.py:50 in insert_price_bars`."""
+    site = ""
+    for frame in traceback.extract_tb(exc.__traceback__):
+        path = frame.filename.replace("\\", "/")
+        if "/src/" in path:
+            site = f"src/{path.split('/src/', 1)[1]}:{frame.lineno} in {frame.name}"
+    return site
+
+
+def _write_step_summary(
+    emitter: EventEmitter, status: str, duration_s: float, error: str | None = None
+) -> None:
+    """Markdown summary on the GitHub Actions run page (no log download needed)."""
+    path = os.getenv("GITHUB_STEP_SUMMARY")
+    if not path:
+        return
+    lines = [
+        f"### {emitter.job_name}: {status}",
+        "",
+        (
+            f"Run `{emitter.run_id}` · {duration_s:.0f} s · "
+            f"{emitter._warn_count} warning(s) · {emitter._error_count} error(s)"
+        ),
+        "",
+    ]
+    if error:
+        lines += [f"**Error:** {error}", ""]
+    if emitter._summary:
+        lines += ["| Metric | Value |", "| --- | --- |"]
+        lines += [f"| {k} | {v} |" for k, v in emitter._summary.items()]
+        lines.append("")
+    if emitter._issues:
+        lines += ["| Level | Event | Message |", "| --- | --- | --- |"]
+        for level, event_type, message in emitter._issues[:20]:
+            lines.append(f"| {level} | {event_type} | {message.replace('|', '/')[:300]} |")
+        lines.append("")
+    try:
+        with open(path, "a", encoding="utf-8") as fh:
+            fh.write("\n".join(lines) + "\n")
+    except OSError as exc:
+        log.warning("step_summary_failed", error=str(exc))
+
+
 @contextmanager
 def job_run(job_name: str) -> Iterator[EventEmitter]:
-    """Context manager wrapping a job with started/completed/failed events."""
+    """Context manager wrapping a job with started/completed/failed events.
+
+    `job_completed` is WARN (not INFO) when the run logged warnings, and both
+    end events carry the duration and the per-table row counts.
+    """
     emitter = EventEmitter(job_name)
+    started = time.monotonic()
     emitter.emit("INFO", "job_started", f"{job_name} started")
     try:
         yield emitter
     except Exception as exc:
-        emitter.emit("ERROR", "job_failed", str(exc))
+        duration_s = round(time.monotonic() - started, 1)
+        error = f"{type(exc).__name__}: {exc}"[:1000]
+        emitter.emit(
+            "ERROR",
+            "job_failed",
+            error,
+            payload={
+                "exception": type(exc).__name__,
+                "where": _failure_site(exc),
+                "duration_s": duration_s,
+                "summary": emitter._summary,
+            },
+        )
         _gha_error_annotation(job_name, exc)
+        _write_step_summary(emitter, "failed", duration_s, error)
         send_summary(job_name, emitter._summary, success=False)
         raise
     else:
-        emitter.emit("INFO", "job_completed", f"{job_name} completed")
+        duration_s = round(time.monotonic() - started, 1)
+        warnings = emitter._warn_count
+        emitter.emit(
+            "WARN" if warnings else "INFO",
+            "job_completed",
+            f"{job_name} completed with {warnings} warning(s)" if warnings else f"{job_name} completed",
+            payload={"duration_s": duration_s, "warnings": warnings, "summary": emitter._summary},
+        )
+        _write_step_summary(
+            emitter, "completed with warnings" if warnings else "completed", duration_s
+        )
         send_summary(job_name, emitter._summary, success=True)

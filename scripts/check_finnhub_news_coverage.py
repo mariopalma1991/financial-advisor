@@ -2,7 +2,7 @@
 
 Finnhub's /company-news endpoint only supports North American companies.
 We filter to NYSE, NASDAQ, and Toronto exchanges first, then test each
-ticker with a 1-week window. Rate limit: 60 calls/min → 1.1s between calls.
+ticker with a 1-week window. Rate limit: 30 calls/min → 2.1s between calls.
 
 Progress is saved incrementally so a crash doesn't lose all work.
 """
@@ -29,8 +29,8 @@ NA_EXCHANGES: set[str] = {
     "OVER THE COUNTER US",
 }
 
-# Rate limit: 60 calls/min → ~1.1s between calls for safety margin
-CALL_DELAY = 1.1
+# Rate limit: 30 calls/min → ~2.1s between calls for safety margin
+CALL_DELAY = 2.1  # Finnhub plan: 30 calls/min
 
 OUTPUT_FILE = Path(__file__).resolve().parent / "finnhub_news_coverage.json"
 PROGRESS_FILE = Path(__file__).resolve().parent / "finnhub_news_coverage_progress.json"
@@ -62,7 +62,7 @@ def main() -> None:
     print(f"Screening universe: {len(universe.symbols)} total")
     print(f"North American tickers: {len(na_tickers)}")
     print(f"Estimated time: {len(na_tickers) * CALL_DELAY / 60:.1f} minutes")
-    print(f"Rate limit: {60 / CALL_DELAY:.0f} calls/min (safety margin under 60)")
+    print(f"Rate limit: {60 / CALL_DELAY:.0f} calls/min (safety margin under 30)")
     print()
 
     # Load progress

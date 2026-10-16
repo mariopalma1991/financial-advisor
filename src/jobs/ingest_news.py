@@ -58,7 +58,7 @@ def run(
     )
 
     if not all_articles:
-        em.emit("INFO", "job_completed", "no new articles")
+        em.emit("INFO", "no_new_rows", "raw_news_articles: no new articles")
         return
 
     # Raw zone only: the curated news tables (news_articles,

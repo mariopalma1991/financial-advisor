@@ -4,20 +4,22 @@ Idempotent: raw upserts ignore duplicates on (source, ticker, event_date, quarte
 
 Finnhub free tier returns 1 month of data. Weekly schedule keeps the window fresh.
 
-Rate limit: 60 Finnhub calls/min → 1.1s between calls.
+Rate limit: Finnhub plan allows 30 calls/min → 2.1s between calls.
 """
 
 from __future__ import annotations
 
-import time
 from datetime import date, timedelta
 
 from src.adapters.finnhub_earnings_calendar import FinnhubEarningsCalendarAdapter
 from src.config import all_symbols
+from src.jobs._symbol_loop import fetch_symbols
 from src.quality.run_metadata import job_run
 from src.storage import curated, raw
 
-_CALL_DELAY = 1.1
+_CALL_DELAY = 2.1  # Finnhub plan: 30 calls/min
+# ~1,150 symbols x 2.1 s = ~40 min; stop cleanly before the 60 min workflow timeout.
+_BUDGET_S = 50 * 60
 
 
 def main() -> None:
@@ -30,21 +32,24 @@ def main() -> None:
         to = (today + timedelta(days=30)).isoformat()
 
         adapter = FinnhubEarningsCalendarAdapter()
-        all_events = []
-        for i, symbol in enumerate(symbols):
-            try:
-                events = adapter.fetch(_from=_from, to=to, symbols=[symbol])
-                all_events.extend(events)
-            except Exception:
-                pass
-            if i < len(symbols) - 1:
-                time.sleep(_CALL_DELAY)
+        # Errors are counted and reported (and a rejected API key fails the
+        # job) by the shared loop. No rotation: one run covers the whole universe.
+        res = fetch_symbols(
+            symbols,
+            lambda s: adapter.fetch(_from=_from, to=to, symbols=[s], strict=True),
+            em=em,
+            label="finnhub earnings calendar",
+            delay_s=_CALL_DELAY,
+            max_symbols=len(symbols),
+            budget_s=_BUDGET_S,
+        )
+        all_events = res.items
 
         em.emit(
             "INFO",
             "source_fetched",
             "finnhub earnings calendar",
-            payload={"events": len(all_events), "symbols": len(symbols)},
+            payload={"events": len(all_events), "symbols": len(res.processed)},
         )
 
         if all_events:

@@ -1,6 +1,6 @@
 """Rate-limited, time-budgeted per-symbol fetch loop for Finnhub jobs.
 
-Finnhub's free tier allows 60 calls/min and its per-company endpoints take one
+Our Finnhub plan allows 30 calls/min and its per-company endpoints take one
 symbol per call, so the full curated universe (1,100+ symbols) cannot be
 fetched inside a single GitHub Actions run. This loop:
 
@@ -9,7 +9,9 @@ fetched inside a single GitHub Actions run. This loop:
 - stops cleanly when `budget_s` is spent, so the job finishes (and writes what
   it fetched) instead of being killed by the workflow timeout;
 - backs off for a minute on HTTP 429 and retries that symbol once;
-- counts and reports errors instead of silently swallowing them.
+- counts and reports errors instead of silently swallowing them;
+- aborts the job on HTTP 401 (bad API key) or when every symbol failed, so a
+  broken credential turns the run red instead of logging "completed".
 """
 
 from __future__ import annotations
@@ -26,6 +28,14 @@ from src.quality.run_metadata import EventEmitter
 log = structlog.get_logger()
 
 _RATE_LIMIT_SLEEP_S = 61
+
+
+class SourceAuthError(RuntimeError):
+    """The source rejected our credentials; no symbol can succeed."""
+
+
+class AllSymbolsFailedError(RuntimeError):
+    """Every planned symbol failed, so the run fetched nothing."""
 
 
 @dataclass
@@ -94,6 +104,12 @@ def fetch_symbols(
                     log.warning("rate_limited", source=label, symbol=symbol)
                     time.sleep(_RATE_LIMIT_SLEEP_S)
                     continue
+                if code == 401:
+                    raise SourceAuthError(
+                        f"{label}: the API key was rejected (HTTP 401) on {symbol}. "
+                        f"Check the API key secret (e.g. FINNHUB_API_KEY). "
+                        f"Aborted after {len(res.processed)}/{len(ordered)} symbols."
+                    ) from exc
                 res.errors += 1
                 if len(error_samples) < 5:
                     error_samples.append(f"{symbol}: {type(exc).__name__} {code or ''} {exc}"[:200])
@@ -126,4 +142,9 @@ def fetch_symbols(
             "error_samples": error_samples,
         },
     )
+    if ordered and not res.processed and res.errors:
+        raise AllSymbolsFailedError(
+            f"{label}: all {res.errors} attempted symbols failed; "
+            f"e.g. {error_samples[0] if error_samples else 'no sample'}"
+        )
     return res
