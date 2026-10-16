@@ -12,6 +12,7 @@ on:
       - .github/workflows/archive_cold.yml
       - src/jobs/archive_cold.py
       - src/storage/archive.py
+      - src/storage/supabase_client.py
   workflow_dispatch:
     inputs:
       mode:

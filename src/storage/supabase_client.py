@@ -13,6 +13,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from functools import lru_cache
 from typing import Iterator
+from urllib.parse import quote, unquote
 
 import psycopg2
 import psycopg2.extras
@@ -29,6 +30,22 @@ def get_client() -> Client:
     return create_client(settings.supabase_url, settings.supabase_service_key)
 
 
+def _quote_password(url: str) -> str:
+    """Percent-encode the password of a postgres URL.
+
+    Supabase passwords may contain '@' or ':'; pasted unencoded, libpq splits the
+    host at the wrong '@'. The host part never contains '@', so split at the last one.
+    """
+    scheme, sep, rest = url.partition("://")
+    if not sep or rest.count("@") < 2:
+        return url
+    creds, host = rest.rsplit("@", 1)
+    user, colon, password = creds.partition(":")
+    if not colon:
+        return url
+    return f"{scheme}://{user}:{quote(unquote(password), safe='')}@{host}"
+
+
 @contextmanager
 def pg_connection() -> Iterator[psycopg2.extensions.connection]:
     """Direct Postgres connection — migrations only. Not used for queries."""
@@ -38,7 +55,7 @@ def pg_connection() -> Iterator[psycopg2.extensions.connection]:
             "SUPABASE_DB_URL not set. Copy .env.example to .env and add the "
             "direct connection string (Project Settings -> Database)."
         )
-    conn = psycopg2.connect(settings.supabase_db_url)
+    conn = psycopg2.connect(_quote_password(settings.supabase_db_url))
     try:
         yield conn
         conn.commit()
