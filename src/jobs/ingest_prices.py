@@ -12,8 +12,39 @@ from datetime import date, timedelta
 from src.adapters.yfinance_prices import YFinanceAdapter
 from src.config import all_symbols
 from src.quality.checks import check_freshness
-from src.quality.run_metadata import job_run
+from src.quality.run_metadata import EventEmitter, job_run
 from src.storage import curated, raw
+
+
+def run(em: EventEmitter, since: date) -> None:
+    """Fetch bars on/after `since` for the whole universe and write them.
+    Idempotent: bars already stored unchanged are skipped."""
+    synced = curated.sync_dim_tickers()
+    symbols = all_symbols()
+
+    yf = YFinanceAdapter()
+    bars = yf.fetch_bars(symbols, since)
+    em.emit("INFO", "source_fetched", "yfinance bars", payload={"rows": len(bars)})
+
+    actions = yf.fetch_corporate_actions(symbols, since - timedelta(days=365))
+    em.emit("INFO", "source_fetched", "yfinance corporate actions", payload={"rows": len(actions)})
+
+    raw.insert_price_bars(bars)
+    raw.insert_corporate_actions(actions)
+
+    n_bars = curated.upsert_price_bars(bars)
+    em.emit(
+        "INFO",
+        "rows_written",
+        "prices consolidated",
+        payload={
+            "dim_tickers_synced": synced,
+            "price_bars_new": n_bars,
+            "corp_actions_new": len(actions),
+        },
+    )
+
+    check_freshness(em)
 
 
 def main() -> None:
@@ -28,33 +59,7 @@ def main() -> None:
     args = parser.parse_args()
 
     with job_run("ingest_prices") as em:
-        synced = curated.sync_dim_tickers()
-        symbols = all_symbols()
-        since = date.today() - timedelta(days=args.days)
-
-        yf = YFinanceAdapter()
-        bars = yf.fetch_bars(symbols, since)
-        em.emit("INFO", "source_fetched", "yfinance bars", payload={"rows": len(bars)})
-
-        actions = yf.fetch_corporate_actions(symbols, since - timedelta(days=365))
-        em.emit("INFO", "source_fetched", "yfinance corporate actions", payload={"rows": len(actions)})
-
-        raw.insert_price_bars(bars)
-        raw.insert_corporate_actions(actions)
-
-        n_bars = curated.upsert_price_bars(bars)
-        em.emit(
-            "INFO",
-            "rows_written",
-            "prices consolidated",
-            payload={
-                "dim_tickers_synced": synced,
-                "price_bars_new": n_bars,
-                "corp_actions_new": len(actions),
-            },
-        )
-
-        check_freshness(em)
+        run(em, date.today() - timedelta(days=args.days))
 
 
 if __name__ == "__main__":
