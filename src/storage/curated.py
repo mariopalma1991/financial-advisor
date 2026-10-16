@@ -28,12 +28,49 @@ def _now() -> str:
 
 # ---------- REST query helpers ----------
 
-def _current_map(view: str, key_cols: list[str], tickers: list[str]) -> dict[tuple, dict]:
-    """Fetch current rows for given tickers from a view via REST."""
+# Tickers per REST request. Keeps the `ticker=in.(...)` query string well under
+# gateway URL limits and keeps each DISTINCT ON view query small enough to stay
+# inside Postgres' statement_timeout.
+_TICKER_CHUNK = 150
+
+# Rows per insert request.
+_WRITE_CHUNK = 1000
+
+
+def _chunks(items: list, size: int) -> list[list]:
+    return [items[i : i + size] for i in range(0, len(items), size)]
+
+
+def _current_map(
+    view: str,
+    key_cols: list[str],
+    tickers: list[str],
+    *,
+    date_col: str | None = None,
+    date_range: tuple[str, str] | None = None,
+) -> dict[tuple, dict]:
+    """Fetch current rows for given tickers from a view via REST.
+
+    Tickers are queried in chunks. When `date_col` and `date_range` (inclusive
+    ISO dates) are given, only rows in that window are fetched — callers that
+    write a few days of data must pass it, otherwise the whole history of every
+    ticker is paginated through the DISTINCT ON view.
+    """
     if not tickers:
         return {}
-    rows = _paginate(get_client().table(view).select("*").in_("ticker", tickers))
-    return {tuple(str(r[c]) for c in key_cols): r for r in rows}
+    out: dict[tuple, dict] = {}
+    for chunk in _chunks(sorted(set(tickers)), _TICKER_CHUNK):
+        query = get_client().table(view).select("*").in_("ticker", chunk)
+        if date_col and date_range:
+            query = query.gte(date_col, date_range[0]).lte(date_col, date_range[1])
+        for r in _paginate(query):
+            out[tuple(str(r[c]) for c in key_cols)] = r
+    return out
+
+
+def _insert_chunked(table: str, rows: list[dict]) -> None:
+    for chunk in _chunks(rows, _WRITE_CHUNK):
+        get_client().table(table).insert(chunk).execute()
 
 
 def _pit_rows(
@@ -126,7 +163,14 @@ def upsert_price_bars(bars: list[RawPriceBar]) -> int:
     if not bars:
         return 0
     tickers = sorted({b.ticker for b in bars})
-    current = _current_map("current_price_bars", ["ticker", "bar_date"], tickers)
+    bar_dates = [b.bar_date.isoformat() for b in bars]
+    current = _current_map(
+        "current_price_bars",
+        ["ticker", "bar_date"],
+        tickers,
+        date_col="bar_date",
+        date_range=(min(bar_dates), max(bar_dates)),
+    )
     now = _now()
     rows = []
     for b in bars:
@@ -147,8 +191,7 @@ def upsert_price_bars(bars: list[RawPriceBar]) -> int:
                 "ingested_at": now,
             }
         )
-    if rows:
-        get_client().table("price_bars_daily").insert(rows).execute()
+    _insert_chunked("price_bars_daily", rows)
     return len(rows)
 
 
@@ -397,20 +440,42 @@ def enabled_tickers(tier: str | None = None) -> list[dict]:
 
 # ---------- news ----------
 
+def get_news_scores(article_ids: list[str]) -> dict[str, float]:
+    """article_id -> sentiment_score for articles already in news_articles."""
+    out: dict[str, float] = {}
+    for chunk in _chunks(sorted(set(article_ids)), 200):
+        rows = _paginate(
+            get_client()
+            .table("news_articles")
+            .select("article_id,sentiment_score")
+            .in_("article_id", chunk)
+        )
+        for r in rows:
+            out[r["article_id"]] = r["sentiment_score"]
+    return out
+
+
 def upsert_news_articles(rows: list[dict[str, Any]]) -> int:
     """Insert curated news articles; idempotent on article_id."""
     if not rows:
         return 0
     now = _now()
     payload = [{**r, "ingested_at": now} for r in rows]
-    get_client().table("news_articles").upsert(
-        payload, on_conflict="article_id", ignore_duplicates=True
-    ).execute()
+    for chunk in _chunks(payload, _WRITE_CHUNK):
+        get_client().table("news_articles").upsert(
+            chunk, on_conflict="article_id", ignore_duplicates=True
+        ).execute()
     return len(payload)
 
 
 def upsert_news_sentiment(rows: list[dict[str, Any]]) -> int:
-    """Upsert daily sentiment aggregates; rebuildable derived data."""
+    """Upsert daily sentiment aggregates; rebuildable derived data.
+
+    Merges on (ticker, date) so later runs, which have seen more articles,
+    refresh the aggregate instead of keeping the first partial value.
+    Written in bulk chunks; a chunk that fails falls back to row-by-row so one
+    bad row doesn't drop the rest.
+    """
     if not rows:
         return 0
     now = _now()
@@ -418,20 +483,22 @@ def upsert_news_sentiment(rows: list[dict[str, Any]]) -> int:
         {**r, "valid_from": f"{r['date']}T23:59:59+00:00", "ingested_at": now}
         for r in rows
     ]
-    # Insert one by one to avoid ON CONFLICT issues if constraint doesn't exist yet
     client = get_client()
-    inserted = 0
-    for row in payload:
+    written = 0
+    for chunk in _chunks(payload, 500):
         try:
-            client.table("news_sentiment_daily").upsert(
-                row, on_conflict="ticker,date", ignore_duplicates=True
-            ).execute()
-            inserted += 1
+            client.table("news_sentiment_daily").upsert(chunk, on_conflict="ticker,date").execute()
+            written += len(chunk)
+            continue
         except Exception:
-            # Row already exists or constraint missing — skip
             pass
-    return inserted
-    return len(payload)
+        for row in chunk:
+            try:
+                client.table("news_sentiment_daily").upsert(row, on_conflict="ticker,date").execute()
+                written += 1
+            except Exception:
+                pass
+    return written
 
 
 def get_news_articles(

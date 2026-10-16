@@ -44,9 +44,10 @@ def insert_price_bars(bars: list[RawPriceBar]) -> int:
         }
         for b in bars
     ]
-    get_client().table("raw_price_bars").upsert(
-        rows, on_conflict="source,ticker,bar_date", ignore_duplicates=True
-    ).execute()
+    for i in range(0, len(rows), 1000):
+        get_client().table("raw_price_bars").upsert(
+            rows[i : i + 1000], on_conflict="source,ticker,bar_date", ignore_duplicates=True
+        ).execute()
     return len(rows)
 
 
@@ -113,9 +114,10 @@ def insert_news_articles(articles: list[RawNewsArticle]) -> int:
         }
         for a in articles
     ]
-    get_client().table("raw_news_articles").upsert(
-        rows, on_conflict="source,article_id", ignore_duplicates=True
-    ).execute()
+    for i in range(0, len(rows), 1000):
+        get_client().table("raw_news_articles").upsert(
+            rows[i : i + 1000], on_conflict="source,article_id", ignore_duplicates=True
+        ).execute()
     return len(rows)
 
 
