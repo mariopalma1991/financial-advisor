@@ -129,7 +129,6 @@ class EventEmitter:
             self._summary[message] = f"{payload.get('rows', '?')} rows"
 
 
-@contextmanager
 def _gha_error_annotation(job_name: str, exc: BaseException) -> None:
     """Surface the failure as a GitHub Actions annotation (visible in the run
     summary and via the checks API without downloading logs)."""
@@ -143,6 +142,7 @@ def _gha_error_annotation(job_name: str, exc: BaseException) -> None:
     print(f"::error title={job_name} failed::{text}", flush=True)
 
 
+@contextmanager
 def job_run(job_name: str) -> Iterator[EventEmitter]:
     """Context manager wrapping a job with started/completed/failed events."""
     emitter = EventEmitter(job_name)
