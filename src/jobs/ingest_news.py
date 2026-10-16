@@ -1,12 +1,11 @@
-"""News ingestion job: Finnhub -> raw -> curated (ticker linking + sentiment).
+"""News ingestion job: Finnhub -> raw_news_articles.
 
 Runs 3x daily (plan §11). Idempotent: raw upserts ignore duplicates;
-curated upserts insert only on new article_id.
+no curated/sentiment stage (those tables were dropped).
 
 Rate limit: 60 Finnhub calls/min, one call per symbol. Each run fetches a
 rotating slice of the universe inside a time budget (src/jobs/_symbol_loop.py);
-limits live in config/platform.yaml -> ingestion.news. Articles already stored
-are not re-scored by FinBERT.
+limits live in config/platform.yaml -> ingestion.news.
 """
 
 from __future__ import annotations
@@ -18,7 +17,6 @@ from src.config import all_symbols, load_platform
 from src.jobs._symbol_loop import fetch_symbols
 from src.quality.run_metadata import EventEmitter, job_run
 from src.storage import curated, raw
-from src.transforms.news_sentiment import process
 
 
 def run(
@@ -28,10 +26,7 @@ def run(
     max_symbols: int | None = None,
     budget_s: float,
 ) -> None:
-    """Fetch news published on/after `_from` and write raw + curated rows.
-
-    Daily sentiment is written only from `_from + 6 days` on (complete 7-day
-    windows); to refresh aggregates starting at day D, pass `_from = D - 6`.
+    """Fetch news published on/after `_from` and write it to raw_news_articles.
 
     `max_symbols=None` fetches the whole universe (backfill); the scheduled job
     passes the per-run slice from config.
@@ -66,47 +61,14 @@ def run(
         em.emit("INFO", "job_completed", "no new articles")
         return
 
-    # Raw zone: immutable snapshot
+    # Raw zone only: the curated news tables (news_articles,
+    # news_sentiment_daily) were dropped; Finnhub raw tables are the store.
     n_raw = raw.insert_news_articles(all_articles)
-    em.emit("INFO", "rows_written", "raw_news_articles", payload={"rows": n_raw})
-
-    # Transform: ticker linking + sentiment (new articles only) + daily aggregation
-    known = curated.get_news_scores([a.article_id for a in all_articles])
-    curated_articles, daily_sentiment = process(
-        all_articles,
-        symbols,
-        known_scores=known,
-        aggregate_tickers=set(res.processed),
-    )
-    # sent_7d for day d needs articles from [d-6, d]; only days whose window is
-    # fully inside the fetched range get written (rows are merged, so a
-    # truncated window would overwrite a good aggregate).
-    complete_from = (date.fromisoformat(_from) + timedelta(days=6)).isoformat()
-    daily_sentiment = [r for r in daily_sentiment if r["date"] >= complete_from]
-    new_articles = [a for a in curated_articles if a["article_id"] not in known]
-    em.emit(
-        "INFO",
-        "transform",
-        "ticker linking + sentiment",
-        payload={
-            "articles_linked": len(curated_articles),
-            "articles_scored": len(new_articles),
-            "daily_rows": len(daily_sentiment),
-        },
-    )
-
-    # Curated zone
-    n_curated = curated.upsert_news_articles(new_articles)
-    n_sentiment = curated.upsert_news_sentiment(daily_sentiment)
     em.emit(
         "INFO",
         "rows_written",
-        "news curated",
-        payload={
-            "dim_tickers_synced": synced,
-            "news_articles_new": n_curated,
-            "sentiment_rows_written": n_sentiment,
-        },
+        "raw_news_articles",
+        payload={"rows": n_raw, "dim_tickers_synced": synced},
     )
 
 

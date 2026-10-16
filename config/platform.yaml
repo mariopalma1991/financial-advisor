@@ -22,7 +22,7 @@ ingestion:
     call_delay_s: 1.1
     max_symbols_per_run: 400
     fetch_budget_min: 12
-    lookback_days: 7 # sent_7d needs a full week of articles
+    lookback_days: 3
 
 indicators:
   sma_windows: [10, 20, 50, 200]

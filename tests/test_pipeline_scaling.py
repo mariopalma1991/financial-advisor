@@ -206,8 +206,7 @@ def test_backfill_runs_whole_universe_and_continues_after_failure(monkeypatch):
     assert backfill_gaps.main([]) == 1
     assert [c[0] for c in calls] == ["prices", "news", "filings"]
     news_call = calls[1]
-    # news fetches 6 extra days so 7-day sentiment windows are complete
-    assert news_call[1] == (date.today() - timedelta(days=6 + 6)).isoformat()
+    assert news_call[1] == (date.today() - timedelta(days=6)).isoformat()
     assert news_call[2] is None and calls[2][2] is None  # whole universe
 
 

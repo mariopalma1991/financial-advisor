@@ -44,7 +44,7 @@ _LATEST_QUERY = {
 # reported up front instead of failing after a long fetch.
 _WRITE_TABLES = {
     "prices": ["raw_price_bars", "raw_corporate_actions", "price_bars_daily"],
-    "news": ["raw_news_articles", "news_articles", "news_sentiment_daily"],
+    "news": ["raw_news_articles"],
     "filings": ["raw_filings"],
 }
 
@@ -96,10 +96,7 @@ def _run_source(source: str, start: date, budget_s: float) -> None:
         if source == "prices":
             ingest_prices.run(em, start)
         elif source == "news":
-            # Fetch 6 extra days so sentiment aggregates from `start` on have
-            # complete 7-day windows (see ingest_news.run).
-            _from = (start - timedelta(days=6)).isoformat()
-            ingest_news.run(em, _from, max_symbols=None, budget_s=budget_s)
+            ingest_news.run(em, start.isoformat(), max_symbols=None, budget_s=budget_s)
         elif source == "filings":
             ingest_filings.run(em, start.isoformat(), max_symbols=None, budget_s=budget_s)
 
