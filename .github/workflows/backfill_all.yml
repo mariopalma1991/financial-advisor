@@ -1,0 +1,47 @@
+name: backfill_all
+
+# Manual: run scripts/backfill_all.py for one adapter (or all) on the curated
+# universe. Resumes from scripts/backfill_progress.json as committed in the
+# repo. --clean (TRUNCATE) is intentionally not exposed here; run it locally.
+
+on:
+  workflow_dispatch:
+    inputs:
+      adapter:
+        description: "Adapter to backfill"
+        type: choice
+        required: true
+        default: news
+        options: [news, filings, financials, earnings, earncal, visa, price, all]
+
+# Finnhub's rate limit is per API key: never run two backfills at once.
+concurrency:
+  group: backfill_all
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Backfill ${{ inputs.adapter }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          ADAPTER: ${{ inputs.adapter }}
+          PYTHONUNBUFFERED: "1"
+        run: python scripts/backfill_all.py --adapter "$ADAPTER"
