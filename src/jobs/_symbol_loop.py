@@ -103,6 +103,14 @@ def fetch_symbols(
             time.sleep(delay_s)
 
     level = "WARN" if res.errors or res.stopped_by_budget else "INFO"
+    if os.getenv("GITHUB_ACTIONS"):
+        kind = "warning" if level == "WARN" else "notice"
+        detail = f"{label}: fetched {len(res.processed)}/{len(ordered)} symbols, {len(res.items)} items, " \
+            f"{res.errors} errors, {res.rate_limited} rate-limited" \
+            + (", stopped by time budget" if res.stopped_by_budget else "")
+        if error_samples:
+            detail += " | e.g. " + " ; ".join(error_samples[:3])
+        print(f"::{kind} title={label}::{detail[:3000]}", flush=True)
     em.emit(
         level,
         "symbol_loop",
