@@ -112,7 +112,11 @@ def _pit_rows(
 # ---------- dim_ticker sync (config -> DB, versioned) ----------
 
 def sync_dim_tickers() -> int:
-    """Upsert the curated universe into dim_ticker; new version row only on change."""
+    """Upsert the curated universe into dim_ticker; new version row only on change.
+
+    Tickers still enabled in dim_ticker but no longer in the universe get a
+    disabled version row, so monitoring doesn't report them as missing data.
+    """
     rows_in: list[dict[str, Any]] = []
     for tier, universe in (("analysis", load_curated_universe()),):
         for t in universe.tickers:
@@ -140,8 +144,28 @@ def sync_dim_tickers() -> int:
         ):
             continue
         out.append({**r, "valid_from": now, "ingested_at": now})
+
+    # An empty universe means a config problem: never disable everything.
+    in_universe = {r["ticker"] for r in rows_in}
+    enabled_now = (
+        _paginate(get_client().table("current_tickers").select("*").eq("enabled", True))
+        if rows_in
+        else []
+    )
+    for cur in enabled_now:
+        if cur["ticker"] in in_universe:
+            continue
+        row = {k: cur.get(k) for k in rows_in[0]}
+        row.update(
+            enabled=False,
+            notes="removed from curated_universe.yaml",
+            valid_from=now,
+            ingested_at=now,
+        )
+        out.append(row)
+
     if out:
-        get_client().table("dim_ticker").insert(out).execute()
+        _insert_chunked("dim_ticker", out)
     return len(out)
 
 
