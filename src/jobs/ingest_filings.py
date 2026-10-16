@@ -2,46 +2,51 @@
 
 Idempotent: raw upserts ignore duplicates on accession_no.
 
-Rate limit: 60 Finnhub calls/min → 1.1s between calls.
+Rate limit: 60 Finnhub calls/min, one call per symbol. The per-symbol loop is
+time-budgeted and rotates through the universe (see src/jobs/_symbol_loop.py);
+limits live in config/platform.yaml -> ingestion.filings.
 """
 
 from __future__ import annotations
 
-import time
+from datetime import date, timedelta
 
 from src.adapters.finnhub_filings import FinnhubFilingsAdapter
-from src.config import all_symbols
+from src.config import all_symbols, load_platform
+from src.jobs._symbol_loop import fetch_symbols
 from src.quality.run_metadata import job_run
 from src.storage import curated, raw
 
-_CALL_DELAY = 1.1
-
 
 def main() -> None:
+    cfg = load_platform().ingestion["filings"]
     with job_run("ingest_filings") as em:
         synced = curated.sync_dim_tickers()
         symbols = all_symbols()
 
+        _from = (date.today() - timedelta(days=int(cfg["lookback_days"]))).isoformat()
+        to = date.today().isoformat()
         adapter = FinnhubFilingsAdapter()
-        all_filings = []
-        for i, symbol in enumerate(symbols):
-            try:
-                filings = adapter.fetch_filings([symbol])
-                all_filings.extend(filings)
-            except Exception:
-                pass
-            if i < len(symbols) - 1:
-                time.sleep(_CALL_DELAY)
+
+        res = fetch_symbols(
+            symbols,
+            lambda s: adapter.fetch_filings([s], _from=_from, to=to, strict=True),
+            em=em,
+            label="finnhub filings",
+            delay_s=float(cfg["call_delay_s"]),
+            max_symbols=int(cfg["max_symbols_per_run"]),
+            budget_s=float(cfg["fetch_budget_min"]) * 60,
+        )
 
         em.emit(
             "INFO",
             "source_fetched",
             "finnhub filings",
-            payload={"filings": len(all_filings), "symbols": len(symbols)},
+            payload={"filings": len(res.items), "symbols": len(res.processed)},
         )
 
-        if all_filings:
-            n = raw.insert_filings(all_filings)
+        if res.items:
+            n = raw.insert_filings(res.items)
             em.emit(
                 "INFO",
                 "rows_written",

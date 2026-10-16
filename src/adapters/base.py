@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Any, Protocol
 
-from tenacity import retry, stop_after_attempt, wait_exponential
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 
 @dataclass
@@ -155,7 +155,17 @@ class PriceAdapter(Protocol):
 
 
 # Shared retry policy: exponential backoff, 4 attempts, give up loudly.
+def _is_retryable(exc: BaseException) -> bool:
+    """Don't retry errors that won't go away: auth/plan (401/403), not found (404).
+    429s are left to the caller, which knows the rate limit window."""
+    code = getattr(exc, "status_code", None)
+    if code is None:
+        code = getattr(getattr(exc, "response", None), "status_code", None)
+    return code not in (401, 403, 404, 429)
+
+
 source_retry = retry(
+    retry=retry_if_exception(_is_retryable),
     stop=stop_after_attempt(4),
     wait=wait_exponential(multiplier=1, min=2, max=30),
     reraise=True,

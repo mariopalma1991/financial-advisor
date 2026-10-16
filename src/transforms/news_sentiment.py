@@ -297,20 +297,55 @@ def _finbert_score(text: str) -> float:
         return _rule_based_sentiment(text)
 
 
-def score_sentiment(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+_FINBERT_BATCH = 32
+
+
+def _finbert_scores(texts: list[str]) -> list[float]:
+    """Score texts with FinBERT in batches; rule-based fallback per failure."""
+    pipe = _load_finbert()
+    if pipe is None:
+        return [_rule_based_sentiment(t) for t in texts]
+    try:
+        results = pipe(texts, truncation=True, max_length=512, batch_size=_FINBERT_BATCH)
+    except Exception:
+        return [_finbert_score(t) for t in texts]
+    out: list[float] = []
+    for text, result in zip(texts, results):
+        try:
+            scores = {r["label"].lower(): r["score"] for r in result}
+            out.append(round(scores.get("positive", 0.0) - scores.get("negative", 0.0), 4))
+        except Exception:
+            out.append(_rule_based_sentiment(text))
+    return out
+
+
+def score_sentiment(
+    rows: list[dict[str, Any]],
+    known_scores: dict[str, float] | None = None,
+) -> list[dict[str, Any]]:
     """Score headline sentiment for each article row (mutates in place).
+
+    Articles whose article_id is in `known_scores` (already scored in an earlier
+    run) reuse that score; only new headlines go through FinBERT, in batches.
 
     For screening tier, only the headline is scored. Analysis tier would also
     score the full body text (future enhancement).
 
     Returns the same list with sentiment_score populated.
     """
+    known_scores = known_scores or {}
+    to_score: list[dict[str, Any]] = []
     for r in rows:
-        headline = r.get("headline") or ""
-        if headline:
-            r["sentiment_score"] = _finbert_score(headline)
+        if r["article_id"] in known_scores and known_scores[r["article_id"]] is not None:
+            r["sentiment_score"] = known_scores[r["article_id"]]
+        elif r.get("headline"):
+            to_score.append(r)
         else:
             r["sentiment_score"] = 0.0
+    if to_score:
+        scores = _finbert_scores([r["headline"] for r in to_score])
+        for r, score in zip(to_score, scores):
+            r["sentiment_score"] = score
     return rows
 
 
@@ -419,13 +454,26 @@ def _rolling_mean(
 def process(
     articles: list[RawNewsArticle],
     symbols: list[str] | None = None,
+    known_scores: dict[str, float] | None = None,
+    aggregate_tickers: set[str] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Run the full news transform pipeline: link -> score -> aggregate.
+
+    Args:
+        known_scores: article_id -> score for articles already stored; they are
+            not re-scored but still count toward the daily aggregates.
+        aggregate_tickers: only emit daily rows for these tickers (the ones whose
+            news was actually fetched this run, so a partial view of another
+            ticker doesn't overwrite its aggregate).
 
     Returns:
         (curated_articles, daily_sentiment_rows) ready for storage.
     """
-    linked = link_tickers(articles, symbols)
-    scored = score_sentiment(linked)
+    # Dedupe: the same article is returned for every symbol it mentions.
+    unique = list({a.article_id: a for a in articles}.values())
+    linked = link_tickers(unique, symbols)
+    scored = score_sentiment(linked, known_scores)
     daily = aggregate_daily_sentiment(scored)
+    if aggregate_tickers is not None:
+        daily = [r for r in daily if r["ticker"] in aggregate_tickers]
     return scored, daily

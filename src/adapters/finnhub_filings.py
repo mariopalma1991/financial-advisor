@@ -79,6 +79,7 @@ class FinnhubFilingsAdapter:
         _from: str | None = None,
         to: str | None = None,
         forms: tuple[str, ...] = ("10-K", "10-Q", "8-K"),
+        strict: bool = False,
     ) -> list[RawFiling]:
         """Fetch SEC filings for multiple symbols.
 
@@ -87,6 +88,7 @@ class FinnhubFilingsAdapter:
             _from: Start date YYYY-MM-DD. Defaults to 30 days ago.
             to: End date YYYY-MM-DD. Defaults to today.
             forms: Filter to these form types only.
+            strict: Raise fetch errors instead of skipping the symbol.
 
         Returns:
             List of RawFiling objects.
@@ -103,6 +105,8 @@ class FinnhubFilingsAdapter:
             try:
                 raw = self._fetch_one(symbol, _from=_from, to=to)
             except Exception:
+                if strict:
+                    raise
                 continue
 
             for item in raw:
