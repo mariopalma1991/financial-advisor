@@ -213,5 +213,22 @@ def test_backfill_runs_whole_universe_and_continues_after_failure(monkeypatch):
 
 def test_backfill_dry_run_fetches_nothing(monkeypatch):
     monkeypatch.setattr(backfill_gaps, "latest_stored", lambda s: None)
+    monkeypatch.setattr(backfill_gaps, "missing_tables", lambda s: [])
     monkeypatch.setattr(backfill_gaps, "_run_source", lambda *a: (_ for _ in ()).throw(AssertionError))
     assert backfill_gaps.main(["--dry-run", "--sources", "news"]) == 0
+
+
+def test_backfill_detection_error_does_not_stop_other_sources(monkeypatch):
+    def latest(source):
+        if source == "news":
+            raise RuntimeError("relation does not exist")
+        return None
+
+    monkeypatch.setattr(backfill_gaps, "latest_stored", latest)
+    monkeypatch.setattr(backfill_gaps, "missing_tables", lambda s: ["news_articles (x)"] if s == "news" else [])
+    ran = []
+    monkeypatch.setattr(backfill_gaps, "_run_source", lambda src, *a: ran.append(src))
+    assert backfill_gaps.main(["--dry-run"]) == 1
+    assert ran == []
+    assert backfill_gaps.main([]) == 1
+    assert ran == ["prices", "filings"]

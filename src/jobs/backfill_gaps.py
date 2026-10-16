@@ -12,7 +12,7 @@ costs time — nothing is duplicated.
 
 Gap detection (latest date already stored):
     prices   current_price_bars.bar_date
-    news     news_articles.published_at
+    news     raw_news_articles.published_at (source = finnhub)
     filings  raw_filings.filed_at (source = finnhub)
 
 Sources run one after another (news and filings share Finnhub's 60 calls/min).
@@ -36,9 +36,28 @@ SOURCES = ("prices", "news", "filings")
 # (view/table, date column, extra equality filters)
 _LATEST_QUERY = {
     "prices": ("current_price_bars", "bar_date", {}),
-    "news": ("news_articles", "published_at", {}),
+    "news": ("raw_news_articles", "published_at", {"source": "finnhub"}),
     "filings": ("raw_filings", "filed_at", {"source": "finnhub"}),
 }
+
+# Tables each pipeline writes to — checked by --dry-run so a missing table is
+# reported up front instead of failing after a long fetch.
+_WRITE_TABLES = {
+    "prices": ["raw_price_bars", "raw_corporate_actions", "price_bars_daily"],
+    "news": ["raw_news_articles", "news_articles", "news_sentiment_daily"],
+    "filings": ["raw_filings"],
+}
+
+
+def missing_tables(source: str) -> list[str]:
+    missing = []
+    for table in _WRITE_TABLES[source]:
+        try:
+            _exec(get_client().table(table).select("*").limit(1))
+        except Exception as exc:
+            missing.append(f"{table} ({type(exc).__name__}: {str(exc)[:150]})")
+    return missing
+
 
 # Re-fetch this many days before the latest stored date, to catch late
 # corrections, late-published articles and filings indexed after the fact.
@@ -92,6 +111,12 @@ def _notice(msg: str) -> None:
         print(f"::notice title=backfill_gaps::{msg}", flush=True)
 
 
+def _error(msg: str) -> None:
+    print(f"!!! {msg}", flush=True)
+    if os.getenv("GITHUB_ACTIONS"):
+        print(f"::error title=backfill_gaps::{msg[:3000]}", flush=True)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument(
@@ -119,21 +144,31 @@ def main(argv: list[str] | None = None) -> int:
 
     today = date.today()
     plan: list[tuple[str, date]] = []
+    failed: list[str] = []
     for source in sources:
-        start, note = gap_start(source, today, args.max_days, args.since)
+        try:
+            start, note = gap_start(source, today, args.max_days, args.since)
+        except Exception as exc:
+            _error(f"{source}: gap detection failed — {type(exc).__name__}: {exc}")
+            failed.append(source)
+            continue
         _notice(f"{source:8} from {start} ({(today - start).days} days)  — {note}")
         plan.append((source, start))
 
     if args.dry_run:
-        return 0
+        for source in sources:
+            for m in missing_tables(source):
+                _error(f"{source}: cannot read table {m}")
+                if source not in failed:
+                    failed.append(source)
+        return 1 if failed else 0
 
-    failed: list[str] = []
     for source, start in plan:
         print(f"\n=== backfill {source} from {start}", flush=True)
         try:
             _run_source(source, start, args.budget_min * 60)
         except Exception as exc:  # job_run already logged + alerted
-            print(f"!!! {source} failed: {type(exc).__name__}: {exc}", flush=True)
+            _error(f"{source} failed: {type(exc).__name__}: {exc}")
             failed.append(source)
 
     if failed:
