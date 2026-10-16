@@ -14,6 +14,7 @@ from src.adapters.base import (
     RawEarningsSurprise,
     RawFiling,
     RawFinancialReport,
+    RawInsiderSentiment,
     RawNewsArticle,
     RawPriceBar,
     RawVisaApplication,
@@ -238,5 +239,37 @@ def insert_visa_applications(apps: list[RawVisaApplication]) -> int:
     ]
     get_client().table("raw_visa_applications").upsert(
         rows, on_conflict="source,ticker,case_number", ignore_duplicates=True
+    ).execute()
+    return len(rows)
+
+
+def insert_insider_sentiment(rows_in: list[RawInsiderSentiment]) -> int:
+    """Insert monthly insider sentiment; idempotent on the month *and* its values.
+
+    The current month keeps changing as new Form 4s are filed, so the natural
+    key includes change and mspr: an identical re-fetch is a no-op, while a
+    revised month lands as a new row with a later valid_from (point-in-time
+    readers keep the latest version known as of a date).
+    """
+    if not rows_in:
+        return 0
+    now = _now()
+    rows = [
+        {
+            "source": r.source,
+            "ticker": r.ticker,
+            "period": date(r.year, r.month, 1).isoformat(),
+            "year": r.year,
+            "month": r.month,
+            "change": r.change,
+            "mspr": r.mspr,
+            "payload_json": r.payload,
+            "valid_from": now,
+            "ingested_at": now,
+        }
+        for r in rows_in
+    ]
+    get_client().table("raw_insider_sentiment").upsert(
+        rows, on_conflict="source,ticker,period,change,mspr", ignore_duplicates=True
     ).execute()
     return len(rows)

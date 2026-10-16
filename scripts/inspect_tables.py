@@ -10,6 +10,7 @@ TABLES = {
     "raw_earnings_surprises": ("ticker", "period"),
     "raw_earnings_calendar": ("ticker", "event_date"),
     "raw_visa_applications": ("ticker", "received_date"),
+    "raw_insider_sentiment": ("ticker", "period"),
     "price_bars_daily": ("ticker", "bar_date"),
     "dim_ticker": ("ticker", None),
 }

@@ -138,6 +138,21 @@ class RawVisaApplication:
     payload: dict[str, Any] = field(default_factory=dict)
 
 
+@dataclass
+class RawInsiderSentiment:
+    """Finnhub insider-sentiment — monthly aggregate of insider (Form 4) trades.
+
+    mspr: Monthly Share Purchase Ratio, -100 (all selling) to 100 (all buying).
+    change: net shares bought (+) or sold (-) by insiders in the month.
+    """
+    source: str
+    ticker: str
+    year: int
+    month: int
+    change: float | None
+    mspr: float | None
+    payload: dict[str, Any] = field(default_factory=dict)
+
 class PriceAdapter(Protocol):
     """Contract for price sources (yfinance)."""
 

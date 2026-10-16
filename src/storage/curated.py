@@ -568,3 +568,8 @@ def get_news_sentiment(
     query = query.order("date", desc=False)
     rows = _paginate(query)
     return rows
+
+
+def get_insider_sentiment(ticker: str, months: int = 12, as_of: date | None = None) -> list[dict]:
+    """Point-in-time monthly insider sentiment (latest revision per month), ascending."""
+    return _pit_rows("raw_insider_sentiment", ticker, "period", as_of, months)
