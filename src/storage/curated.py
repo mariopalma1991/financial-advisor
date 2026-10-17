@@ -244,24 +244,28 @@ def prune_indicators(keep_days: int) -> None:
 
 # ---------- fundamentals ----------
 
-_FUND_FIELDS = ("revenue", "net_income", "eps", "total_debt", "equity", "gross_margin", "net_margin", "growth_yoy")
+_FUND_FIELDS = (
+    "eps", "sales_per_share", "book_value_per_share", "gross_margin", "operating_margin",
+    "net_margin", "fcf_margin", "roe_ttm", "roa_ttm", "debt_to_equity", "current_ratio",
+    "pe_ttm", "pb", "ps_ttm", "growth_yoy",
+)
 
 
 def _same_fundamental(cur: dict, r: dict) -> bool:
-    """None-aware field comparison: filling a previously-null field IS a change."""
+    """None-aware comparison at real (float4) precision: filling a null IS a change."""
     for k in _FUND_FIELDS:
         a, b = cur.get(k), r.get(k)
         if a is None and b is None:
             continue
         if a is None or b is None:
             return False
-        if abs(float(a) - float(b)) > 1e-6:
+        if abs(float(a) - float(b)) > 1e-6 * max(1.0, abs(float(b))):
             return False
     return True
 
 
 def upsert_fundamentals(rows: list[dict[str, Any]]) -> int:
-    """Rows come from transforms/fundamentals.py (quarterly, one per metric set)."""
+    """Insert quarters that are new or whose values Finnhub revised (versioned)."""
     if not rows:
         return 0
     tickers = sorted({r["ticker"] for r in rows})
@@ -269,14 +273,34 @@ def upsert_fundamentals(rows: list[dict[str, Any]]) -> int:
     now = _now()
     out = []
     for r in rows:
-        key = (r["ticker"], str(r["period_end"]))
-        cur = current.get(key)
+        cur = current.get((r["ticker"], str(r["period_end"])))
         if cur and _same_fundamental(cur, r):
             continue
-        out.append({**r, "ingested_at": now})
-    if out:
-        get_client().table("fundamentals_quarterly").insert(out).execute()
+        out.append({**r, "valid_from": now, "ingested_at": now, "run_id": current_run_id()})
+    for i in range(0, len(out), 1000):
+        get_client().table("fundamentals_quarterly").insert(out[i : i + 1000]).execute()
     return len(out)
+
+
+def upsert_fundamentals_snapshot(rows: list[dict[str, Any]]) -> int:
+    """One row per (ticker, as_of); a re-run on the same day overwrites it."""
+    if not rows:
+        return 0
+    now = _now()
+    payload = [{**r, "ingested_at": now, "run_id": current_run_id()} for r in rows]
+    for i in range(0, len(payload), 1000):
+        get_client().table("fundamentals_snapshot").upsert(
+            payload[i : i + 1000], on_conflict="ticker,as_of"
+        ).execute()
+    return len(payload)
+
+
+def get_fundamentals_snapshot(ticker: str, as_of: date | None = None) -> dict | None:
+    query = get_client().table("fundamentals_snapshot").select("*").eq("ticker", ticker)
+    if as_of:
+        query = query.lte("as_of", as_of.isoformat())
+    rows = query.order("as_of", desc=True).limit(1).execute().data
+    return rows[0] if rows else None
 
 
 # ---------- screener & feeds ----------

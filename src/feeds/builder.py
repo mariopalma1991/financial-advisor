@@ -79,31 +79,35 @@ def build_price_technicals(ticker: str, as_of: date | None = None) -> dict[str, 
 
 
 def build_fundamentals(ticker: str, as_of: date | None = None) -> dict[str, Any]:
+    """Valuation and quality: latest Finnhub snapshot + last 8 quarters of ratios."""
+    snap = curated.get_fundamentals_snapshot(ticker, as_of=as_of)
     rows = curated.get_fundamentals(ticker, quarters=8, as_of=as_of)
-    if not rows:
+    if not snap and not rows:
         return {}
-    latest = rows[-1]
-    bars = curated.get_price_history(ticker, window_days=5, as_of=as_of)
-    close = bars[-1]["close"] if bars else None
-    eps_vals = [r["eps"] for r in rows[-4:] if r.get("eps")]
-    eps_ttm = sum(eps_vals) if len(eps_vals) == 4 else None
-    debt, equity = latest.get("total_debt"), latest.get("equity")
+    snap = snap or {}
     return {
+        "as_of": str(snap["as_of"]) if snap.get("as_of") else None,
+        "valuation": {k: _r(snap.get(k)) for k in ("pe_ttm", "pb", "ps_ttm", "pfcf_ttm", "dividend_yield")},
+        "growth": {
+            k: _r(snap.get(k))
+            for k in ("revenue_growth_ttm_yoy", "revenue_growth_q_yoy", "revenue_growth_3y",
+                      "eps_growth_ttm_yoy", "eps_growth_q_yoy")
+        },
+        "quality": {
+            k: _r(snap.get(k))
+            for k in ("gross_margin_ttm", "operating_margin_ttm", "net_margin_ttm", "roe_ttm", "roa_ttm")
+        },
+        "leverage": {k: _r(snap.get(k)) for k in ("debt_to_equity", "current_ratio")},
+        "market_cap_musd": _r(snap.get("market_cap"), 0),
+        "beta": _r(snap.get("beta"), 2),
         "quarters": [
             {
                 "period_end": str(r["period_end"]),
-                "revenue": _r(r.get("revenue"), 0),
-                "net_income": _r(r.get("net_income"), 0),
-                "eps": _r(r.get("eps"), 2),
-                "growth_yoy": _r(r.get("growth_yoy")),
+                **{k: _r(r.get(k)) for k in ("eps", "gross_margin", "operating_margin", "net_margin",
+                                             "growth_yoy", "debt_to_equity", "pe_ttm")},
             }
             for r in rows
         ],
-        "pe_ttm": _r(close / eps_ttm if close and eps_ttm else None, 2),
-        "debt_to_equity": _r(debt / equity if debt and equity else None, 3),
-        "gross_margin": _r(latest.get("gross_margin")),
-        "net_margin": _r(latest.get("net_margin")),
-        "revenue_growth_yoy": _r(latest.get("growth_yoy")),
     }
 
 

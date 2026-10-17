@@ -2,7 +2,9 @@
 
 Idempotent: raw upserts ignore duplicates on (source, ticker, event_date, quarter).
 
-Finnhub free tier returns 1 month of data. Weekly schedule keeps the window fresh.
+One call without a symbol returns every company reporting in the date range, so
+we fetch the whole market one day at a time (a busy day has a few hundred
+reports) and keep our universe: ~45 calls instead of one per symbol (~46 min).
 
 Rate limit: Finnhub plan allows 30 calls/min → 2.1s between calls.
 """
@@ -18,9 +20,8 @@ from src.quality.run_metadata import job_run
 from src.storage import curated, raw
 
 _CALL_DELAY = 2.1  # Finnhub plan: 30 calls/min
-# ~1,150 symbols x 2.1 s = ~46 min. Rows are written every 100 symbols inside
-# this budget, which leaves room for setup before the 60 min workflow timeout.
-_BUDGET_S = 48 * 60
+_BUDGET_S = 20 * 60
+_DAYS_BACK, _DAYS_AHEAD = 7, 37  # last week's actuals + the next five weeks
 
 
 def main() -> None:
@@ -28,20 +29,20 @@ def main() -> None:
         synced = curated.sync_dim_tickers()
         symbols = all_symbols()
 
+        universe = set(symbols)
         today = date.today()
-        _from = (today - timedelta(days=7)).isoformat()
-        to = (today + timedelta(days=30)).isoformat()
+        days = [(today + timedelta(days=d)).isoformat() for d in range(-_DAYS_BACK, _DAYS_AHEAD + 1)]
 
         adapter = FinnhubEarningsCalendarAdapter()
-        # Errors are counted and reported (and a rejected API key fails the
-        # job) by the shared loop. No rotation: one run covers the whole universe.
+        # The shared loop paces calls, reports errors and fails on a rejected key;
+        # here each "symbol" is a day.
         res = fetch_symbols(
-            symbols,
-            lambda s: adapter.fetch(_from=_from, to=to, symbols=[s], strict=True),
+            days,
+            lambda d: [e for e in adapter.fetch(_from=d, to=d, strict=True) if e.ticker in universe],
             em=em,
             label="finnhub earnings calendar",
             delay_s=_CALL_DELAY,
-            max_symbols=len(symbols),
+            max_symbols=len(days),
             budget_s=_BUDGET_S,
             flush=raw.insert_earnings_calendar,
         )
@@ -49,7 +50,7 @@ def main() -> None:
             "INFO",
             "source_fetched",
             "finnhub earnings calendar",
-            payload={"events": res.n_items, "symbols": len(res.processed)},
+            payload={"events": res.n_items, "days": len(res.processed)},
         )
 
         if res.rows_written:
