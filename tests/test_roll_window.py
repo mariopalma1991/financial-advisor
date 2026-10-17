@@ -33,7 +33,7 @@ def test_roll_archives_then_deletes_exact_ids(monkeypatch):
     calls = []
     monkeypatch.setattr(archive_cold, "_cold_rows",
                         lambda t: iter([("2025-03", [_news(1, 3), _news(2, 3)]), ("2025-04", [_news(3, 4)])]))
-    monkeypatch.setattr(archive_cold, "_delete_ids", lambda t, ids: calls.append((t, ids)) or len(ids))
+    monkeypatch.setattr(archive_cold, "_delete_ids", lambda t, ids, **_: calls.append((t, ids)) or len(ids))
     monkeypatch.setattr(archive_cold, "_db_size", lambda: "300 MB")
 
     out = archive_cold.roll(["raw_news_articles"], s3=s3)
@@ -50,7 +50,7 @@ def test_roll_archives_then_deletes_exact_ids(monkeypatch):
 def test_roll_deletes_nothing_when_window_is_empty(monkeypatch):
     s3 = FakeS3()
     monkeypatch.setattr(archive_cold, "_cold_rows", lambda t: iter([]))
-    monkeypatch.setattr(archive_cold, "_delete_ids", lambda t, ids: (_ for _ in ()).throw(AssertionError))
+    monkeypatch.setattr(archive_cold, "_delete_ids", lambda t, ids, **_: (_ for _ in ()).throw(AssertionError))
     monkeypatch.setattr(archive_cold, "_db_size", lambda: "300 MB")
     assert archive_cold.roll(["price_bars_daily"], s3=s3) == {"price_bars_daily": {"archived": 0, "deleted": 0}}
     assert archive.read_manifest("price_bars_daily", s3=s3) is None

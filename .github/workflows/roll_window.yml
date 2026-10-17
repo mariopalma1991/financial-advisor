@@ -1,7 +1,7 @@
 name: roll_window
 
 # Monthly rolling window (src/jobs/archive_cold.py `roll`): rows that left the
-# hot window (news 180 days, price bars and filings 3 years) move to the
+# hot window (news 180 days, price bars and filings 2 years) move to the
 # Parquet archive in Supabase Storage and are deleted from Postgres, which keeps
 # the database under the 0.5 GB free cap. Runs on the 2nd, after the monthly
 # ingests; never alongside archive_cold.
@@ -9,7 +9,12 @@ name: roll_window
 on:
   schedule:
     - cron: "0 9 2 * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      vacuum_full:
+        description: "Compact tables afterwards (one-off, after shrinking a window)"
+        type: boolean
+        default: false
 
 concurrency:
   group: archive-cold
@@ -40,4 +45,6 @@ jobs:
         run: pip install -e .
 
       - name: Roll the hot window
-        run: python -m src.jobs.archive_cold roll
+        env:
+          VACUUM_FULL: ${{ inputs.vacuum_full && '--vacuum-full' || '' }}
+        run: python -m src.jobs.archive_cold roll $VACUUM_FULL
