@@ -1,18 +1,21 @@
 name: ingest_filings
 
-# Daily SEC filing metadata ingestion from Finnhub (10-K, 10-Q, 8-K).
-# Runs 14:00 UTC Mon-Sat (~8am Mexico City).
+# Daily SEC filing lists from EDGAR (the forms in platform.yaml keep_forms).
+# Runs 14:00 UTC Mon-Sat (~8am Mexico City), before enrich_filings at 15:00.
 
 on:
   schedule:
     - cron: "0 14 * * 1-6"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Look back N days (default 30 from platform.yaml)"
+        required: false
+        default: ""
 
-# Finnhub allows 30 calls/min for the whole account, so Finnhub workflows run
-# one at a time: a run queues while another holds the group. GitHub keeps only
-# the newest pending run per group; an older pending one is cancelled.
+# EDGAR has its own limit (10 requests/s), shared with enrich_filings.
 concurrency:
-  group: finnhub-api
+  group: sec-edgar
   cancel-in-progress: false
 
 jobs:
@@ -30,12 +33,15 @@ jobs:
 
       - name: Install dependencies
         run: pip install -e .
+        env:
+          PIP_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu
 
-      - name: Ingest filings (Finnhub SEC)
+      - name: Ingest filings (SEC EDGAR)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
-          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
-        run: python -m src.jobs.ingest_filings
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          DAYS: ${{ inputs.days }}
+        run: python -m src.jobs.ingest_filings ${DAYS:+--days "$DAYS"}

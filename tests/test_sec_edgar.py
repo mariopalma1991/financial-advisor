@@ -68,3 +68,37 @@ def test_form4_summary():
     assert s["codes"] == ["M", "S"]
     assert s["sell_value"] == 50500.0 and s["buy_value"] == 0
     assert s["net_shares"] == -600.0
+
+
+def test_parse_company_tickers():
+    from src.adapters.sec_edgar import parse_company_tickers
+    doc = {"0": {"cik_str": 320193, "ticker": "AAPL", "title": "Apple"},
+           "1": {"cik_str": 1067983, "ticker": "BRK-B", "title": "Berkshire"}}
+    assert parse_company_tickers(doc) == {"AAPL": 320193, "BRK-B": 1067983}
+
+
+def test_parse_recent_filings_filters_date_and_form():
+    from src.adapters.sec_edgar import parse_recent_filings
+    doc = {"filings": {"recent": {
+        "accessionNumber": ["0000316709-26-000035", "0000316709-26-000030", "0000316709-26-000020"],
+        "form": ["8-K", "S-8", "4"],
+        "filingDate": ["2026-10-15", "2026-10-14", "2026-09-01"],
+        "acceptanceDateTime": ["2026-10-15T07:30:12.000Z", "", ""],
+        "items": ["2.02,9.01", "", ""],
+        "primaryDocument": ["schw-20261015.htm", "", ""],
+        "reportDate": ["2026-10-15", "", ""],
+    }}}
+    out = parse_recent_filings(doc, "2026-10-01", {"8-K", "4"})
+    assert [f["accession"] for f in out] == ["0000316709-26-000035"]
+    assert out[0]["items"] == ["2.02", "9.01"] and out[0]["accepted"].startswith("2026-10-15")
+
+
+def test_to_raw_filing_builds_index_url_parse_index_url_reads():
+    from src.adapters.sec_edgar import parse_index_url
+    from src.jobs.ingest_filings import resolve_ciks, to_raw_filing
+    f = {"accession": "0000316709-26-000035", "form": "8-K", "filing_date": "2026-10-15",
+         "accepted": None, "items": ["2.02"], "primary": "x.htm", "report_date": None}
+    r = to_raw_filing("SCHW", 316709, f)
+    assert parse_index_url(r.url) == (316709, "000031670926000035")
+    assert r.filed_at.isoformat() == "2026-10-15T00:00:00+00:00" and r.source == "sec_edgar"
+    assert resolve_ciks(["BRK.B", "ZZZ", "OLD"], {"BRK-B": 1}, {"OLD": 7}) == {"BRK.B": 1, "OLD": 7}

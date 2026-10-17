@@ -96,9 +96,10 @@ def insert_filings(filings: list[RawFiling]) -> int:
         }
         for f in filings
     ]
-    get_client().table("raw_filings").upsert(
-        rows, on_conflict="accession_no", ignore_duplicates=True
-    ).execute()
+    for i in range(0, len(rows), 1000):
+        get_client().table("raw_filings").upsert(
+            rows[i : i + 1000], on_conflict="accession_no", ignore_duplicates=True
+        ).execute()
     return len(rows)
 
 
