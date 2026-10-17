@@ -14,6 +14,7 @@ import pandas as pd
 from src.config import load_cost_model, load_platform
 from src.storage import curated
 from src.transforms.adjustments import adjust_bars
+from src.transforms.insider_sentiment import summarize as summarize_insider_sentiment
 
 SCHEMA_VERSION = "1.0"
 
@@ -143,6 +144,11 @@ def build_news_sentiment(ticker: str, as_of: date | None = None) -> dict[str, An
     }
 
 
+def build_insider_sentiment(ticker: str, as_of: date | None = None) -> dict[str, Any]:
+    """Insider buying/selling pressure (Form 4, monthly): MSPR and net shares."""
+    return summarize_insider_sentiment(curated.get_insider_sentiment(ticker, months=12, as_of=as_of))
+
+
 def build_screener_feed(ticker: str) -> dict[str, Any]:
     rows = [r for r in curated.get_screener_results(matched_only=True) if r["ticker"] == ticker]
     if not rows:
@@ -184,6 +190,7 @@ def build_full(ticker: str, feeds: dict[str, dict[str, Any]]) -> dict[str, Any]:
         "price_summary": feeds.get("price_technicals", {}),
         "fundamentals": feeds.get("fundamentals", {}),
         "news_digest": feeds.get("news_sentiment", {}),
+        "insider_sentiment": feeds.get("insider_sentiment", {}),
         "screener": feeds.get("screener", {}),
         "data_quality": feeds.get("data_quality", {}),
         "cost_context": {
@@ -206,6 +213,7 @@ def build_all(as_of: date | None = None) -> int:
             "price_technicals": build_price_technicals(ticker, as_of),
             "fundamentals": build_fundamentals(ticker, as_of),
             "news_sentiment": build_news_sentiment(ticker, as_of),
+            "insider_sentiment": build_insider_sentiment(ticker, as_of),
             "screener": build_screener_feed(ticker),
             "data_quality": build_data_quality(ticker),
         }

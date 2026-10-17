@@ -46,7 +46,7 @@ def get_research_package(ticker: str, as_of: str | None = None) -> dict[str, Any
 
 def get_feed(ticker: str, feed: str, as_of: str | None = None) -> dict[str, Any]:
     """One role-scoped feed by name (price_technicals | fundamentals |
-    news_sentiment | screener | data_quality | full). Every response carries
+    news_sentiment | insider_sentiment | screener | data_quality | full). Every response carries
     its snapshot_id for audit."""
     pkg = curated.get_latest_package(ticker, feed=feed, as_of=_parse_as_of(as_of))
     if pkg is None:
