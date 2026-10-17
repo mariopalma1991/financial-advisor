@@ -151,9 +151,12 @@ def insert_financial_reports(reports: list[RawFinancialReport]) -> int:
         }
         for r in reports
     ]
-    get_client().table("raw_financial_reports").upsert(
-        rows, on_conflict="source,ticker,access_number", ignore_duplicates=True
-    ).execute()
+    # Each report carries its full statements as JSON: one request with thousands of
+    # them hit Postgres' statement timeout, so write in small chunks.
+    for i in range(0, len(rows), 100):
+        get_client().table("raw_financial_reports").upsert(
+            rows[i : i + 100], on_conflict="source,ticker,access_number", ignore_duplicates=True
+        ).execute()
     return len(rows)
 
 

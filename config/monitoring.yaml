@@ -13,6 +13,7 @@ jobs:
   ingest_earncal: { max_hours: 192 }     # weekly
   ingest_insider_sentiment: { max_hours: 192 }  # weekly
   ingest_visa: { max_hours: 768 }        # monthly
+  compute_indicators: { max_hours: 54 }  # after each ingest_prices
   roll_window: { max_hours: 768 }        # monthly, 2nd 09:00 UTC
 
 # Tables that grow every run: the newest row must be younger than max_hours.
