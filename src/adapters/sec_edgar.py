@@ -99,11 +99,16 @@ def pick_text_document(index: dict[str, Any], primary: str) -> str:
     return primary
 
 
+# SGML wrapper EDGAR leaves at the top of a document: "EX-99.1 2 file.htm EX-99.1 Document"
+_SGML_HEAD = re.compile(r"^(?P<type>[\w./-]+) \d+ \S+\.(?:htm|html|txt)(?: (?P=type))?(?: Document)? ", re.IGNORECASE)
+
+
 def html_to_text(raw: str, limit: int = 6000) -> str:
     s = re.sub(r"(?is)<(script|style).*?</\1>", " ", raw)
     s = re.sub(r"(?s)<[^>]+>", " ", s)
     s = html.unescape(s)
-    return re.sub(r"\s+", " ", s).strip()[:limit]
+    s = re.sub(r"\s+", " ", s).strip()
+    return _SGML_HEAD.sub("", s, count=1)[:limit]
 
 
 def _f(x: str | None) -> float | None:
