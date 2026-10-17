@@ -1,12 +1,10 @@
 name: ingest_financials
 
-# Weekly financials as reported ingestion from Finnhub.
-# Financial statements are quarterly; weekly refresh catches new filings.
-# Runs Monday 16:00 UTC (~10am Mexico City).
+# Financials as reported from Finnhub. Manual only: fundamentals now come from
+# /stock/metric (ingest_fundamentals), and this job cost ~46 min of Finnhub quota
+# a week (10-Q values are year-to-date and there are no 10-Ks, so agents can't use them).
 
 on:
-  schedule:
-    - cron: "0 16 * * 1"
   workflow_dispatch: {}
 
 # Finnhub allows 30 calls/min for the whole account, so Finnhub workflows run

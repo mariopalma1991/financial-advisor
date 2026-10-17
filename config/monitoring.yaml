@@ -8,7 +8,6 @@ jobs:
   ingest_prices: { max_hours: 54 }       # Mon-Sat 02:00 UTC
   ingest_news: { max_hours: 12 }         # 3x/day
   ingest_filings: { max_hours: 54 }      # Mon-Sat 14:00 UTC
-  ingest_financials: { max_hours: 192 }  # weekly
   ingest_fundamentals: { max_hours: 192 }  # weekly, Tue 16:00 UTC
   ingest_earnings: { max_hours: 192 }    # weekly
   ingest_earncal: { max_hours: 192 }     # weekly, ~2 min (whole market per day)
