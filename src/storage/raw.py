@@ -20,7 +20,7 @@ from src.adapters.base import (
     RawVisaApplication,
 )
 from src.quality.run_metadata import current_run_id
-from src.storage.supabase_client import get_client
+from src.storage.supabase_client import get_client, pg_connection
 
 
 def _now() -> str:
@@ -100,6 +100,13 @@ def insert_filings(filings: list[RawFiling]) -> int:
         rows, on_conflict="accession_no", ignore_duplicates=True
     ).execute()
     return len(rows)
+
+
+def delete_filings_except(keep_forms: list[str]) -> int:
+    """Delete filings whose form is not in keep_forms; returns rows deleted."""
+    with pg_connection() as conn, conn.cursor() as cur:
+        cur.execute("delete from raw_filings where form_type <> all(%s)", (keep_forms,))
+        return cur.rowcount
 
 
 def insert_news_articles(articles: list[RawNewsArticle]) -> int:

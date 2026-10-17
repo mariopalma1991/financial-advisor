@@ -33,6 +33,7 @@ def run(
     """
     cfg = load_platform().ingestion["news"]
     synced = curated.sync_dim_tickers()
+    aliases = curated.sync_ticker_aliases()
     symbols = all_symbols()
 
     to = date.today().isoformat()
@@ -68,7 +69,7 @@ def run(
         "INFO",
         "rows_written",
         "raw_news_articles",
-        payload={"rows": n_raw, "dim_tickers_synced": synced},
+        payload={"rows": n_raw, "dim_tickers_synced": synced, "ticker_aliases": aliases},
     )
 
 

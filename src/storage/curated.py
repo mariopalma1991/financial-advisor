@@ -20,7 +20,7 @@ from typing import Any
 from src.adapters.base import RawPriceBar
 from src.config import load_curated_universe
 from src.quality.run_metadata import current_run_id
-from src.storage.supabase_client import _exec, _paginate, get_client
+from src.storage.supabase_client import _exec, _paginate, get_client, pg_connection
 
 
 def _now() -> str:
@@ -240,6 +240,28 @@ def prune_indicators(keep_days: int) -> None:
     """Drop indicator rows older than keep_days (they can be recomputed from prices)."""
     cutoff = (date.today() - timedelta(days=keep_days)).isoformat()
     get_client().table("indicators_daily").delete().lt("bar_date", cutoff).execute()
+
+
+# ---------- news relevance ----------
+
+def sync_ticker_aliases() -> int:
+    """Rebuild ticker_aliases from the curated universe (+ config/news_aliases.yaml)."""
+    from src.config import _load_yaml
+    from src.transforms.ticker_aliases import patterns_for
+
+    extra = (_load_yaml("news_aliases.yaml") or {}).get("aliases", {})
+    rows = {
+        (t.symbol, pattern): cs
+        for t in load_curated_universe().enabled()
+        for pattern, cs in patterns_for(t.symbol, t.name or "", extra.get(t.symbol, []))
+    }
+    with pg_connection() as conn, conn.cursor() as cur:
+        cur.execute("delete from ticker_aliases")
+        cur.executemany(
+            "insert into ticker_aliases (ticker, pattern, case_sensitive) values (%s, %s, %s)",
+            [(t, p, cs) for (t, p), cs in rows.items()],
+        )
+    return len(rows)
 
 
 # ---------- fundamentals ----------

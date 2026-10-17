@@ -17,6 +17,16 @@ ingestion:
     max_symbols_per_run: 900
     fetch_budget_min: 35
     lookback_days: 30
+    # Only these forms are stored; the rest (prospectus supplements, S-8, 13F,
+    # proxy soliciting material...) never reaches an agent. 6-K/20-F/40-F are the
+    # foreign-issuer equivalents of 8-K/10-K, needed for the ADRs listed on the SIC.
+    keep_forms: [
+      "8-K", "8-K/A", "6-K", "10-K", "10-K/A", "10-Q", "10-Q/A", "20-F", "20-F/A", "40-F",
+      "4", "4/A", "144", "144/A",
+      "SC 13D", "SC 13D/A", "SCHEDULE 13D", "SCHEDULE 13D/A",
+      "SC 13G", "SC 13G/A", "SCHEDULE 13G", "SCHEDULE 13G/A",
+      "DEF 14A", "DEFM14A", "PREM14A", "425", "SC TO-T", "SC TO-I", "SC 14D9", "S-1", "S-1/A",
+    ]
   news: # Phase 2
     schedule_cron: "0 13,19,23 * * *"
     # 3 runs/day x 300 symbols rotates through the universe about every 1.3 days.
