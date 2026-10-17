@@ -190,3 +190,48 @@ def test_known_articles_are_not_rescored(monkeypatch):
     by_id = {r["article_id"]: r["sentiment_score"] for r in rows}
     assert by_id == {"fh_1": -0.2, "fh_2": 0.5}
     assert {r["ticker"] for r in daily} == {"AAPL"}
+
+
+def test_flush_writes_in_batches_inside_the_loop(monkeypatch):
+    monkeypatch.delenv("GITHUB_RUN_NUMBER", raising=False)
+    batches: list[list[str]] = []
+
+    def flush(items):
+        batches.append(list(items))
+        return len(items) * 10
+
+    res = _symbol_loop.fetch_symbols(
+        [f"S{i}" for i in range(5)], lambda s: [s, s + "b"], em=MagicMock(), label="t",
+        delay_s=0, max_symbols=10, budget_s=60, flush=flush, flush_every=2,
+    )
+    assert [len(b) for b in batches] == [4, 4, 2]  # every 2 symbols, then the rest
+    assert res.items == [] and res.n_items == 10 and res.rows_written == 100
+
+
+def test_flush_keeps_rows_fetched_before_the_budget_ran_out(monkeypatch):
+    monkeypatch.delenv("GITHUB_RUN_NUMBER", raising=False)
+    clock = iter(range(0, 1000, 10))
+    monkeypatch.setattr(_symbol_loop.time, "monotonic", lambda: next(clock))
+    written: list[str] = []
+    res = _symbol_loop.fetch_symbols(
+        [f"S{i}" for i in range(50)], lambda s: [s], em=MagicMock(), label="t",
+        delay_s=0, max_symbols=50, budget_s=60, flush=lambda b: written.extend(b) or len(b),
+        flush_every=100,
+    )
+    assert res.stopped_by_budget and written == res.processed and res.rows_written == len(written)
+
+
+def test_calls_are_paced_start_to_start(monkeypatch):
+    monkeypatch.delenv("GITHUB_RUN_NUMBER", raising=False)
+    now = [0.0]
+    sleeps: list[float] = []
+    monkeypatch.setattr(_symbol_loop.time, "monotonic", lambda: now[0])
+    monkeypatch.setattr(_symbol_loop.time, "sleep", lambda s: sleeps.append(s) or now.__setitem__(0, now[0] + s))
+
+    def fetch(s):
+        now[0] += 0.5  # request latency
+        return [s]
+
+    _symbol_loop.fetch_symbols(["A", "B", "C"], fetch, em=MagicMock(), label="t",
+                               delay_s=2.1, max_symbols=10, budget_s=60)
+    assert sleeps == pytest.approx([1.6, 1.6])

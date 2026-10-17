@@ -16,8 +16,9 @@ from src.quality.run_metadata import job_run
 from src.storage import curated, raw
 
 _CALL_DELAY = 2.1  # Finnhub plan: 30 calls/min
-# ~1,150 symbols x 2.1 s = ~40 min; stop cleanly before the 60 min workflow timeout.
-_BUDGET_S = 50 * 60
+# ~1,150 symbols x 2.1 s = ~46 min. Rows are written every 100 symbols inside
+# this budget, which leaves room for setup before the 60 min workflow timeout.
+_BUDGET_S = 48 * 60
 
 
 def main() -> None:
@@ -36,23 +37,21 @@ def main() -> None:
             delay_s=_CALL_DELAY,
             max_symbols=len(symbols),
             budget_s=_BUDGET_S,
+            flush=raw.insert_earnings_surprises,
         )
-        all_surprises = res.items
-
         em.emit(
             "INFO",
             "source_fetched",
             "finnhub earnings",
-            payload={"surprises": len(all_surprises), "symbols": len(res.processed)},
+            payload={"surprises": res.n_items, "symbols": len(res.processed)},
         )
 
-        if all_surprises:
-            n = raw.insert_earnings_surprises(all_surprises)
+        if res.rows_written:
             em.emit(
                 "INFO",
                 "rows_written",
                 "raw_earnings_surprises",
-                payload={"rows": n, "dim_tickers_synced": synced},
+                payload={"rows": res.rows_written, "dim_tickers_synced": synced},
             )
 
 
