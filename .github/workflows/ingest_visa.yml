@@ -1,6 +1,7 @@
 name: ingest_visa
 
-# Monthly visa application ingestion from Finnhub (H1-B + Permanent).
+# Monthly visa application ingestion from Finnhub (H1-B + Permanent), written to
+# the Storage archive (market-archive bucket), not Postgres.
 # DOL data is updated quarterly; monthly refresh catches new releases.
 # Runs 1st of month at 12:00 UTC.
 
@@ -39,4 +40,8 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          SUPABASE_S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
+          SUPABASE_S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
+          SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
+          SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
         run: python -m src.jobs.ingest_visa

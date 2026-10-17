@@ -2,9 +2,10 @@ name: archive_cold
 
 # Moves heavy raw history from Postgres (0.5 GB free cap) to Parquet in the
 # Supabase Storage bucket (1 GB). See src/jobs/archive_cold.py.
-# On a pull request that touches the archive code it runs `check` + `export`
-# (non-destructive). `prune` deletes from Postgres and only runs by hand, with
-# the confirm input set to BORRAR.
+# On a pull request that touches the archive code it only runs `check`. Export
+# refuses to overwrite a table that already has a manifest (after a prune the
+# archive holds history Postgres no longer has). `prune` deletes from Postgres and
+# only runs by hand, with the confirm input set to BORRAR.
 
 on:
   pull_request:
@@ -60,12 +61,6 @@ jobs:
 
       - name: Check connections
         run: python -m src.jobs.archive_cold check
-
-      - name: Export to Storage (pull request)
-        if: github.event_name == 'pull_request'
-        run: |
-          python -m src.jobs.archive_cold export
-          python -m src.jobs.archive_cold verify
 
       - name: Run requested mode
         if: github.event_name == 'workflow_dispatch' && inputs.mode != 'check'
