@@ -1,7 +1,7 @@
 """Per-article enrichment at ingest time: relevance and FinBERT sentiment.
 
 Finnhub's summary (2-3 sentences) is the only article text we get. It is too big to
-keep in Postgres for every article (~55 MB at 180 days on a 500 MB plan), so
+keep in Postgres for every article (~28 MB at 90 days on a 500 MB plan), so
 ingest_news uses it here, stores the results in the article's payload and archives
 the summary itself as Parquet (news_summaries, one file per publication day):
 

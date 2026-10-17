@@ -1,0 +1,57 @@
+name: peek_archive
+
+# Prints rows from one archived Parquet partition to the job summary, so archive
+# contents can be inspected without Storage access from outside Actions.
+
+on:
+  workflow_dispatch:
+    inputs:
+      table:
+        description: "Archive table (e.g. filings_text, news_summaries)"
+        required: true
+        default: "filings_text"
+      part:
+        description: "Partition (e.g. 2026-10-15 or a ticker)"
+        required: true
+        default: "2026-10-15"
+      match:
+        description: "Only rows where any column contains this text"
+        required: false
+        default: "000031670926000035"
+  push:
+    branches: [claude/project-thread-05xrjc]
+    paths: [.github/workflows/peek_archive.yml]
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install -e .
+      - name: Peek
+        env:
+          SUPABASE_S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
+          SUPABASE_S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
+          SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
+          SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
+          TABLE: ${{ inputs.table || 'filings_text' }}
+          PART: ${{ inputs.part || '2026-10-15' }}
+          MATCH: ${{ inputs.match || '000031670926000035' }}
+        run: |
+          python - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import os
+          from src.storage import archive
+          rows = archive.read_partition(os.environ["TABLE"], os.environ["PART"]).to_pylist()
+          m = os.environ.get("MATCH", "")
+          hits = [r for r in rows if not m or any(m in str(v) for v in r.values())]
+          print(f"{len(rows)} rows in partition, {len(hits)} match\n")
+          for r in hits[:3]:
+              for k, v in r.items():
+                  print(f"**{k}**:\n\n```\n{v}\n```\n")
+          PY
