@@ -169,11 +169,15 @@ def upsert_partition(
 
     new_rows = [{k: _jsonable(v) for k, v in r.items()} for r in rows]
     if existing is not None:
-        old_rows = existing.to_pylist()
-        seen = {tuple(r.get(k) for k in key) for r in old_rows}
+        seen = set(zip(*(existing.column(k).to_pylist() for k in key)))
         new_rows = [r for r in new_rows if tuple(r.get(k) for k in key) not in seen]
         if not new_rows:
-            return 0, len(old_rows)
+            return 0, existing.num_rows
+        # Columns added to Postgres after the file was written (e.g. run_id) join as nulls.
+        incoming = pa.Table.from_pylist(new_rows).schema
+        for field in incoming:
+            if field.name not in existing.schema.names:
+                existing = existing.append_column(field, pa.nulls(existing.num_rows, field.type))
         merged = pa.concat_tables(
             [existing, pa.Table.from_pylist(new_rows, schema=existing.schema)]
         )

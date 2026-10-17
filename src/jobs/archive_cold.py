@@ -9,21 +9,35 @@ Modes (python -m src.jobs.archive_cold <mode>):
     prune   remove archived rows/payloads from Postgres, then VACUUM FULL.
             Destructive: requires --confirm BORRAR, and only touches rows ingested
             before that table's manifest was written, so nothing unarchived is lost.
+    roll    monthly rolling window (workflow roll_window): merge rows that left the
+            hot window into the archive, then delete exactly those ids from Postgres
+            and VACUUM so new rows reuse the space. Rows are deleted only after their
+            partition file and the manifest are written.
 
 Postgres keeps the hot window the feeds read: price bars and filings for the
-last HOT_YEARS years, and every news article (its payload feeds news sentiment).
+last HOT_YEARS years, and news for the last NEWS_HOT_DAYS days.
 """
 from __future__ import annotations
 
 import argparse
 import sys
-from typing import Any
+from typing import Any, Iterator
 
+from src.quality.run_metadata import job_run
 from src.storage import archive
 from src.storage.supabase_client import pg_connection
 
 HOT_YEARS = 3
+NEWS_HOT_DAYS = 180  # feeds read 30 days of news; Mario chose 180 (2026-10-17)
 CONFIRM_WORD = "BORRAR"
+
+# table -> rows outside the hot window, moved to the archive by `roll`
+ROLL_WHERE: dict[str, str] = {
+    "raw_news_articles": f"published_at < now() - interval '{NEWS_HOT_DAYS} days'",
+    "price_bars_daily": f"bar_date < current_date - interval '{HOT_YEARS} years'",
+    "raw_filings": f"filed_at < now() - interval '{HOT_YEARS} years'",
+}
+DELETE_BATCH = 5_000
 
 # table -> statements run by prune; %(ts)s = manifest exported_at
 PRUNE_SQL: dict[str, list[str]] = {
@@ -130,9 +144,73 @@ def prune(tables: list[str]) -> None:
     print(f"database size after: {_db_size()}")
 
 
+def _cold_rows(table: str) -> Iterator[tuple[str, list[dict[str, Any]]]]:
+    """Yield (partition, rows) for the rows of `table` outside its hot window."""
+    part_expr = archive.ARCHIVE_TABLES[table]
+    with pg_connection() as conn, conn.cursor(name=f"roll_{table}") as cur:
+        cur.itersize = 20_000
+        cur.execute(
+            f"select ({part_expr})::text as _part, t.* from {table} t"
+            f" where {ROLL_WHERE[table]} order by 1, id"
+        )
+        cols: list[str] | None = None
+        current, rows = None, []
+        for rec in cur:
+            if cols is None:
+                cols = [d[0] for d in cur.description][1:]
+            if rows and rec[0] != current:
+                yield current, rows
+                rows = []
+            current = rec[0]
+            rows.append(dict(zip(cols, rec[1:])))
+        if rows:
+            yield current, rows
+
+
+def _delete_ids(table: str, ids: list[int]) -> int:
+    deleted = 0
+    with pg_connection() as conn:
+        conn.autocommit = True
+        with conn.cursor() as cur:
+            for i in range(0, len(ids), DELETE_BATCH):
+                cur.execute(f"delete from {table} where id = any(%s)", (ids[i:i + DELETE_BATCH],))
+                deleted += cur.rowcount
+            cur.execute(f"vacuum analyze {table}")
+    return deleted
+
+
+def roll(tables: list[str], s3=None) -> dict[str, dict[str, int]]:
+    """Move rows that left the hot window to the archive, then delete them."""
+    s3 = s3 or archive.s3_client()
+    out = {}
+    for t in tables:
+        if t not in ROLL_WHERE:
+            continue
+        sizes: dict[str, int] = {}
+        ids: list[int] = []
+        added = 0
+        for part, rows in _cold_rows(t):
+            n, size = archive.upsert_partition(t, part, rows, ("id",), s3=s3)
+            added += n
+            sizes[part] = size
+            ids.extend(r["id"] for r in rows)
+        if not ids:
+            print(f"{t}: nothing outside the hot window", flush=True)
+            out[t] = {"archived": 0, "deleted": 0}
+            continue
+        # Manifest first: a crash after it leaves rows in both places, never in neither.
+        archive.update_manifest(t, sizes, archive.ARCHIVE_TABLES[t], s3=s3)
+        deleted = _delete_ids(t, ids)
+        print(f"{t}: {added:,} rows added to {len(sizes):,} archive files,"
+              f" {deleted:,} deleted from Postgres", flush=True)
+        out[t] = {"archived": added, "deleted": deleted}
+    print(f"database size: {_db_size()}")
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("mode", choices=["check", "export", "verify", "prune"])
+    p.add_argument("mode", choices=["check", "export", "verify", "prune", "roll"])
     p.add_argument("--tables", default=",".join(archive.ARCHIVE_TABLES))
     p.add_argument("--confirm", default="")
     p.add_argument("--force", action="store_true", help="export: overwrite existing archives")
@@ -152,6 +230,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.confirm != CONFIRM_WORD:
             p.error(f"prune is destructive: pass --confirm {CONFIRM_WORD}")
         prune(tables)
+    elif args.mode == "roll":
+        with job_run("roll_window") as em:
+            for t, n in roll(tables).items():
+                em.emit("INFO", "rows_archived", f"{t}: {n['deleted']:,} rows moved to the archive",
+                        payload={"table": t, **n})
     return 0
 
 
