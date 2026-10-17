@@ -1103,7 +1103,8 @@ tickers:
   - { symbol: "VSNT", name: "VERSANT MEDIA GROUP, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "VTRS", name: "VIATRIS INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "VXRT", name: "VAXART, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
-  - { symbol: "WBD", name: "WARNER BROS. DISCOVERY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
+  # WBD delisted 2026-10-06 after the merger with Paramount into Skydance (SKYD); 8-K items 2.01, 3.01
+  - { symbol: "WBD", name: "WARNER BROS. DISCOVERY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: false }
   - { symbol: "WDAY", name: "WORKDAY, INC.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "WDC", name: "WESTERN DIGITAL CORPORATION.", exchange: NASDAQ, currency: USD, sector: Equity, benchmark: SPY, enabled: true }
   - { symbol: "WIX", name: "WIX.COM LTD.", exchange: NASDAQ, currency: ILS, sector: Equity, benchmark: SPY, enabled: true }

@@ -102,3 +102,10 @@ def test_to_raw_filing_builds_index_url_parse_index_url_reads():
     assert parse_index_url(r.url) == (316709, "000031670926000035")
     assert r.filed_at.isoformat() == "2026-10-15T00:00:00+00:00" and r.source == "sec_edgar"
     assert resolve_ciks(["BRK.B", "ZZZ", "OLD"], {"BRK-B": 1}, {"OLD": 7}) == {"BRK.B": 1, "OLD": 7}
+
+
+def test_html_to_text_drops_sgml_header():
+    from src.adapters.sec_edgar import html_to_text
+    raw = "EX-99.1 2 a3q26exhibit991.htm EX-99.1 Document <p>Exhibit 99.1</p><p>SCHWAB DELIVERS</p>"
+    assert html_to_text(raw) == "Exhibit 99.1 SCHWAB DELIVERS"
+    assert html_to_text("<p>Results for 2026</p>") == "Results for 2026"
