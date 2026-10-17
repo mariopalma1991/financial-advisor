@@ -15,6 +15,7 @@ jobs:
   ingest_analysts: { max_hours: 192 }    # weekly, Wed 16:00 UTC
   ingest_profiles: { max_hours: 192 }    # weekly, Thu 16:00 UTC (a third of the universe)
   ingest_macro: { max_hours: 78 }        # Tue-Sat 03:00 UTC
+  enrich_filings: { max_hours: 54 }      # Mon-Sat 15:00 UTC (EDGAR)
   compute_indicators: { max_hours: 54 }  # after each ingest_prices
   roll_window: { max_hours: 768 }        # monthly, 2nd 09:00 UTC
 
