@@ -28,13 +28,14 @@ from src.storage.supabase_client import pg_connection
 
 DEFAULT_BUCKET = "market-archive"
 
-# table -> SQL expression used as the partition key
+# table -> SQL expression used as the partition key. Tables exported from Postgres.
+# raw_visa_applications is not here: its ingest writes to the archive directly
+# (see upsert_partition), so the archive, not Postgres, is its source of truth.
 ARCHIVE_TABLES: dict[str, str] = {
     "raw_price_bars": "ticker",
     "price_bars_daily": "ticker",
     "raw_financial_reports": "ticker",
     "raw_filings": "ticker",
-    "raw_visa_applications": "ticker",
     "raw_news_articles": "to_char(published_at at time zone 'UTC', 'YYYY-MM')",
 }
 
@@ -150,6 +151,54 @@ def read_partition(table: str, part: str, s3=None) -> pa.Table:
     s3 = s3 or s3_client()
     obj = s3.get_object(Bucket=bucket(), Key=f"{table}/part={_safe_key(part)}.parquet")
     return pq.read_table(io.BytesIO(obj["Body"].read()))
+
+
+def upsert_partition(
+    table: str, part: str, rows: list[dict[str, Any]], key: tuple[str, ...], s3=None
+) -> tuple[int, int]:
+    """Merge `rows` into one archived partition, keeping existing rows on key clashes.
+
+    Rows are dicts with Python values (dates, datetimes, dicts for JSON). Returns
+    (rows added, partition size). Only that partition is read, to spare egress.
+    """
+    s3 = s3 or s3_client()
+    try:
+        existing = read_partition(table, part, s3=s3)
+    except s3.exceptions.NoSuchKey:
+        existing = None
+
+    new_rows = [{k: _jsonable(v) for k, v in r.items()} for r in rows]
+    if existing is not None:
+        old_rows = existing.to_pylist()
+        seen = {tuple(r.get(k) for k in key) for r in old_rows}
+        new_rows = [r for r in new_rows if tuple(r.get(k) for k in key) not in seen]
+        if not new_rows:
+            return 0, len(old_rows)
+        merged = pa.concat_tables(
+            [existing, pa.Table.from_pylist(new_rows, schema=existing.schema)]
+        )
+    else:
+        merged = pa.Table.from_pylist(new_rows)
+
+    buf = io.BytesIO()
+    pq.write_table(merged, buf, compression="zstd")
+    s3.put_object(Bucket=bucket(), Key=f"{table}/part={_safe_key(part)}.parquet", Body=buf.getvalue())
+    return len(new_rows), merged.num_rows
+
+
+def update_manifest(table: str, partition_rows: dict[str, int], partition_by: str, s3=None) -> None:
+    """Record new partition sizes in a table's manifest (created if missing)."""
+    s3 = s3 or s3_client()
+    m = read_manifest(table, s3=s3) or {"table": table, "partition_by": partition_by, "partitions": {}}
+    m["partitions"].update({_safe_key(p): n for p, n in partition_rows.items()})
+    m["rows"] = sum(m["partitions"].values())
+    m["exported_at"] = datetime.now(timezone.utc).isoformat()
+    s3.put_object(
+        Bucket=bucket(),
+        Key=f"{table}/_manifest.json",
+        Body=json.dumps(m).encode(),
+        ContentType="application/json",
+    )
 
 
 def roundtrip_check(s3=None) -> str:

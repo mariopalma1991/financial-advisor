@@ -42,9 +42,6 @@ PRUNE_SQL: dict[str, list[str]] = {
         "update raw_filings set payload_json = null"
         " where ingested_at <= %(ts)s and payload_json is not null",
     ],
-    "raw_visa_applications": [
-        "delete from raw_visa_applications where ingested_at <= %(ts)s",
-    ],
 }
 
 
