@@ -65,7 +65,7 @@ class FinnhubVisaAdapter:
             if not self._api_key
             else finnhub.Client(api_key=self._api_key)
         )
-        return client.visa_application(symbol=symbol, _from=_from, to=to)
+        return client.stock_visa_application(symbol=symbol, _from=_from, to=to)
 
     def fetch(
         self,
