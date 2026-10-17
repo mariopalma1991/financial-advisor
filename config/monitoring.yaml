@@ -13,6 +13,9 @@ jobs:
   ingest_earnings: { max_hours: 192 }    # weekly
   ingest_earncal: { max_hours: 192 }     # weekly, ~2 min (whole market per day)
   ingest_insider_sentiment: { max_hours: 192 }  # weekly
+  ingest_analysts: { max_hours: 192 }    # weekly, Wed 16:00 UTC
+  ingest_profiles: { max_hours: 192 }    # weekly, Thu 16:00 UTC (a third of the universe)
+  ingest_macro: { max_hours: 78 }        # Tue-Sat 03:00 UTC
   compute_indicators: { max_hours: 54 }  # after each ingest_prices
   roll_window: { max_hours: 768 }        # monthly, 2nd 09:00 UTC
 
@@ -23,6 +26,16 @@ tables:
   raw_news_articles: { column: ingested_at, max_hours: 24 }
   price_bars_daily: { column: ingested_at, max_hours: 78 }
   raw_filings: { column: ingested_at, max_hours: 78 }
+
+# Per-ticker data problems (data_quality_flags view). More tickers than max_tickers
+# with the same problem means a pipeline issue, not a one-off: ERROR.
+quality:
+  stale_prices: { max_tickers: 5 }        # no bar in 4+ days (delisted, renamed, source gap)
+  bad_bar: { max_tickers: 20 }            # zero volume or non-positive open/high/low, last 30 days
+  jump_without_split: { max_tickers: 20 } # >40% one-day move with no split on record
+  indicators_behind: { max_tickers: 20 }  # indicators older than the latest bar
+  fundamentals_stale: { max_tickers: 100 } # snapshot older than 10 days
+  earnings_actual_missing: { max_tickers: 50 }
 
 # Free-plan limits (Supabase). WARN at warn_pct, ERROR at error_pct.
 budgets:

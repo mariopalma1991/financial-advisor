@@ -1,0 +1,42 @@
+name: ingest_profiles
+
+# Weekly company profiles and peers from Finnhub /stock/profile2 + /stock/peers.
+# Writes company_profiles (a third of the universe per run); feeds peer_comparison (0009).
+# Runs Thursday 16:00 UTC (10:00 CST), ~27 min.
+
+on:
+  schedule:
+    - cron: "0 16 * * 4"
+  workflow_dispatch: {}
+
+# Finnhub allows 30 calls/min for the whole account, so Finnhub workflows run
+# one at a time: a run queues while another holds the group. GitHub keeps only
+# the newest pending run per group; an older pending one is cancelled.
+concurrency:
+  group: finnhub-api
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Ingest profiles and peers (Finnhub)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: python -m src.jobs.ingest_profiles

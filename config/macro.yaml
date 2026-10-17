@@ -1,0 +1,17 @@
+# FRED series ingested daily by src/jobs/ingest_macro.py (public CSV, no API key).
+# frequency is FRED's native one; values are stored as published (percent stays percent).
+series:
+  DGS10:        { label: "US 10-year Treasury yield", unit: pct, frequency: daily }
+  DGS2:         { label: "US 2-year Treasury yield", unit: pct, frequency: daily }
+  DGS3MO:       { label: "US 3-month Treasury yield", unit: pct, frequency: daily }
+  T10Y2Y:       { label: "10y minus 2y Treasury spread", unit: pct, frequency: daily }
+  DFF:          { label: "Effective federal funds rate", unit: pct, frequency: daily }
+  BAMLH0A0HYM2: { label: "US high-yield credit spread", unit: pct, frequency: daily }
+  VIXCLS:       { label: "VIX volatility index", unit: index, frequency: daily }
+  DEXMXUS:      { label: "Mexican pesos per US dollar", unit: mxn_per_usd, frequency: daily }
+  DCOILWTICO:   { label: "WTI crude oil", unit: usd_per_barrel, frequency: daily }
+  ICSA:         { label: "US initial jobless claims", unit: claims, frequency: weekly }
+  CPIAUCSL:     { label: "US CPI, all items (index)", unit: index, frequency: monthly }
+  UNRATE:       { label: "US unemployment rate", unit: pct, frequency: monthly }
+# History kept in Postgres (the series are tiny: ~25k rows in total).
+start_date: "2016-01-01"

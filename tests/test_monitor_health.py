@@ -50,3 +50,15 @@ def test_budget_levels():
     assert mh._budget("database_mb", 369, cfg)["level"] == "INFO"
     assert mh._budget("database_mb", 420, cfg)["level"] == "WARN"
     assert mh._budget("database_mb", 490, cfg)["level"] == "ERROR"
+
+
+def test_quality_check_errors_only_above_max_tickers():
+    cur = FakeCursor([[("stale_prices", 1, ["WBD last bar 2026-10-05"]), ("bad_bar", 25, ["X"])]])
+    res = {r["name"]: r for r in mh.check_quality(cur, {
+        "stale_prices": {"max_tickers": 5},
+        "bad_bar": {"max_tickers": 20},
+        "indicators_behind": {"max_tickers": 20},
+    })}
+    assert res["stale_prices"]["level"] == "INFO" and res["stale_prices"]["payload"]["examples"]
+    assert res["bad_bar"]["level"] == "ERROR"
+    assert res["indicators_behind"]["level"] == "INFO" and res["indicators_behind"]["payload"]["tickers"] == 0

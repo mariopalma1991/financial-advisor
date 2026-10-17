@@ -1,4 +1,8 @@
-"""Daily filings ingestion: Finnhub SEC filing metadata (10-K, 10-Q, 8-K).
+"""Daily filings ingestion: Finnhub SEC filing metadata.
+
+Only the forms in platform.yaml ingestion.filings.keep_forms are stored; rows of
+any other form are deleted (not archived), so changing the list cleans the table
+on the next run.
 
 Idempotent: raw upserts ignore duplicates on accession_no.
 
@@ -50,14 +54,19 @@ def run(
         payload={"filings": len(res.items), "symbols": len(res.processed)},
     )
 
-    if res.items:
-        n = raw.insert_filings(res.items)
+    keep = set(cfg["keep_forms"])
+    kept = [f for f in res.items if f.form_type in keep]
+    if kept:
+        n = raw.insert_filings(kept)
         em.emit(
             "INFO",
             "rows_written",
             "raw_filings",
-            payload={"rows": n, "dim_tickers_synced": synced},
+            payload={"rows": n, "skipped_forms": len(res.items) - len(kept), "dim_tickers_synced": synced},
         )
+    removed = raw.delete_filings_except(sorted(keep))
+    if removed:
+        em.emit("INFO", "rows_deleted", "raw_filings outside keep_forms", payload={"rows": removed})
 
 
 def main() -> None:

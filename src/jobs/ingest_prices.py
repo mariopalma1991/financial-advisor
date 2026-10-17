@@ -14,6 +14,7 @@ from src.config import all_symbols, benchmark_symbols
 from src.quality.checks import check_freshness
 from src.quality.run_metadata import EventEmitter, job_run
 from src.storage import curated, raw
+from src.transforms.price_quality import sanitize_bars
 
 
 def run(em: EventEmitter, since: date, only_benchmarks: bool = False) -> None:
@@ -25,6 +26,9 @@ def run(em: EventEmitter, since: date, only_benchmarks: bool = False) -> None:
     yf = YFinanceAdapter()
     bars = yf.fetch_bars(symbols, since)
     em.emit("INFO", "source_fetched", "yfinance bars", payload={"rows": len(bars)})
+    bars, fixes = sanitize_bars(bars)
+    if fixes:
+        em.emit("WARN", "price_bars_sanitized", "yfinance bars with impossible values", payload=dict(fixes))
 
     actions = yf.fetch_corporate_actions(symbols, since - timedelta(days=365))
     em.emit("INFO", "source_fetched", "yfinance corporate actions", payload={"rows": len(actions)})

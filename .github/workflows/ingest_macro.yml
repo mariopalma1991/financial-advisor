@@ -1,0 +1,39 @@
+name: ingest_macro
+
+# Daily macro series from FRED (config/macro.yaml): Treasury yields, credit spread,
+# VIX, USD/MXN, oil, claims, CPI, unemployment. Public CSV, no API key, so it runs
+# outside the finnhub-api group. Tue-Sat 03:00 UTC (21:00 CST), after FRED's
+# overnight update of the previous business day.
+
+on:
+  schedule:
+    - cron: "0 3 * * 2-6"
+  workflow_dispatch: {}
+
+concurrency:
+  group: ingest_macro
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Ingest macro series (FRED)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: python -m src.jobs.ingest_macro

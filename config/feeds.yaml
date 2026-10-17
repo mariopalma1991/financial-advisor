@@ -5,9 +5,13 @@ feeds:
   price_technicals:
     tables: [price_bars_daily, indicators_daily, corporate_actions]
   fundamentals:
-    tables: [fundamentals_quarterly, fundamentals_snapshot]
+    tables: [fundamentals_quarterly, fundamentals_snapshot, peer_comparison, company_profiles]
+  analysts:                  # monthly buy/hold/sell counts, 1-5 score and its 3-month change
+    tables: [analyst_consensus]
+  macro:                     # FRED: yields, credit spread, VIX, USD/MXN, oil, claims, CPI
+    tables: [macro_latest, macro_observations]
   news_sentiment:
-    tables: [news_articles, news_sentiment_daily]
+    tables: [news_relevant, news_sentiment_daily]   # news_relevant: only articles about the company
   insider_sentiment:         # Finnhub monthly MSPR + net insider share change (Form 4)
     tables: [raw_insider_sentiment]
   catalysts:                 # next earnings, surprises, 8-K / Form 4 counts, dividends, splits
@@ -15,6 +19,6 @@ feeds:
   screener:
     tables: [screener_results]
   data_quality:
-    tables: [pipeline_events]
+    tables: [data_quality_flags, pipeline_events]
   full:
-    tables: [price_bars_daily, indicators_daily, corporate_actions, fundamentals_quarterly, fundamentals_snapshot, catalysts, raw_insider_sentiment, screener_results]
+    tables: [price_bars_daily, indicators_daily, corporate_actions, fundamentals_quarterly, fundamentals_snapshot, peer_comparison, analyst_consensus, macro_latest, catalysts, raw_insider_sentiment, screener_results]

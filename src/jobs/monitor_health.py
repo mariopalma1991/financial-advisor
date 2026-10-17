@@ -1,6 +1,7 @@
 """Daily health check: job runs, table freshness and free-plan budgets.
 
-Reads config/monitoring.yaml. Every check emits a `health_check` event (so the
+Reads config/monitoring.yaml. Data quality comes from the data_quality_flags view
+(db/migrations/0008_data_quality.sql). Every check emits a `health_check` event (so the
 dashboard can chart them); a breach is WARN or ERROR. Any ERROR makes the run fail,
 which GitHub emails to the repo owner, and goes to Slack if ALERT_WEBHOOK_URL is set.
 
@@ -88,6 +89,23 @@ def check_budgets(cur, budgets: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
+def check_quality(cur, quality: dict[str, Any]) -> list[dict[str, Any]]:
+    """Count data_quality_flags per check; ERROR when more tickers than max_tickers."""
+    cur.execute("select check_name, count(*), (array_agg(ticker || ' ' || detail))[1:3]"
+                " from data_quality_flags group by check_name")
+    counts = {r[0]: (r[1], r[2]) for r in cur.fetchall()}
+    out = []
+    for name, cfg in quality.items():
+        n, examples = counts.get(name, (0, []))
+        ok = n <= cfg["max_tickers"]
+        out.append({
+            "check": "quality", "name": name, "ok": ok, "level": "INFO" if ok else "ERROR",
+            "message": f"{name}: {n} tickers flagged (max {cfg['max_tickers']})",
+            "payload": {"tickers": n, "max_tickers": cfg["max_tickers"], "examples": examples},
+        })
+    return out
+
+
 def run_checks(em: EventEmitter, cfg: dict[str, Any], now: datetime | None = None) -> list[dict]:
     now = now or datetime.now(timezone.utc)
     with pg_connection() as conn, conn.cursor() as cur:
@@ -95,6 +113,7 @@ def run_checks(em: EventEmitter, cfg: dict[str, Any], now: datetime | None = Non
             check_jobs(cur, cfg.get("jobs", {}), now)
             + check_tables(cur, cfg.get("tables", {}), now)
             + check_budgets(cur, cfg.get("budgets", {}))
+            + check_quality(cur, cfg.get("quality", {}))
         )
     for r in results:
         em.emit(r["level"], "health_check", r["message"],
