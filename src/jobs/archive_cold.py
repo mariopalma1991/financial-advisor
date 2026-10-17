@@ -2,7 +2,9 @@
 
 Modes (python -m src.jobs.archive_cold <mode>):
     check   write/read/delete a test object in the bucket and confirm Postgres access
-    export  write every row of the archive tables to Parquet (idempotent: overwrites)
+    export  write every row of the archive tables to Parquet. Refuses a table that
+            already has a manifest unless --force: once pruned, Postgres holds less
+            than the archive, and re-exporting would overwrite the history.
     verify  compare each manifest against Postgres row counts
     prune   remove archived rows/payloads from Postgres, then VACUUM FULL.
             Destructive: requires --confirm BORRAR, and only touches rows ingested
@@ -66,8 +68,15 @@ def check() -> None:
     print(f"postgres ok: database size {_db_size()}")
 
 
-def export(tables: list[str]) -> None:
+def export(tables: list[str], force: bool = False) -> None:
     s3 = archive.s3_client()
+    if not force:
+        existing = [t for t in tables if archive.read_manifest(t, s3=s3) is not None]
+        if existing:
+            raise RuntimeError(
+                f"already archived: {', '.join(existing)}. Re-exporting would overwrite "
+                "history pruned from Postgres; pass --force only if Postgres is complete."
+            )
     for t in tables:
         m = archive.export_table(t, s3=s3)
         print(
@@ -126,6 +135,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("mode", choices=["check", "export", "verify", "prune"])
     p.add_argument("--tables", default=",".join(archive.ARCHIVE_TABLES))
     p.add_argument("--confirm", default="")
+    p.add_argument("--force", action="store_true", help="export: overwrite existing archives")
     args = p.parse_args(argv)
     tables = [t for t in args.tables.split(",") if t]
     unknown = set(tables) - set(archive.ARCHIVE_TABLES)
@@ -135,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.mode == "check":
         check()
     elif args.mode == "export":
-        export(tables)
+        export(tables, force=args.force)
     elif args.mode == "verify":
         return 0 if verify(tables) else 1
     elif args.mode == "prune":
