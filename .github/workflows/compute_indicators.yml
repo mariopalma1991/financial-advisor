@@ -1,0 +1,45 @@
+name: compute_indicators
+
+# Technical indicators (src/jobs/compute_indicators.py) into indicators_daily.
+# Runs after every successful ingest_prices run, so it never reads stale bars.
+# Dispatch with full=true to rebuild the last year (first load, or after a fix).
+
+on:
+  workflow_run:
+    workflows: [ingest_prices]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "Rebuild the whole kept year"
+        type: boolean
+        default: false
+
+concurrency:
+  group: compute-indicators
+  cancel-in-progress: false
+
+jobs:
+  run:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Compute indicators
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          FULL: ${{ inputs.full && '--full' || '' }}
+        run: python -m src.jobs.compute_indicators $FULL

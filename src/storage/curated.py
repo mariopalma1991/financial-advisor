@@ -222,18 +222,24 @@ def upsert_price_bars(bars: list[RawPriceBar]) -> int:
 
 
 def upsert_indicators(rows: list[dict[str, Any]]) -> int:
-    """Indicators are rebuildable derived data: upsert-ignore on (ticker, bar_date)."""
+    """Indicators are rebuildable derived data: a recompute overwrites (ticker, bar_date)."""
     if not rows:
         return 0
     now = _now()
     payload = [
-        {**r, "valid_from": f"{r['bar_date']}T23:59:59+00:00", "ingested_at": now}
+        {**r, "valid_from": f"{r['bar_date']}T23:59:59+00:00", "ingested_at": now,
+         "run_id": current_run_id()}
         for r in rows
     ]
-    get_client().table("indicators_daily").upsert(
-        payload, on_conflict="ticker,bar_date", ignore_duplicates=True
-    ).execute()
+    for chunk in _chunks(payload, 1000):
+        get_client().table("indicators_daily").upsert(chunk, on_conflict="ticker,bar_date").execute()
     return len(payload)
+
+
+def prune_indicators(keep_days: int) -> None:
+    """Drop indicator rows older than keep_days (they can be recomputed from prices)."""
+    cutoff = (date.today() - timedelta(days=keep_days)).isoformat()
+    get_client().table("indicators_daily").delete().lt("bar_date", cutoff).execute()
 
 
 # ---------- fundamentals ----------
@@ -310,7 +316,7 @@ def get_fundamentals(ticker: str, quarters: int = 8, as_of: date | None = None) 
 
 
 def get_corporate_actions(ticker: str, as_of: date | None = None) -> list[dict]:
-    return _pit_rows("corporate_actions", ticker, "ex_date", as_of, 10_000)
+    return _pit_rows("raw_corporate_actions", ticker, "ex_date", as_of, 10_000)
 
 
 def get_screener_results(result_date: date | None = None, matched_only: bool = True) -> list[dict]:

@@ -1,12 +1,15 @@
 """Indicator computation for both tiers, from adjusted bars.
 
 Daily mode writes the last few days (covers missed runs). Backfill mode
-(--full or via compute_and_store(full=True)) rewrites full history.
-Indicators are rebuildable derived data: upsert-ignore on (ticker, bar_date).
+(--full or via compute_and_store(full=True)) rewrites the last KEEP_DAYS.
+Indicators are rebuildable derived data: a recompute overwrites (ticker, bar_date),
+and rows older than KEEP_DAYS are dropped to fit the free database.
+Runs after every ingest_prices run (.github/workflows/compute_indicators.yml).
 """
 from __future__ import annotations
 
 import argparse
+from datetime import date, timedelta
 
 import pandas as pd
 
@@ -15,6 +18,10 @@ from src.quality.run_metadata import job_run
 from src.storage import curated
 from src.transforms.adjustments import adjust_bars
 from src.transforms.indicators import compute_indicators
+
+KEEP_DAYS = 365
+# ~2 trading years: sma_200 and ema_200 need 200 bars of warm-up before the kept year.
+HISTORY_BARS = 520
 
 _INDICATOR_COLS = [
     "sma_10", "sma_20", "sma_50", "sma_200",
@@ -26,7 +33,7 @@ _INDICATOR_COLS = [
 
 
 def _benchmark_series(symbol: str) -> pd.Series:
-    rows = curated.get_price_history(symbol, window_days=400)
+    rows = curated.get_price_history(symbol, window_days=HISTORY_BARS)
     if not rows:
         return pd.Series(dtype=float)
     return pd.Series(
@@ -37,7 +44,7 @@ def _benchmark_series(symbol: str) -> pd.Series:
 def compute_and_store(
     symbol: str, benchmark: str, cfg: dict, bench_cache: dict[str, pd.Series], full: bool = False
 ) -> int:
-    bars_rows = curated.get_price_history(symbol, window_days=400)
+    bars_rows = curated.get_price_history(symbol, window_days=HISTORY_BARS)
     if len(bars_rows) < 30:
         return 0
     bars = pd.DataFrame(bars_rows)
@@ -58,7 +65,8 @@ def compute_and_store(
         bench_cache[benchmark] = _benchmark_series(benchmark)
     inds = compute_indicators(adj, bench_cache[benchmark], cfg)
 
-    tail = inds if full else inds.tail(5)
+    cutoff = date.today() - timedelta(days=KEEP_DAYS)
+    tail = inds[inds.index >= cutoff] if full else inds.tail(5)
     rows = [
         {
             "ticker": symbol,
@@ -81,6 +89,7 @@ def main() -> None:
         total = 0
         for t in curated.enabled_tickers():
             total += compute_and_store(t["ticker"], t["benchmark"], cfg, bench_cache, full=args.full)
+        curated.prune_indicators(KEEP_DAYS)
         em.emit("INFO", "rows_written", "indicators_daily", payload={"rows": total, "full": args.full})
 
 
