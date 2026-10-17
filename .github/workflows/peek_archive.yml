@@ -17,7 +17,7 @@ on:
       match:
         description: "Only rows where any column contains this text"
         required: false
-        default: "0000316709-26-000035"
+        default: "000031670926000035"
   push:
     branches: [claude/project-thread-05xrjc]
     paths: [.github/workflows/peek_archive.yml]
@@ -42,7 +42,7 @@ jobs:
           SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
           TABLE: ${{ inputs.table || 'filings_text' }}
           PART: ${{ inputs.part || '2026-10-15' }}
-          MATCH: ${{ inputs.match || '0000316709-26-000035' }}
+          MATCH: ${{ inputs.match || '000031670926000035' }}
         run: |
           python - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
           import os
