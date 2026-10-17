@@ -13,9 +13,9 @@ feeds:
   news_sentiment:
     tables: [news_relevant, news_sentiment_daily]   # news_relevant: only articles about the company
   insider_sentiment:         # Finnhub monthly MSPR + net insider share change (Form 4)
-    tables: [raw_insider_sentiment]
+    tables: [raw_insider_sentiment, insider_trades, insider_activity_30d]
   catalysts:                 # next earnings, surprises, 8-K / Form 4 counts, dividends, splits
-    tables: [catalysts]
+    tables: [catalysts, filing_events]   # filing_events: 8-K items + press-release sentiment
   screener:
     tables: [screener_results]
   data_quality:

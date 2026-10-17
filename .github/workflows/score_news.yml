@@ -1,0 +1,48 @@
+name: score_news
+
+# Manual: FinBERT scores for stored articles that predate ingest-time scoring
+# (headline only; their summaries were never kept). New articles are scored by
+# ingest_news. No Finnhub calls.
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Score articles published in the last N days"
+        required: false
+        default: "30"
+
+concurrency:
+  group: score-news
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -e .
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-finbert-v1
+
+      - name: Score stored news (FinBERT)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: python -m src.jobs.score_news --days "${{ inputs.days }}"
