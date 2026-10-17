@@ -191,6 +191,13 @@ def all_symbols() -> list[str]:
     return load_curated_universe().symbols
 
 
+def benchmark_symbols() -> list[str]:
+    """Benchmark ETFs of the enabled universe that are not universe members themselves.
+    Their prices feed relative strength in indicators_daily."""
+    universe = load_curated_universe()
+    return sorted({t.benchmark for t in universe.enabled()} - set(universe.symbols))
+
+
 def tier_of(symbol: str) -> Literal["analysis", "screening"]:
     if symbol in load_analysis_universe().by_symbol():
         return "analysis"

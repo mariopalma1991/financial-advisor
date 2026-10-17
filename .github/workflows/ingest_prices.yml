@@ -12,6 +12,10 @@ on:
         description: "Days to look back (raise to fill gaps after failed runs)"
         required: false
         default: "1"
+      only_benchmarks:
+        description: "Fetch only the benchmark ETFs (backfill them with a large lookback)"
+        type: boolean
+        default: false
 
 jobs:
   run:
@@ -36,4 +40,5 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
           LOOKBACK_DAYS: ${{ inputs.lookback_days || '1' }}
+          ONLY_BENCHMARKS: ${{ inputs.only_benchmarks && 'true' || 'false' }}
         run: python -m src.jobs.ingest_prices
