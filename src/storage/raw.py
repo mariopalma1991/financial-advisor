@@ -19,6 +19,7 @@ from src.adapters.base import (
     RawPriceBar,
     RawVisaApplication,
 )
+from src.quality.run_metadata import current_run_id
 from src.storage.supabase_client import get_client
 
 
@@ -42,6 +43,7 @@ def insert_price_bars(bars: list[RawPriceBar]) -> int:
             "payload_json": b.payload,
             "valid_from": (b.valid_from or datetime.now(timezone.utc)).isoformat(),
             "ingested_at": _now(),
+            "run_id": current_run_id(),
         }
         for b in bars
     ]
@@ -66,6 +68,7 @@ def insert_corporate_actions(actions: list[RawCorporateAction]) -> int:
             "payload_json": a.payload,
             "valid_from": f"{a.ex_date.isoformat()}T00:00:00+00:00",
             "ingested_at": _now(),
+            "run_id": current_run_id(),
         }
         for a in actions
     ]
@@ -89,6 +92,7 @@ def insert_filings(filings: list[RawFiling]) -> int:
             "payload_json": f.payload,
             "valid_from": f.filed_at.isoformat(),
             "ingested_at": _now(),
+            "run_id": current_run_id(),
         }
         for f in filings
     ]
@@ -112,6 +116,7 @@ def insert_news_articles(articles: list[RawNewsArticle]) -> int:
             "payload_json": a.payload,
             "valid_from": a.published_at.isoformat(),
             "ingested_at": _now(),
+            "run_id": current_run_id(),
         }
         for a in articles
     ]
@@ -142,6 +147,7 @@ def insert_financial_reports(reports: list[RawFinancialReport]) -> int:
             "payload_json": r.payload,
             "valid_from": (r.filed_date or datetime.now(timezone.utc)).isoformat(),
             "ingested_at": _now(),
+            "run_id": current_run_id(),
         }
         for r in reports
     ]
@@ -169,6 +175,7 @@ def insert_earnings_surprises(surprises: list[RawEarningsSurprise]) -> int:
             "payload_json": s.payload,
             "valid_from": s.period.isoformat(),
             "ingested_at": _now(),
+            "run_id": current_run_id(),
         }
         for s in surprises
     ]
@@ -197,6 +204,7 @@ def insert_earnings_calendar(events: list[RawEarningsCalendar]) -> int:
             "payload_json": e.payload,
             "valid_from": e.date.isoformat(),
             "ingested_at": _now(),
+            "run_id": current_run_id(),
         }
         for e in events
     ]
@@ -234,6 +242,7 @@ def insert_visa_applications(apps: list[RawVisaApplication]) -> int:
             "payload_json": a.payload,
             "valid_from": (a.received_date or datetime.now(timezone.utc)).isoformat(),
             "ingested_at": _now(),
+            "run_id": current_run_id(),
         }
         for a in apps
     ]
@@ -266,6 +275,7 @@ def insert_insider_sentiment(rows_in: list[RawInsiderSentiment]) -> int:
             "payload_json": r.payload,
             "valid_from": now,
             "ingested_at": now,
+            "run_id": current_run_id(),
         }
         for r in rows_in
     ]
