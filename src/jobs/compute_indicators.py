@@ -20,8 +20,8 @@ from src.transforms.adjustments import adjust_bars
 from src.transforms.indicators import compute_indicators
 
 KEEP_DAYS = 365
-# ~2 trading years: sma_200 and ema_200 need 200 bars of warm-up before the kept year.
-HISTORY_BARS = 520
+# Prices keep 2 years (~500 bars): 250 of warm-up before the kept year covers sma_200.
+HISTORY_BARS = 500
 
 _INDICATOR_COLS = [
     "sma_10", "sma_20", "sma_50", "sma_200",

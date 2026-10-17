@@ -27,7 +27,7 @@ from src.quality.run_metadata import job_run
 from src.storage import archive
 from src.storage.supabase_client import pg_connection
 
-HOT_YEARS = 3
+HOT_YEARS = 2  # Mario chose 2 (was 3) on 2026-10-17 to keep the DB under ~70%
 NEWS_HOT_DAYS = 180  # feeds read 30 days of news; Mario chose 180 (2026-10-17)
 CONFIRM_WORD = "BORRAR"
 
@@ -144,6 +144,12 @@ def prune(tables: list[str]) -> None:
     print(f"database size after: {_db_size()}")
 
 
+def _table_bytes(table: str) -> int:
+    with pg_connection() as conn, conn.cursor() as cur:
+        cur.execute("select pg_total_relation_size(%s::regclass)", (table,))
+        return cur.fetchone()[0]
+
+
 def _cold_rows(table: str) -> Iterator[tuple[str, list[dict[str, Any]]]]:
     """Yield (partition, rows) for the rows of `table` outside its hot window."""
     part_expr = archive.ARCHIVE_TABLES[table]
@@ -167,7 +173,7 @@ def _cold_rows(table: str) -> Iterator[tuple[str, list[dict[str, Any]]]]:
             yield current, rows
 
 
-def _delete_ids(table: str, ids: list[int]) -> int:
+def _delete_ids(table: str, ids: list[int], vacuum_full: bool = False) -> int:
     deleted = 0
     with pg_connection() as conn:
         conn.autocommit = True
@@ -175,14 +181,23 @@ def _delete_ids(table: str, ids: list[int]) -> int:
             for i in range(0, len(ids), DELETE_BATCH):
                 cur.execute(f"delete from {table} where id = any(%s)", (ids[i:i + DELETE_BATCH],))
                 deleted += cur.rowcount
-            cur.execute(f"vacuum analyze {table}")
+            # Plain VACUUM lets new rows reuse the space; FULL rewrites the table and
+            # returns it to the plan quota, but needs room for a full copy meanwhile.
+            cur.execute(f"vacuum {'full ' if vacuum_full else ''}analyze {table}")
     return deleted
 
 
-def roll(tables: list[str], s3=None) -> dict[str, dict[str, int]]:
-    """Move rows that left the hot window to the archive, then delete them."""
+def roll(tables: list[str], s3=None, vacuum_full: bool = False) -> dict[str, dict[str, int]]:
+    """Move rows that left the hot window to the archive, then delete them.
+
+    vacuum_full: compact each table after deleting (one-off, e.g. after shrinking
+    the window). Tables are processed smallest first so the temporary copy that
+    VACUUM FULL needs fits while the database is near its cap.
+    """
     s3 = s3 or archive.s3_client()
     out = {}
+    if vacuum_full:
+        tables = sorted(tables, key=_table_bytes)
     for t in tables:
         if t not in ROLL_WHERE:
             continue
@@ -200,7 +215,7 @@ def roll(tables: list[str], s3=None) -> dict[str, dict[str, int]]:
             continue
         # Manifest first: a crash after it leaves rows in both places, never in neither.
         archive.update_manifest(t, sizes, archive.ARCHIVE_TABLES[t], s3=s3)
-        deleted = _delete_ids(t, ids)
+        deleted = _delete_ids(t, ids, vacuum_full=vacuum_full)
         print(f"{t}: {added:,} rows added to {len(sizes):,} archive files,"
               f" {deleted:,} deleted from Postgres", flush=True)
         out[t] = {"archived": added, "deleted": deleted}
@@ -214,6 +229,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--tables", default=",".join(archive.ARCHIVE_TABLES))
     p.add_argument("--confirm", default="")
     p.add_argument("--force", action="store_true", help="export: overwrite existing archives")
+    p.add_argument("--vacuum-full", action="store_true", help="roll: compact tables after deleting")
     args = p.parse_args(argv)
     tables = [t for t in args.tables.split(",") if t]
     unknown = set(tables) - set(archive.ARCHIVE_TABLES)
@@ -232,7 +248,7 @@ def main(argv: list[str] | None = None) -> int:
         prune(tables)
     elif args.mode == "roll":
         with job_run("roll_window") as em:
-            for t, n in roll(tables).items():
+            for t, n in roll(tables, vacuum_full=args.vacuum_full).items():
                 em.emit("INFO", "rows_archived", f"{t}: {n['deleted']:,} rows moved to the archive",
                         payload={"table": t, **n})
     return 0
