@@ -8,6 +8,11 @@ fetched inside a single GitHub Actions run. This loop:
   with GITHUB_RUN_NUMBER, so consecutive runs cover the whole universe;
 - stops cleanly when `budget_s` is spent, so the job finishes (and writes what
   it fetched) instead of being killed by the workflow timeout;
+- with `flush`, writes the fetched items every `flush_every` symbols, so writing
+  happens inside the time budget and a killed run keeps what it already wrote
+  (a full-universe run used to fetch for ~46 min, then die while writing);
+- spaces calls `delay_s` apart start to start, so request latency and flushes
+  count toward the gap instead of adding to it;
 - backs off for a minute on HTTP 429 and retries that symbol once;
 - counts and reports errors instead of silently swallowing them;
 - aborts the job on HTTP 401 (bad API key) or when every symbol failed, so a
@@ -46,6 +51,8 @@ class LoopResult:
     rate_limited: int = 0
     stopped_by_budget: bool = False
     start_offset: int = 0
+    n_items: int = 0       # items fetched, flushed or not
+    rows_written: int = 0  # sum of what `flush` returned
 
 
 def status_code_of(exc: BaseException) -> int | None:
@@ -80,6 +87,8 @@ def fetch_symbols(
     delay_s: float,
     max_symbols: int,
     budget_s: float,
+    flush: Callable[[list[Any]], int] | None = None,
+    flush_every: int = 100,
 ) -> LoopResult:
     n = len(symbols)
     start = rotation_offset(n, max_symbols)
@@ -88,13 +97,21 @@ def fetch_symbols(
     error_samples: list[str] = []
     deadline = time.monotonic() + budget_s
 
+    def _flush() -> None:
+        if flush and res.items:
+            res.rows_written += flush(res.items)
+            res.items = []
+
     for i, symbol in enumerate(ordered):
         if time.monotonic() >= deadline:
             res.stopped_by_budget = True
             break
+        started = time.monotonic()
         for attempt in (1, 2):
             try:
-                res.items.extend(fetch(symbol))
+                got = fetch(symbol)
+                res.items.extend(got)
+                res.n_items += len(got)
                 res.processed.append(symbol)
                 break
             except Exception as exc:  # noqa: BLE001 — reported below
@@ -115,13 +132,16 @@ def fetch_symbols(
                     error_samples.append(f"{symbol}: {type(exc).__name__} {code or ''} {exc}"[:200])
                 log.warning("symbol_fetch_failed", source=label, symbol=symbol, error=str(exc))
                 break
+        if len(res.processed) % flush_every == 0:
+            _flush()
         if i < len(ordered) - 1:
-            time.sleep(delay_s)
+            time.sleep(max(0.0, delay_s - (time.monotonic() - started)))
+    _flush()
 
     level = "WARN" if res.errors or res.stopped_by_budget else "INFO"
     if os.getenv("GITHUB_ACTIONS"):
         kind = "warning" if level == "WARN" else "notice"
-        detail = f"{label}: fetched {len(res.processed)}/{len(ordered)} symbols, {len(res.items)} items, " \
+        detail = f"{label}: fetched {len(res.processed)}/{len(ordered)} symbols, {res.n_items} items, " \
             f"{res.errors} errors, {res.rate_limited} rate-limited" \
             + (", stopped by time budget" if res.stopped_by_budget else "")
         if error_samples:

@@ -172,7 +172,10 @@ class PriceAdapter(Protocol):
 # Shared retry policy: exponential backoff, 4 attempts, give up loudly.
 def _is_retryable(exc: BaseException) -> bool:
     """Don't retry errors that won't go away: auth/plan (401/403), not found (404).
-    429s are left to the caller, which knows the rate limit window."""
+    429s are left to the caller, which knows the rate limit window. Programming
+    errors (e.g. calling a client method that doesn't exist) fail fast too."""
+    if isinstance(exc, (AttributeError, TypeError, NameError)):
+        return False
     code = getattr(exc, "status_code", None)
     if code is None:
         code = getattr(getattr(exc, "response", None), "status_code", None)
