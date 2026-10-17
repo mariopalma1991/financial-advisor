@@ -264,6 +264,44 @@ def sync_ticker_aliases() -> int:
     return len(rows)
 
 
+# ---------- macro & company ----------
+
+def upsert_macro(obs) -> int:
+    """Upsert FRED observations on (series_id, obs_date); revisions overwrite."""
+    if not obs:
+        return 0
+    now = _now()
+    rows = [{"series_id": o.series_id, "obs_date": o.obs_date.isoformat(), "value": o.value,
+             "ingested_at": now, "run_id": current_run_id()} for o in obs]
+    for i in range(0, len(rows), 1000):
+        get_client().table("macro_observations").upsert(
+            rows[i : i + 1000], on_conflict="series_id,obs_date"
+        ).execute()
+    return len(rows)
+
+
+def upsert_analyst_recommendations(rows: list[dict[str, Any]]) -> int:
+    """Monthly buy/hold/sell counts per ticker; a re-fetched month overwrites."""
+    if not rows:
+        return 0
+    now = _now()
+    payload = [{**r, "ingested_at": now, "run_id": current_run_id()} for r in rows]
+    for i in range(0, len(payload), 1000):
+        get_client().table("analyst_recommendations").upsert(
+            payload[i : i + 1000], on_conflict="ticker,period"
+        ).execute()
+    return len(payload)
+
+
+def upsert_company_profiles(rows: list[dict[str, Any]]) -> int:
+    if not rows:
+        return 0
+    now = _now()
+    payload = [{**r, "updated_at": now, "run_id": current_run_id()} for r in rows]
+    get_client().table("company_profiles").upsert(payload, on_conflict="ticker").execute()
+    return len(payload)
+
+
 # ---------- fundamentals ----------
 
 _FUND_FIELDS = (
