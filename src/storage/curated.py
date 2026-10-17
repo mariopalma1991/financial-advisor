@@ -244,17 +244,22 @@ def prune_indicators(keep_days: int) -> None:
 
 # ---------- news relevance ----------
 
-def sync_ticker_aliases() -> int:
-    """Rebuild ticker_aliases from the curated universe (+ config/news_aliases.yaml)."""
+def alias_patterns() -> dict[str, list[tuple[str, bool]]]:
+    """(postgres_regex, case_sensitive) per enabled ticker, from the universe + overrides."""
     from src.config import _load_yaml
     from src.transforms.ticker_aliases import patterns_for
 
     extra = (_load_yaml("news_aliases.yaml") or {}).get("aliases", {})
-    rows = {
-        (t.symbol, pattern): cs
+    return {
+        t.symbol: patterns_for(t.symbol, t.name or "", extra.get(t.symbol, []))
         for t in load_curated_universe().enabled()
-        for pattern, cs in patterns_for(t.symbol, t.name or "", extra.get(t.symbol, []))
     }
+
+
+def sync_ticker_aliases(patterns: dict[str, list[tuple[str, bool]]] | None = None) -> int:
+    """Rebuild ticker_aliases from the curated universe (+ config/news_aliases.yaml)."""
+    patterns = patterns if patterns is not None else alias_patterns()
+    rows = {(t, p): cs for t, pats in patterns.items() for p, cs in pats}
     with pg_connection() as conn, conn.cursor() as cur:
         cur.execute("delete from ticker_aliases")
         cur.executemany(
@@ -262,6 +267,18 @@ def sync_ticker_aliases() -> int:
             [(t, p, cs) for (t, p), cs in rows.items()],
         )
     return len(rows)
+
+
+def existing_news_ids(article_ids: list[str]) -> set[str]:
+    """Which of these Finnhub article ids are already stored."""
+    found: set[str] = set()
+    for i in range(0, len(article_ids), 200):
+        rows = _exec(
+            get_client().table("raw_news_articles").select("article_id")
+            .in_("article_id", article_ids[i : i + 200])
+        )
+        found.update(r["article_id"] for r in rows)
+    return found
 
 
 # ---------- macro & company ----------
