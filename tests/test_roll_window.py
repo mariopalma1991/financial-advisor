@@ -58,4 +58,6 @@ def test_roll_deletes_nothing_when_window_is_empty(monkeypatch):
 
 def test_roll_windows_cover_only_archived_tables():
     assert set(archive_cold.ROLL_WHERE) <= set(archive.ARCHIVE_TABLES)
-    assert "180 days" in archive_cold.ROLL_WHERE["raw_news_articles"]
+    assert "90 days" in archive_cold.ROLL_WHERE["raw_news_articles"]
+    assert "'144'" in archive_cold.ROLL_WHERE["raw_filings"]
+    assert set(archive_cold.BEFORE_DELETE) <= set(archive_cold.ROLL_WHERE)

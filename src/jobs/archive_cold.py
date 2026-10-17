@@ -15,7 +15,9 @@ Modes (python -m src.jobs.archive_cold <mode>):
             partition file and the manifest are written.
 
 Postgres keeps the hot window the feeds read: price bars and filings for the
-last HOT_YEARS years, and news for the last NEWS_HOT_DAYS days.
+last HOT_YEARS years, Form 4/144 for INSIDER_HOT_DAYS, and news for the last
+NEWS_HOT_DAYS days (whole Mexico City days; their daily sentiment is kept in
+news_sentiment_history). raw_financial_reports is archived whole: no feed reads it.
 """
 from __future__ import annotations
 
@@ -28,14 +30,32 @@ from src.storage import archive
 from src.storage.supabase_client import pg_connection
 
 HOT_YEARS = 2  # Mario chose 2 (was 3) on 2026-10-17 to keep the DB under ~70%
-NEWS_HOT_DAYS = 180  # feeds read 30 days of news; Mario chose 180 (2026-10-17)
+# Mario chose 90 days of news and 1 year of Form 4/144 on 2026-10-17 (DB at 474/500 MB)
+NEWS_HOT_DAYS = 90  # feeds read 30 days of news
+INSIDER_HOT_DAYS = 365  # insider_trades is enriched for the last 90 days only
+INSIDER_FORMS = "('4', '4/A', '144', '144/A')"
+_MX = "'America/Mexico_City'"
+NEWS_CUTOFF = f"(date_trunc('day', now() at time zone {_MX}) - interval '{NEWS_HOT_DAYS} days') at time zone {_MX}"
 CONFIRM_WORD = "BORRAR"
 
 # table -> rows outside the hot window, moved to the archive by `roll`
 ROLL_WHERE: dict[str, str] = {
-    "raw_news_articles": f"published_at < now() - interval '{NEWS_HOT_DAYS} days'",
+    "raw_news_articles": f"published_at < {NEWS_CUTOFF}",
     "price_bars_daily": f"bar_date < current_date - interval '{HOT_YEARS} years'",
-    "raw_filings": f"filed_at < now() - interval '{HOT_YEARS} years'",
+    "raw_filings": f"filed_at < now() - interval '{HOT_YEARS} years' or (form_type in {INSIDER_FORMS}"
+                   f" and filed_at < now() - interval '{INSIDER_HOT_DAYS} days')",
+    "raw_financial_reports": "true",
+}
+# table -> statement run right before its rows are deleted
+BEFORE_DELETE: dict[str, str] = {
+    "raw_news_articles": (
+        "insert into news_sentiment_history select * from news_sentiment_live"
+        f" where date < (now() at time zone {_MX})::date - {NEWS_HOT_DAYS}"
+        " on conflict (ticker, date) do update set n_articles = excluded.n_articles,"
+        " n_scored = excluded.n_scored, avg_sentiment = excluded.avg_sentiment,"
+        " n_positive = excluded.n_positive, n_negative = excluded.n_negative,"
+        " valid_from = excluded.valid_from"
+    ),
 }
 DELETE_BATCH = 5_000
 
@@ -178,6 +198,8 @@ def _delete_ids(table: str, ids: list[int], vacuum_full: bool = False) -> int:
     with pg_connection() as conn:
         conn.autocommit = True
         with conn.cursor() as cur:
+            if table in BEFORE_DELETE:
+                cur.execute(BEFORE_DELETE[table])
             for i in range(0, len(ids), DELETE_BATCH):
                 cur.execute(f"delete from {table} where id = any(%s)", (ids[i:i + DELETE_BATCH],))
                 deleted += cur.rowcount
