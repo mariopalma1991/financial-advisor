@@ -137,12 +137,19 @@ def export_table(table: str, s3=None) -> dict[str, Any]:
     return manifest
 
 
+def _exists(s3, key: str) -> bool:
+    """Supabase Storage answers GetObject on a missing key with an empty error code
+    instead of NoSuchKey, so existence is checked with a listing."""
+    resp = s3.list_objects_v2(Bucket=bucket(), Prefix=key, MaxKeys=1)
+    return any(o["Key"] == key for o in resp.get("Contents", []))
+
+
 def read_manifest(table: str, s3=None) -> dict[str, Any] | None:
     s3 = s3 or s3_client()
-    try:
-        obj = s3.get_object(Bucket=bucket(), Key=f"{table}/_manifest.json")
-    except s3.exceptions.NoSuchKey:
+    key = f"{table}/_manifest.json"
+    if not _exists(s3, key):
         return None
+    obj = s3.get_object(Bucket=bucket(), Key=key)
     return json.loads(obj["Body"].read())
 
 
@@ -162,10 +169,8 @@ def upsert_partition(
     (rows added, partition size). Only that partition is read, to spare egress.
     """
     s3 = s3 or s3_client()
-    try:
-        existing = read_partition(table, part, s3=s3)
-    except s3.exceptions.NoSuchKey:
-        existing = None
+    exists = _exists(s3, f"{table}/part={_safe_key(part)}.parquet")
+    existing = read_partition(table, part, s3=s3) if exists else None
 
     new_rows = [{k: _jsonable(v) for k, v in r.items()} for r in rows]
     if existing is not None:

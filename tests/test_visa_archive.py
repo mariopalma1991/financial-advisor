@@ -26,6 +26,10 @@ class FakeS3:
     def put_object(self, Bucket, Key, Body, **_):
         self.objects[Key] = Body
 
+    def list_objects_v2(self, Bucket, Prefix, MaxKeys=1000):
+        keys = sorted(k for k in self.objects if k.startswith(Prefix))[:MaxKeys]
+        return {"Contents": [{"Key": k} for k in keys]} if keys else {}
+
     def get_object(self, Bucket, Key):
         if Key not in self.objects:
             raise _NoSuchKey(Key)
