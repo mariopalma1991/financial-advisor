@@ -10,12 +10,8 @@ ingestion:
     backfill_years_analysis: 3
     backfill_years_screening: 1
   filings:
-    schedule_cron: "0 12 * * *"
-    # Finnhub plan: 30 calls/min, one call per symbol (2.1 s apart = ~28/min).
-    # 900 x 2.1 s = 31.5 min fits the budget, which must fit the workflow timeout.
-    call_delay_s: 2.1
-    max_symbols_per_run: 900
-    fetch_budget_min: 35
+    # Source: SEC EDGAR submissions (one call per company, 10 requests/s), so
+    # the whole universe is read every run; no Finnhub quota.
     lookback_days: 30
     # Only these forms are stored; the rest (prospectus supplements, S-8, 13F,
     # proxy soliciting material...) never reaches an agent. 6-K/20-F/40-F are the

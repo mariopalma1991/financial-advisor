@@ -1,9 +1,9 @@
-"""SEC EDGAR reader for filings we already list (raw_filings, from Finnhub).
+"""SEC EDGAR: the filings list (raw_filings) and their content.
 
-Finnhub gives a filing's form, dates and EDGAR index URL, not its content. EDGAR
-(free, 10 requests/s, a contact User-Agent is required) gives:
-- /submissions/CIK##########.json: per company, recent filings with 8-K item codes
-  and the primary document name (one call per company covers all its filings);
+EDGAR (free, 10 requests/s, a contact User-Agent is required) gives:
+- /files/company_tickers.json: ticker -> CIK for every SEC registrant;
+- /submissions/CIK##########.json: per company, its recent filings (form, dates,
+  8-K item codes, primary document); one call covers all of a company's filings;
 - the filing folder's index.json: documents, to find the press release (EX-99.1);
 - Form 4 XML: each insider transaction (code, shares, price, 10b5-1 plan flag).
 """
@@ -59,6 +59,34 @@ def parse_submissions(doc: dict[str, Any]) -> dict[str, dict[str, Any]]:
             "items": sorted({i.strip() for i in (it or "").split(",") if i.strip()}),
             "primary": p or "",
         }
+    return out
+
+
+def parse_company_tickers(doc: dict[str, Any]) -> dict[str, int]:
+    """company_tickers.json -> {ticker: cik}; class shares use '-' (BRK-B)."""
+    return {str(v["ticker"]).upper(): int(v["cik_str"]) for v in doc.values()}
+
+
+def parse_recent_filings(doc: dict[str, Any], since: str, forms: set[str]) -> list[dict[str, Any]]:
+    """Filings in a submissions JSON filed on/after `since` (YYYY-MM-DD) whose form is in `forms`."""
+    recent = (doc.get("filings") or {}).get("recent") or {}
+    accs = recent.get("accessionNumber") or []
+
+    def col(name: str) -> list[Any]:
+        return recent.get(name) or [""] * len(accs)
+
+    out = []
+    for acc, form, day, accepted, items, prim, rep in zip(
+        accs, col("form"), col("filingDate"), col("acceptanceDateTime"),
+        col("items"), col("primaryDocument"), col("reportDate"),
+    ):
+        if not day or day < since or form not in forms:
+            continue
+        out.append({
+            "accession": acc, "form": form, "filing_date": day, "accepted": accepted or None,
+            "items": sorted({i.strip() for i in (items or "").split(",") if i.strip()}),
+            "primary": prim or "", "report_date": rep or None,
+        })
     return out
 
 
@@ -167,8 +195,14 @@ class EdgarClient:
         resp.raise_for_status()
         return resp
 
+    def submissions_json(self, cik: int) -> dict[str, Any]:
+        return self._get(f"{self.DATA}/submissions/CIK{cik:010d}.json").json()
+
     def submissions(self, cik: int) -> dict[str, dict[str, Any]]:
-        return parse_submissions(self._get(f"{self.DATA}/submissions/CIK{cik:010d}.json").json())
+        return parse_submissions(self.submissions_json(cik))
+
+    def company_tickers(self) -> dict[str, int]:
+        return parse_company_tickers(self._get(f"{self.BASE}/files/company_tickers.json").json())
 
     def folder(self, cik: int, acc: str) -> str:
         return f"{self.BASE}/Archives/edgar/data/{cik}/{acc}"
