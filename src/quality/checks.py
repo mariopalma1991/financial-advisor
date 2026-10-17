@@ -10,21 +10,29 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from typing import Any
 
-from src.config import load_platform
+from src.config import benchmark_symbols, load_platform
 from src.quality.run_metadata import EventEmitter
 from src.storage.supabase_client import _exec, _paginate, get_client
 
 
 def check_freshness(emitter: EventEmitter) -> None:
-    """WARN if the newest price bar is implausibly old (weekend/holiday tolerant)."""
-    rows = _exec(
-        get_client()
-        .table("current_price_bars")
-        .select("bar_date")
-        .order("bar_date", desc=True)
-        .limit(1)
-    )
-    latest_str = rows[0]["bar_date"] if rows else None
+    """WARN if the newest price bar is implausibly old (weekend/holiday tolerant).
+
+    Reads the benchmark ETFs' newest bar through the (ticker, bar_date) index: the
+    newest bar over the whole table is a full scan that hits the statement timeout.
+    """
+    dates = []
+    for symbol in benchmark_symbols() or ["SPY"]:
+        rows = _exec(
+            get_client()
+            .table("price_bars_daily")
+            .select("bar_date")
+            .eq("ticker", symbol)
+            .order("bar_date", desc=True)
+            .limit(1)
+        )
+        dates += [str(r["bar_date"]) for r in rows]
+    latest_str = max(dates) if dates else None
     if latest_str is None:
         emitter.emit("ERROR", "freshness_check", "no price bars in the database at all")
         return
