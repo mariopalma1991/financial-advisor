@@ -19,6 +19,7 @@ from typing import Any
 
 from src.adapters.base import RawPriceBar
 from src.config import load_curated_universe
+from src.quality.run_metadata import current_run_id
 from src.storage.supabase_client import _exec, _paginate, get_client
 
 
@@ -213,6 +214,7 @@ def upsert_price_bars(bars: list[RawPriceBar]) -> int:
                 "source_used": b.source,
                 "valid_from": (b.valid_from or datetime.now(timezone.utc)).isoformat(),
                 "ingested_at": now,
+                "run_id": current_run_id(),
             }
         )
     _insert_chunked("price_bars_daily", rows)

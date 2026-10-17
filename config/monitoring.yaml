@@ -1,0 +1,28 @@
+# Health checks run by src/jobs/monitor_health.py (daily, .github/workflows/monitor_health.yml).
+# A breach is an ERROR event: it fails the workflow (GitHub emails the failure) and
+# goes to Slack when ALERT_WEBHOOK_URL is set.
+
+# Each scheduled job must have a successful run (job_runs.status completed*)
+# within max_hours. Catches jobs that stopped running or keep failing.
+jobs:
+  ingest_prices: { max_hours: 54 }       # Mon-Sat 02:00 UTC
+  ingest_news: { max_hours: 12 }         # 3x/day
+  ingest_filings: { max_hours: 54 }      # Mon-Sat 14:00 UTC
+  ingest_financials: { max_hours: 192 }  # weekly
+  ingest_earnings: { max_hours: 192 }    # weekly
+  ingest_earncal: { max_hours: 192 }     # weekly
+  ingest_insider_sentiment: { max_hours: 192 }  # weekly
+  ingest_visa: { max_hours: 768 }        # monthly
+
+# Tables that grow every run: the newest row must be younger than max_hours.
+# Catches "job completed but wrote nothing" (e.g. a rejected API key).
+# Weekly feeds are left out: a week without new reports is normal.
+tables:
+  raw_news_articles: { column: ingested_at, max_hours: 24 }
+  price_bars_daily: { column: ingested_at, max_hours: 78 }
+  raw_filings: { column: ingested_at, max_hours: 78 }
+
+# Free-plan limits (Supabase). WARN at warn_pct, ERROR at error_pct.
+budgets:
+  database_mb: { limit: 500, warn_pct: 80, error_pct: 95 }
+  storage_mb: { limit: 1024, warn_pct: 80, error_pct: 95, bucket: market-archive }
