@@ -38,3 +38,11 @@ def test_cost_model_math():
 def test_screens_and_feeds_load():
     assert "oversold_swing_candidate" in load_screens().screens
     assert "full" in load_feeds().feeds
+
+
+def test_benchmark_symbols_are_etfs_outside_the_universe():
+    from src.config import all_symbols, benchmark_symbols
+
+    bench = benchmark_symbols()
+    assert "SPY" in bench
+    assert not set(bench) & set(all_symbols())

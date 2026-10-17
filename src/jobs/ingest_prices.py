@@ -10,17 +10,17 @@ import os
 from datetime import date, timedelta
 
 from src.adapters.yfinance_prices import YFinanceAdapter
-from src.config import all_symbols
+from src.config import all_symbols, benchmark_symbols
 from src.quality.checks import check_freshness
 from src.quality.run_metadata import EventEmitter, job_run
 from src.storage import curated, raw
 
 
-def run(em: EventEmitter, since: date) -> None:
-    """Fetch bars on/after `since` for the whole universe and write them.
+def run(em: EventEmitter, since: date, only_benchmarks: bool = False) -> None:
+    """Fetch bars on/after `since` for the universe plus its benchmark ETFs.
     Idempotent: bars already stored unchanged are skipped."""
     synced = curated.sync_dim_tickers()
-    symbols = all_symbols()
+    symbols = benchmark_symbols() if only_benchmarks else all_symbols() + benchmark_symbols()
 
     yf = YFinanceAdapter()
     bars = yf.fetch_bars(symbols, since)
@@ -56,10 +56,16 @@ def main() -> None:
         help="days to look back (default 1 = just yesterday; raise it to fill gaps "
         "after failed runs — idempotent, existing bars are skipped)",
     )
+    parser.add_argument(
+        "--only-benchmarks",
+        action="store_true",
+        default=os.getenv("ONLY_BENCHMARKS") == "true",
+        help="fetch only the benchmark ETFs (to backfill them without the whole universe)",
+    )
     args = parser.parse_args()
 
     with job_run("ingest_prices") as em:
-        run(em, date.today() - timedelta(days=args.days))
+        run(em, date.today() - timedelta(days=args.days), only_benchmarks=args.only_benchmarks)
 
 
 if __name__ == "__main__":
