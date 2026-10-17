@@ -189,7 +189,7 @@ def insert_earnings_surprises(surprises: list[RawEarningsSurprise]) -> int:
 
 
 def insert_earnings_calendar(events: list[RawEarningsCalendar]) -> int:
-    """Insert raw earnings calendar events; idempotent on (source, ticker, event_date, quarter)."""
+    """Upsert raw earnings calendar events on (source, ticker, event_date, quarter)."""
     if not events:
         return 0
     rows = [
@@ -211,8 +211,10 @@ def insert_earnings_calendar(events: list[RawEarningsCalendar]) -> int:
         }
         for e in events
     ]
+    # Overwrite: a report seen as upcoming gets its actuals (and revised estimates)
+    # on a later run; rescheduled dates land as new rows (current_earnings_calendar).
     get_client().table("raw_earnings_calendar").upsert(
-        rows, on_conflict="source,ticker,event_date,quarter", ignore_duplicates=True
+        rows, on_conflict="source,ticker,event_date,quarter"
     ).execute()
     return len(rows)
 

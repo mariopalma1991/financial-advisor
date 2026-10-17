@@ -5,16 +5,16 @@ feeds:
   price_technicals:
     tables: [price_bars_daily, indicators_daily, corporate_actions]
   fundamentals:
-    tables: [fundamentals_quarterly]
+    tables: [fundamentals_quarterly, fundamentals_snapshot]
   news_sentiment:
     tables: [news_articles, news_sentiment_daily]
   insider_sentiment:         # Finnhub monthly MSPR + net insider share change (Form 4)
     tables: [raw_insider_sentiment]
-  catalysts:                 # Phase 3
-    tables: [catalyst_events]
+  catalysts:                 # next earnings, surprises, 8-K / Form 4 counts, dividends, splits
+    tables: [catalysts]
   screener:
     tables: [screener_results]
   data_quality:
     tables: [pipeline_events]
   full:
-    tables: [price_bars_daily, indicators_daily, corporate_actions, fundamentals_quarterly, raw_insider_sentiment, screener_results]
+    tables: [price_bars_daily, indicators_daily, corporate_actions, fundamentals_quarterly, fundamentals_snapshot, catalysts, raw_insider_sentiment, screener_results]

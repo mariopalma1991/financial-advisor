@@ -9,10 +9,10 @@ jobs:
   ingest_news: { max_hours: 12 }         # 3x/day
   ingest_filings: { max_hours: 54 }      # Mon-Sat 14:00 UTC
   ingest_financials: { max_hours: 192 }  # weekly
+  ingest_fundamentals: { max_hours: 192 }  # weekly, Tue 16:00 UTC
   ingest_earnings: { max_hours: 192 }    # weekly
-  ingest_earncal: { max_hours: 192 }     # weekly
+  ingest_earncal: { max_hours: 192 }     # weekly, ~2 min (whole market per day)
   ingest_insider_sentiment: { max_hours: 192 }  # weekly
-  ingest_visa: { max_hours: 768 }        # monthly
   compute_indicators: { max_hours: 54 }  # after each ingest_prices
   roll_window: { max_hours: 768 }        # monthly, 2nd 09:00 UTC
 

@@ -97,6 +97,8 @@ class FinnhubEarningsCalendarAdapter:
             try:
                 raw = self._fetch(_from=_from, to=to)
             except Exception:
+                if strict:
+                    raise
                 return events
             events.extend(self._parse(raw))
 

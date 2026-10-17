@@ -110,7 +110,7 @@ def render():
     funds = _fundamentals(selected)
     if funds:
         fdf = pd.DataFrame(funds)
-        cols_to_show = [c for c in ["period_end", "revenue", "net_income", "eps", "gross_margin", "net_margin", "growth_yoy"] if c in fdf.columns]
+        cols_to_show = [c for c in ["period_end", "eps", "gross_margin", "operating_margin", "net_margin", "growth_yoy", "pe_ttm"] if c in fdf.columns]
         st.dataframe(fdf[cols_to_show], width='stretch', hide_index=True)
     else:
         st.info("No fundamentals data.")

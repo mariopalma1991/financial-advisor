@@ -119,18 +119,13 @@ def _fundamentals_table(funds: list[dict]) -> None:
     df["period_end"] = pd.to_datetime(df["period_end"]).dt.strftime("%Y-%m-%d")
     df = df.sort_values("period_end", ascending=False)
 
-    display = df[[
-        "period_end", "revenue", "net_income", "eps",
-        "gross_margin", "net_margin", "total_debt", "equity",
-    ]].copy()
+    display = df[[c for c in (
+        "period_end", "eps", "gross_margin", "operating_margin", "net_margin",
+        "growth_yoy", "debt_to_equity", "pe_ttm",
+    ) if c in df.columns]].copy()
 
     # Format
-    for col in ["revenue", "net_income", "total_debt", "equity"]:
-        if col in display.columns:
-            display[col] = display[col].apply(
-                lambda x: f"${x/1e9:.2f}B" if pd.notna(x) else "—"
-            )
-    for col in ["gross_margin", "net_margin"]:
+    for col in ["gross_margin", "operating_margin", "net_margin", "growth_yoy"]:
         if col in display.columns:
             display[col] = display[col].apply(
                 lambda x: f"{x:.1%}" if pd.notna(x) else "—"
