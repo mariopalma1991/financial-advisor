@@ -23,11 +23,12 @@ from mcp.client.stdio import stdio_client
 
 from src.mcp_server import server, tools
 
-_GLOBAL_TOOLS = ("get_macro", "get_cost_model", "get_data_status", "screen_universe")
+_GLOBAL_TOOLS = ("get_macro", "get_cost_model", "get_data_status", "screen_universe", "get_portfolio")
 _TICKER_TOOLS = [n for n in tools.ALL_TOOLS if n not in _GLOBAL_TOOLS + ("resolve_refs",)]
 # date-like fields that must not be later than a past read's as_of
 _DATE_FIELDS = ("bar_date", "last_bar_date", "filed_at", "date", "grade_date", "snapshot_date", "as_of",
-                "period", "obs_date", "last_8k_at", "last_dividend_ex_date", "started_at")
+                "period", "obs_date", "last_8k_at", "last_dividend_ex_date", "started_at", "trade_date",
+                "alert_day", "exit_day")
 
 
 def _summary(out: dict) -> str:

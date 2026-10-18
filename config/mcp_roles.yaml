@@ -25,8 +25,9 @@ roles:
     tools: [get_ticker_overview, get_price_technicals, get_short_interest, get_earnings,
             get_catalysts, get_macro, get_data_status]
   presidente:
-    max_calls: 6
-    tools: [get_research_digest, screen_universe, get_factor_scores, get_cost_model, get_data_status]
+    max_calls: 8
+    tools: [get_research_digest, screen_universe, get_factor_scores, get_portfolio, get_alert_history,
+            get_cost_model, get_data_status]
   validador:  # the non-LLM checker after each committee run, never an agent
     max_calls: 100
     tools: [resolve_refs]

@@ -92,6 +92,21 @@ buys excluded) and quality. `score` is their mean (a missing factor counts as 0)
 so past month-ends can be rebuilt (`--backfill-months`). Table `factor_scores` keeps
 40 daily days plus every month-end; view `factor_latest`.
 
+## Investor positions and committee log
+
+The bot gives buy / sell / hold alerts; the investor rebalances. Amounts the investor
+sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
+
+- `investor_trades`: the investor's buys and sells in MXN, recorded from chat. MCP
+  `get_portfolio` turns them into open positions (split-adjusted shares, average
+  cost with fees, value and gain in MXN, today's factor rank, realized gain this year).
+- `committee_runs`, `committee_opinions`, `committee_alerts`: written by the committee
+  runner: each run's as_of (replayable), each agent's stance, reasoning, cited refs and
+  tool calls, and the alerts that reach the investor (vetoed buys kept, to score the veto).
+- `score_alerts` (after `compute_factors`) fills `alert_outcomes`: each alert against
+  VOO in MXN after 21, 63 and 126 trading days, from the next day's close. Views
+  `alert_scorecard` and `agent_scorecard`; MCP `get_alert_history` shows past calls.
+
 ## Cloud operation
 
 GitHub Actions runs the pipeline on schedule (see `.github/workflows/`):
