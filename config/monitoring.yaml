@@ -5,7 +5,7 @@
 # Each scheduled job must have a successful run (job_runs.status completed*)
 # within max_hours. Catches jobs that stopped running or keep failing.
 jobs:
-  ingest_prices: { max_hours: 54 }       # Mon-Sat 02:00 UTC
+  ingest_prices: { max_hours: 78 }       # Tue-Sat 02:00 UTC (Mon-Fri 20:00 CST); 78 h spans the weekend
   ingest_news: { max_hours: 12 }         # 3x/day
   ingest_filings: { max_hours: 54 }      # Mon-Sat 14:00 UTC
   ingest_fundamentals: { max_hours: 192 }  # weekly, Tue 16:00 UTC
@@ -16,7 +16,7 @@ jobs:
   ingest_profiles: { max_hours: 192 }    # weekly, Thu 16:00 UTC (a third of the universe)
   ingest_macro: { max_hours: 78 }        # Tue-Sat 03:00 UTC
   enrich_filings: { max_hours: 54 }      # Mon-Sat 15:00 UTC (EDGAR)
-  compute_indicators: { max_hours: 54 }  # after each ingest_prices
+  compute_indicators: { max_hours: 78 }  # after each ingest_prices (weekend gap)
   roll_window: { max_hours: 768 }        # monthly, 2nd 09:00 UTC
 
 # Tables that grow every run: the newest row must be younger than max_hours.

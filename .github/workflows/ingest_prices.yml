@@ -1,11 +1,12 @@
 name: ingest_prices
 
 # Daily price ingestion: yfinance bars + corporate actions.
-# Runs after US market close (02:00 UTC Mon-Sat = ~8pm Mexico City).
+# Runs after US market close on trading days only: 02:00 UTC Tue-Sat = Mon-Fri 20:00 CST.
+# Weekends have no bars (lookback 1 = the previous UTC day). Holidays still run but find nothing.
 
 on:
   schedule:
-    - cron: "0 2 * * 1-6"
+    - cron: "0 2 * * 2-6"
   workflow_dispatch:
     inputs:
       lookback_days:
