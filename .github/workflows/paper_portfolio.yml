@@ -1,16 +1,13 @@
 name: paper_portfolio
 
-# Paper portfolio from the factor scores against VOO, in MXN
-# (src/jobs/paper_portfolio.py). Runs after every successful compute_factors run.
+# Model portfolio from the factor scores on the investor's budget, against VOO, in
+# MXN (src/jobs/paper_portfolio.py). Runs after every successful compute_factors run.
 
 on:
   workflow_run:
     workflows: [compute_factors]
     types: [completed]
   workflow_dispatch:
-  push:
-    branches: [claude/project-thread-05xrjc]
-    paths: [.github/workflows/paper_portfolio.yml, src/jobs/paper_portfolio.py, src/transforms/paper.py]
 
 concurrency:
   group: paper-portfolio
