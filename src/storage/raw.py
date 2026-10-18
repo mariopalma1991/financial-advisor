@@ -13,11 +13,9 @@ from src.adapters.base import (
     RawEarningsCalendar,
     RawEarningsSurprise,
     RawFiling,
-    RawFinancialReport,
     RawInsiderSentiment,
     RawNewsArticle,
     RawPriceBar,
-    RawVisaApplication,
 )
 from src.quality.run_metadata import current_run_id
 from src.storage.supabase_client import get_client, pg_connection
@@ -135,39 +133,6 @@ def insert_news_articles(articles: list[RawNewsArticle]) -> int:
     return len(rows)
 
 
-def insert_financial_reports(reports: list[RawFinancialReport]) -> int:
-    """Insert raw financial reports; idempotent on (source, ticker, access_number)."""
-    if not reports:
-        return 0
-    rows = [
-        {
-            "source": r.source,
-            "ticker": r.ticker,
-            "cik": r.cik,
-            "access_number": r.access_number,
-            "form": r.form,
-            "year": r.year,
-            "quarter": r.quarter,
-            "start_date": r.start_date.isoformat() if r.start_date else None,
-            "end_date": r.end_date.isoformat() if r.end_date else None,
-            "filed_date": r.filed_date.isoformat() if r.filed_date else None,
-            "report_json": r.report,
-            "payload_json": r.payload,
-            "valid_from": (r.filed_date or datetime.now(timezone.utc)).isoformat(),
-            "ingested_at": _now(),
-            "run_id": current_run_id(),
-        }
-        for r in reports
-    ]
-    # Each report carries its full statements as JSON: one request with thousands of
-    # them hit Postgres' statement timeout, so write in small chunks.
-    for i in range(0, len(rows), 100):
-        get_client().table("raw_financial_reports").upsert(
-            rows[i : i + 100], on_conflict="source,ticker,access_number", ignore_duplicates=True
-        ).execute()
-    return len(rows)
-
-
 def insert_earnings_surprises(surprises: list[RawEarningsSurprise]) -> int:
     """Insert raw earnings surprises; idempotent on (source, ticker, period)."""
     if not surprises:
@@ -223,44 +188,6 @@ def insert_earnings_calendar(events: list[RawEarningsCalendar]) -> int:
     # on a later run; rescheduled dates land as new rows (current_earnings_calendar).
     get_client().table("raw_earnings_calendar").upsert(
         rows, on_conflict="source,ticker,event_date,quarter"
-    ).execute()
-    return len(rows)
-
-
-def insert_visa_applications(apps: list[RawVisaApplication]) -> int:
-    """Insert raw visa applications; idempotent on (source, ticker, case_number)."""
-    if not apps:
-        return 0
-    rows = [
-        {
-            "source": a.source,
-            "ticker": a.ticker,
-            "case_number": a.case_number,
-            "job_title": a.job_title,
-            "visa_class": a.visa_class,
-            "case_status": a.case_status,
-            "employer_name": a.employer_name,
-            "begin_date": a.begin_date.isoformat() if a.begin_date else None,
-            "end_date": a.end_date.isoformat() if a.end_date else None,
-            "received_date": a.received_date.isoformat() if a.received_date else None,
-            "quarter": a.quarter,
-            "year": a.year,
-            "wage_range_from": a.wage_range_from,
-            "wage_range_to": a.wage_range_to,
-            "wage_unit": a.wage_unit,
-            "worksite_city": a.worksite_city,
-            "worksite_state": a.worksite_state,
-            "full_time": a.full_time,
-            "h1b_dependent": a.h1b_dependent,
-            "payload_json": a.payload,
-            "valid_from": (a.received_date or datetime.now(timezone.utc)).isoformat(),
-            "ingested_at": _now(),
-            "run_id": current_run_id(),
-        }
-        for a in apps
-    ]
-    get_client().table("raw_visa_applications").upsert(
-        rows, on_conflict="source,ticker,case_number", ignore_duplicates=True
     ).execute()
     return len(rows)
 

@@ -24,7 +24,7 @@ from typing import Any
 import finnhub
 
 from src.adapters.base import source_retry
-from src.adapters.finnhub_visa import _finnhub_client
+from src.adapters.finnhub_client import _finnhub_client
 
 # column -> (candidate metric keys in order of preference, divide by 100?)
 SNAPSHOT_METRICS: dict[str, tuple[tuple[str, ...], bool]] = {

@@ -17,7 +17,7 @@ Modes (python -m src.jobs.archive_cold <mode>):
 Postgres keeps the hot window the feeds read: price bars and filings for the
 last HOT_YEARS years, Form 4/144 for INSIDER_HOT_DAYS, and news for the last
 NEWS_HOT_DAYS days (whole Mexico City days; their daily sentiment is kept in
-news_sentiment_history). raw_financial_reports is archived whole: no feed reads it.
+news_sentiment_history).
 """
 from __future__ import annotations
 
@@ -44,7 +44,6 @@ ROLL_WHERE: dict[str, str] = {
     "price_bars_daily": f"bar_date < current_date - interval '{HOT_YEARS} years'",
     "raw_filings": f"filed_at < now() - interval '{HOT_YEARS} years' or (form_type in {INSIDER_FORMS}"
                    f" and filed_at < now() - interval '{INSIDER_HOT_DAYS} days')",
-    "raw_financial_reports": "true",
 }
 # table -> statement run right before its rows are deleted
 BEFORE_DELETE: dict[str, str] = {
@@ -67,10 +66,6 @@ PRUNE_SQL: dict[str, list[str]] = {
     "price_bars_daily": [
         f"delete from price_bars_daily where bar_date < current_date - interval '{HOT_YEARS} years'"
         " and ingested_at <= %(ts)s",
-    ],
-    "raw_financial_reports": [
-        "update raw_financial_reports set report_json = '{}'::jsonb, payload_json = null"
-        " where ingested_at <= %(ts)s and (report_json <> '{}'::jsonb or payload_json is not null)",
     ],
     "raw_filings": [
         f"delete from raw_filings where filed_at < now() - interval '{HOT_YEARS} years'"

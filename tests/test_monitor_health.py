@@ -29,11 +29,11 @@ def test_job_check_flags_stale_and_missing_jobs():
     res = {r["name"]: r for r in mh.check_jobs(cur, {
         "ingest_news": {"max_hours": 12},
         "ingest_prices": {"max_hours": 54},
-        "ingest_visa": {"max_hours": 768},
+        "ingest_analysts": {"max_hours": 768},
     }, NOW)}
     assert res["ingest_news"]["level"] == "INFO"
     assert res["ingest_prices"]["level"] == "ERROR" and "last run failed" in res["ingest_prices"]["message"]
-    assert res["ingest_visa"]["level"] == "ERROR" and "no successful run" in res["ingest_visa"]["message"]
+    assert res["ingest_analysts"]["level"] == "ERROR" and "no successful run" in res["ingest_analysts"]["message"]
 
 
 def test_table_check_uses_newest_row_age():
