@@ -595,7 +595,7 @@ def get_news(ticker: str, days: int = 7, limit: int = 20, as_of: str | None = No
         r["summary"] = summaries.get(str(r.pop("article_id")))
     env.put("articles", rows_with_ref(rows, "news_relevant", "id"), required=False)
     if unavailable:
-        env.note("Algunos resúmenes no se pudieron leer del archivo; los titulares están completos.")
+        env.note("No se pudo leer el archivo de resúmenes; los titulares están completos.")
     return env.out()
 
 
@@ -627,15 +627,22 @@ def get_filing_text(ticker: str, filing_id: int | None = None, as_of: str | None
 _edgar: EdgarClient | None = None
 
 
+_ciks: dict[str, int] = {}
+
+
 def _cik(t: str) -> int | None:
-    """From our stored filings' URLs, else SEC's ticker list."""
-    global _edgar
-    row = db.one("select url from raw_filings where ticker = %s and url like '%%/edgar/data/%%' limit 1", (t,))
+    """SEC's ticker list (once per process), else an 8-K we stored (Form 4 URLs can
+    carry the insider's CIK, not the company's)."""
+    global _edgar, _ciks
+    if not _ciks:
+        _edgar = _edgar or EdgarClient()
+        _ciks = _edgar.company_tickers()
+    if t in _ciks:
+        return _ciks[t]
+    row = db.one("select url from raw_filings where ticker = %s and form_type in ('8-K', '6-K', '10-Q') "
+                 "and url like '%%/edgar/data/%%' limit 1", (t,))
     parsed = parse_index_url(row["url"]) if row else None
-    if parsed:
-        return parsed[0]
-    _edgar = _edgar or EdgarClient()
-    return _edgar.company_tickers().get(t)
+    return parsed[0] if parsed else None
 
 
 def get_risk_factors(ticker: str, as_of: str | None = None) -> dict[str, Any]:

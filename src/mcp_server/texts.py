@@ -8,6 +8,8 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Any
 
+from botocore.exceptions import ClientError
+
 from src.storage import archive
 
 
@@ -18,9 +20,12 @@ def _s3():
 
 @lru_cache(maxsize=64)
 def _partition(table: str, part: str) -> tuple[dict[str, Any], ...] | None:
+    """Rows of one partition; () when it doesn't exist, None when storage can't be read."""
     try:
         return tuple(archive.read_partition(table, part, s3=_s3()).to_pylist())
-    except Exception:  # noqa: BLE001 — missing partition, no credentials, network
+    except ClientError:  # no such partition (nothing archived that day)
+        return ()
+    except Exception:  # noqa: BLE001 — no credentials, network
         return None
 
 

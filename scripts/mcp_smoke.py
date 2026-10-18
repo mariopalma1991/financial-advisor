@@ -119,7 +119,13 @@ def _run(tickers: list[str], as_of: str | None) -> tuple[int, list[dict]]:
                 print(f"::warning title={name} {t}::{line[:300]}")
             print(f"{t:6} {name:22} {time.monotonic() - started:5.2f}s {line}"[:600])
             if t == tickers[0] and name in _TEXT_TOOLS and as_of is None:
-                print(f"::notice title={name} {t}::{line[:400]}")
+                extra = ""
+                if name == "get_news":
+                    arts = out.get("data", {}).get("articles") or []
+                    extra = f" with_summary={sum(bool(a.get('summary')) for a in arts)}/{len(arts)}"
+                if name == "get_risk_factors":
+                    extra = f" change={out.get('data', {}).get('change')}"[:300]
+                print(f"::notice title={name} {t}::{extra} {line[:300]}")
     for name in _GLOBAL_TOOLS:
         out = tools.ALL_TOOLS[name](as_of=as_of)
         failures += "error" in out
