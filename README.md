@@ -63,12 +63,16 @@ Four pages: **Pipeline** (run history, events, freshness), **Market Data** (OHLC
 ## MCP server
 
 ```bash
-python -m src.mcp_server.server              # stdio transport
+python -m src.mcp_server.server --role optimista   # stdio transport; needs SUPABASE_DB_URL
 ```
 
-Tools: `get_research_package`, `get_feed`, `get_price_history`, `get_fundamentals`,
-`search_news`, `get_news_sentiment`, `run_screener`, `get_screener_results`,
-`list_tickers`, `get_pipeline_runs`, `get_pipeline_events`.
+Read-only tools over the curated views: `get_ticker_overview`, `get_price_technicals`,
+`get_fundamentals`, `get_peer_valuation`, `get_analyst_view`, `get_short_interest`,
+`get_earnings`, `get_news_sentiment`, `get_filing_events`, `get_insider_activity`,
+`get_catalysts`, `get_macro`, `get_data_status`, `get_cost_model`, `get_research_digest`.
+Every answer carries a `snapshot_id` and a `_ref` per row that agents cite as
+`<_ref>#<field>`. `config/mcp_roles.yaml` sets which tools each committee role sees.
+`mcp_smoke` (manual workflow) checks every tool against the real database.
 
 ## Cloud operation
 
