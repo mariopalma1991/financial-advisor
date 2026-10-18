@@ -32,6 +32,8 @@ EAR_MAX_AGE_DAYS = 60
 MAX_SUE = 0.2
 INSIDER_DAYS = 90
 INSIDER_SLACK_DAYS = 7
+ROUTINE_SAME_DAY_BUYERS = 4   # e.g. SPG: 11 directors "bought" on the same day (board fees in stock)
+MIN_INSIDER_BUY_USD = 5_000
 
 _COLS = ("as_of", "ticker", "industry", "eligible", "last_bar_date", "adv_20d", "mom_12_1",
          "rev_chg", "rev_breadth", "sue", "ear", "ins_buyers", "ins_buy_value", "insider_raw",
@@ -50,8 +52,9 @@ def _num(v) -> float | None:
 
 
 def _sue(surprise: dict | None, bars: list[dict]) -> float | None:
-    """EPS surprise over the price. Above MAX_SUE it is a unit mismatch, not news
-    (ADRs whose EPS is in pesos or reais while the price is in dollars)."""
+    """EPS surprise over the price. Only for US companies: ADRs often report EPS in
+    their own currency (yen, pesos) against a dollar price. Above MAX_SUE it is
+    still a data error, not news."""
     if not surprise or not bars:
         return None
     v = _num(surprise["surprise"]) / bars[-1]["close"]
@@ -65,7 +68,7 @@ def _iso(v) -> str | None:
 def load_inputs(cur, as_of: date) -> pd.DataFrame:
     """Raw factor inputs per enabled ticker as known at the close of as_of."""
     p = {"day": as_of, "at": datetime.combine(as_of, time(23, 59, 59), timezone.utc)}
-    universe = _rows(cur, "select t.ticker, p.industry from current_tickers t "
+    universe = _rows(cur, "select t.ticker, p.industry, p.country from current_tickers t "
                           "left join company_profiles p using (ticker) where t.enabled", p)
 
     bars: dict[str, list[dict]] = defaultdict(list)
@@ -102,10 +105,15 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
     # Form 4s were loaded from 2026-07-19; a window that starts a few days before still counts
     ins_covered = ins_start is not None and ins_start <= p["at"] - timedelta(days=INSIDER_DAYS - INSIDER_SLACK_DAYS)
     insider = {r["ticker"]: r for r in _rows(
-        cur, "select ticker, count(distinct owner) as n_buyers, sum(buy_value) as buy_value "
-             "from insider_trades where filed_at <= %(at)s and filed_at > %(at)s - make_interval(days => %(n)s) "
-             "and buy_value > 0 and not coalesce(is_10b5_1, false) group by ticker",
-        {**p, "n": INSIDER_DAYS})}
+        cur, "with b as (select ticker, filed_at::date as d, owner, buy_value from insider_trades "
+             "  where filed_at <= %(at)s and filed_at > %(at)s - make_interval(days => %(n)s) "
+             "  and buy_value > 0 and not coalesce(is_10b5_1, false)), "
+             # many insiders filing buys the same day is a board fee or purchase plan, not conviction
+             "routine as (select ticker, d from b group by ticker, d having count(distinct owner) >= %(routine)s) "
+             "select ticker, count(distinct owner) as n_buyers, sum(buy_value) as buy_value from b "
+             "where buy_value >= %(min_buy)s and (ticker, d) not in (select ticker, d from routine) "
+             "group by ticker",
+        {**p, "n": INSIDER_DAYS, "routine": ROUTINE_SAME_DAY_BUYERS, "min_buy": MIN_INSIDER_BUY_USD})}
 
     quarters: dict[str, list[dict]] = defaultdict(list)
     for r in _rows(cur, "select distinct on (ticker, period_end) ticker, period_end, roe_ttm, gross_margin, "
@@ -140,7 +148,7 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
             "rev_chg": rev_chg, "rev_breadth": rev_breadth,
             # surprise in dollars per share over the price: a percent surprise explodes
             # when the estimate is near zero
-            "sue": _sue(s, b),
+            "sue": _sue(s, b) if u["country"] == "US" else None,
             "ear": fx.window_return(b, closes, rd) if rd else None,
             "ins_buyers": n_buyers if ins_covered else None,
             "ins_buy_value": buy_value if ins_covered else None,
