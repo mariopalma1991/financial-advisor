@@ -173,3 +173,15 @@ def test_buy_and_top_up_on_the_same_day_are_one_fill():
     r = _run(prices, rules=paper.Rules(**{**WHOLE.__dict__, "n": 2}), flows=[("2026-01-01", 5000.0)])
     keys = [(f["exec_day"], f["ticker"], f["side"]) for f in r["fills"]]
     assert len(keys) == len(set(keys))
+
+
+def test_a_drop_below_the_deposits_keeps_the_positions():
+    # 4,000 deposited, 2 positions of 2,000; prices fall 10%, so the book is worth 3,600:
+    # a new signal still holds 2 positions (by value it would be 1, leaving cash idle)
+    days = ["2026-01-01", "2026-01-02", "2026-01-05", "2026-01-06"]
+    prices = {"B": {"2026-01-01": 50.0, "2026-01-02": 50.0, "2026-01-05": 45.0, "2026-01-06": 45.0},
+              "C": {"2026-01-01": 25.0, "2026-01-02": 25.0, "2026-01-05": 22.5, "2026-01-06": 22.5}}
+    rules = paper.Rules(**{**WHOLE.__dict__, "n": 2})
+    r = _run(prices, rules=rules, signals=("2026-01-01", "2026-01-05"), flows=[("2026-01-01", 4000.0)])
+    assert r["nav"][-1]["n_positions"] == 2
+    assert all(a == "hold" for a, _ in _acts(r["decisions"]["2026-01-05"]).values())

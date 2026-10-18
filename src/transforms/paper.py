@@ -135,6 +135,12 @@ class Book:
     positions: dict[str, Position] = field(default_factory=dict)
     realized_ytd: float = 0.0
     fills: list[dict] = field(default_factory=list)
+    contributed: float = 0.0   # the investor's deposits so far
+
+    def slots(self, value: float, rules: Rules) -> int:
+        """Positions to hold: from the deposits, or the value if it grew past them, so
+        a drop below the deposits doesn't cut a position and leave its cash idle."""
+        return rules.slots(max(value, self.contributed))
 
     def value(self, day: str, px: Callable[[str, str], float | None], fx: float) -> float:
         return self.cash + sum(p.shares * (px(t, day) or 0.0) * fx for t, p in self.positions.items())
@@ -193,7 +199,7 @@ def top_up(book: Book, day: str, px, fx: float, rules: Rules, signal_day: str, b
     """Spend cash on the positions furthest below NAV / n (new money, or what is left
     after a rebalance), whole shares, until no position can take another share."""
     value = book.value(day, px, fx)
-    target = value / rules.slots(value)
+    target = value / book.slots(value, rules)
     while True:
         best, gap = None, 0.0
         for t, p in book.positions.items():
@@ -221,7 +227,7 @@ def rebalance(book: Book, decisions: Sequence[dict], day: str, px, fx: float, ru
     buys = [d["ticker"] for d in decisions if d["action"] == "buy" and px(d["ticker"], day)]
     if buys:
         value = book.value(day, px, fx)
-        budget = min(book.cash / len(buys), value / rules.slots(value))
+        budget = min(book.cash / len(buys), value / book.slots(value, rules))
         for t in buys:
             n = shares_for(min(budget, book.cash), px(t, day), fx, rules, basis(t, day))
             if n > 0:
@@ -230,9 +236,9 @@ def rebalance(book: Book, decisions: Sequence[dict], day: str, px, fx: float, ru
 
 
 def _sizing(book: Book, day: str | None, px, fx: float, rules: Rules, basis) -> tuple[int, Callable[[str], bool]]:
-    """Positions the book's value allows, and whether one share of a stock fits one."""
+    """Positions the book allows (Book.slots), and whether one share of a stock fits one."""
     value = book.value(day, px, fx) if day and fx else book.cash
-    slots = rules.slots(value)
+    slots = book.slots(value, rules)
     budget = value / slots
 
     def can_buy(t: str) -> bool:
@@ -248,7 +254,7 @@ def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., 
              flows: Sequence[tuple[str, float]] = (), basis=None) -> dict:
     """Run the book over trading `days` (ascending). Each signal day's decisions
     (decide(signal_day, held, slots, can_buy)) fill on the first trading day after
-    it; slots is how many positions the portfolio's value allows (Rules.slots) and
+    it; slots is how many positions the deposits (or a larger value) allow (Book.slots) and
     can_buy(ticker) whether one whole share fits a position's budget. `flows` are
     the investor's deposits (day, MXN): cash on the first trading day on or after
     their date, spent the same day on the positions below target (or at the first
@@ -256,7 +262,7 @@ def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., 
     Returns decisions per signal, fills and one NAV row per day from the first fill,
     with the money put in so far and the time-weighted return (flows removed)."""
     basis = basis or (lambda t, day: 1.0)
-    book = Book(cash=rules.initial_mxn)
+    book = Book(cash=rules.initial_mxn, contributed=rules.initial_mxn)
     contributed = rules.initial_mxn
     queue = sorted(flows)
     pending = sorted(signals)
@@ -283,6 +289,7 @@ def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., 
         while queue and queue[0][0] <= day:
             flow += queue.pop(0)[1]
         book.cash += flow
+        book.contributed += flow
         contributed += flow
         filled = False
         while pending and pending[0] < day:
