@@ -92,14 +92,20 @@ buys excluded) and quality. `score` is their mean (a missing factor counts as 0)
 so past month-ends can be rebuilt (`--backfill-months`). Table `factor_scores` keeps
 40 daily days plus every month-end; view `factor_latest`.
 
-## Investor positions and committee log
+## Model portfolio and committee log
 
-The bot gives buy / sell / hold alerts; the investor rebalances. Amounts the investor
-sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
+Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
 
-- `investor_trades`: the investor's buys and sells in MXN, recorded from chat. MCP
-  `get_portfolio` turns them into open positions (split-adjusted shares, average
-  cost with fees, value and gain in MXN, today's factor rank, realized gain this year).
+- `paper_portfolio` (after `compute_factors`, settings in `config/paper_portfolio.yaml`)
+  runs the model portfolio: the best factor-ranked stocks, at most 25% per industry,
+  held while ranked within 40, rebalanced at month-ends at the next day's close, with
+  GBM costs, dividend withholding and 10% ISR. Whole shares only: the investor's budget
+  (an initial deposit plus later ones in `investor_contributions`) sets how many
+  positions fit (`min_position_mxn`), and a stock whose one share costs more than a
+  position is skipped until the budget grows. VOO gets the same pesos on the same days.
+  `forward_top20` stores each decision once (from `forward_start`); `backtest_top20`
+  replays the past year. Tables `paper_decisions`, `paper_fills`, `paper_nav`; view
+  `paper_performance`; MCP `get_portfolio`.
 - `committee_runs`, `committee_opinions`, `committee_alerts`: written by the committee
   runner: each run's as_of (replayable), each agent's stance, reasoning, cited refs and
   tool calls, and the alerts that reach the investor (vetoed buys kept, to score the veto).
