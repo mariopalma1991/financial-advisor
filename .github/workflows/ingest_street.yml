@@ -1,0 +1,49 @@
+name: ingest_street
+
+# Weekly Yahoo street data: EPS estimate trends and revisions, analyst price targets,
+# short interest and analyst rating changes. Writes estimate_trends, street_snapshot and
+# analyst_rating_changes; read through estimate_revisions / street_latest (db/migrations/0014).
+# Runs Saturday 17:00 UTC (11:00 CST), ~25 min.
+
+on:
+  schedule:
+    - cron: "0 17 * * 6"
+  workflow_dispatch:
+    inputs:
+      max_symbols:
+        description: "Tickers to fetch (empty = whole universe)"
+        required: false
+        default: ""
+  push:  # TEMP: test run from the PR branch; removed before merge
+    branches: [claude/project-thread-05xrjc]
+    paths: [.github/workflows/ingest_street.yml]
+
+# Yahoo throttles bursts; never run two Yahoo-heavy jobs at once.
+concurrency:
+  group: yahoo-api
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Ingest street data (Yahoo)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          MAX_SYMBOLS: ${{ inputs.max_symbols || (github.event_name == 'push' && '40') || '' }}
+        run: python -m src.jobs.ingest_street

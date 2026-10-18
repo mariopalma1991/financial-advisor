@@ -310,6 +310,38 @@ def upsert_analyst_recommendations(rows: list[dict[str, Any]]) -> int:
     return len(payload)
 
 
+def upsert_street(items: list[dict[str, Any]]) -> int:
+    """Yahoo street data (adapters/yahoo_street.py), routed by each item's kind:
+    weekly estimate_trends and street_snapshot rows, and analyst_rating_changes
+    (one row per firm and day; a re-fetch overwrites)."""
+    if not items:
+        return 0
+    now, run_id = _now(), current_run_id()
+    targets = {
+        "trend": ("estimate_trends", "ticker,snapshot_date,period"),
+        "street": ("street_snapshot", "ticker,snapshot_date"),
+        "rating": ("analyst_rating_changes", "ticker,grade_date,firm"),
+    }
+    n = 0
+    for kind, (table, keys) in targets.items():
+        rows = [{**{k: v for k, v in it.items() if k != "kind"}, "ingested_at": now, "run_id": run_id}
+                for it in items if it.get("kind") == kind]
+        for chunk in _chunks(rows, _WRITE_CHUNK):
+            get_client().table(table).upsert(chunk, on_conflict=keys).execute()
+        n += len(rows)
+    return n
+
+
+def prune_street(keep_weeks: int, rating_days: int) -> None:
+    """Weekly snapshots older than keep_weeks and rating changes older than rating_days."""
+    today = datetime.now(timezone.utc).date()
+    snap_cut = (today - timedelta(weeks=keep_weeks)).isoformat()
+    for table in ("estimate_trends", "street_snapshot"):
+        get_client().table(table).delete().lt("snapshot_date", snap_cut).execute()
+    rating_cut = (today - timedelta(days=rating_days)).isoformat()
+    get_client().table("analyst_rating_changes").delete().lt("grade_date", rating_cut).execute()
+
+
 def upsert_company_profiles(rows: list[dict[str, Any]]) -> int:
     if not rows:
         return 0
