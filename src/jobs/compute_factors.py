@@ -26,9 +26,11 @@ KEEP_DAILY_DAYS = 40
 MIN_ADV_USD = 1_000_000
 MAX_STALE_DAYS = 7
 SURPRISE_MAX_AGE_DAYS = 150   # quarter end within ~5 months: reported in the last ~3
+# (the price reaction needs the report date; the earnings calendar starts 2026-09-14)
 REPORT_LAG_DAYS = 45
 EAR_MAX_AGE_DAYS = 60
 INSIDER_DAYS = 90
+INSIDER_SLACK_DAYS = 7
 
 _COLS = ("as_of", "ticker", "industry", "eligible", "last_bar_date", "adv_20d", "mom_12_1",
          "rev_chg", "rev_breadth", "sue", "ear", "ins_buyers", "ins_buy_value", "insider_raw",
@@ -76,9 +78,9 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
         trends[r["ticker"]].append(r)
 
     surprise = {r["ticker"]: r for r in _rows(
-        cur, "select distinct on (ticker) ticker, period, surprise_pct from raw_earnings_surprises "
+        cur, "select distinct on (ticker) ticker, period, surprise from raw_earnings_surprises "
              "where period > %(day)s::date - %(age)s "
-             "and (ingested_at <= %(at)s or period + %(lag)s <= %(day)s) and surprise_pct is not null "
+             "and (ingested_at <= %(at)s or period + %(lag)s <= %(day)s) and surprise is not null "
              "order by ticker, period desc, (ingested_at <= %(at)s) desc, ingested_at desc",
         {**p, "age": SURPRISE_MAX_AGE_DAYS, "lag": REPORT_LAG_DAYS})}
     report_day = {r["ticker"]: _iso(r["event_date"]) for r in _rows(
@@ -87,7 +89,8 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
         {**p, "age": EAR_MAX_AGE_DAYS})}
 
     ins_start = _rows(cur, "select min(filed_at) as first from insider_trades", p)[0]["first"]
-    ins_covered = ins_start is not None and ins_start <= p["at"] - timedelta(days=INSIDER_DAYS)
+    # Form 4s were loaded from 2026-07-19; a window that starts a few days before still counts
+    ins_covered = ins_start is not None and ins_start <= p["at"] - timedelta(days=INSIDER_DAYS - INSIDER_SLACK_DAYS)
     insider = {r["ticker"]: r for r in _rows(
         cur, "select ticker, count(distinct owner) as n_buyers, sum(buy_value) as buy_value "
              "from insider_trades where filed_at <= %(at)s and filed_at > %(at)s - make_interval(days => %(n)s) "
@@ -125,7 +128,9 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
             "eligible": bool(fresh and adv is not None and adv >= MIN_ADV_USD),
             "last_bar_date": last, "adv_20d": adv, "mom_12_1": fx.momentum_12_1(closes),
             "rev_chg": rev_chg, "rev_breadth": rev_breadth,
-            "sue": max(-1.0, min(1.0, _num(s["surprise_pct"]) / 100)) if s else None,
+            # surprise in dollars per share over the price: a percent surprise explodes
+            # when the estimate is near zero
+            "sue": _num(s["surprise"]) / b[-1]["close"] if s and b else None,
             "ear": fx.window_return(b, closes, rd) if rd else None,
             "ins_buyers": n_buyers if ins_covered else None,
             "ins_buy_value": buy_value if ins_covered else None,

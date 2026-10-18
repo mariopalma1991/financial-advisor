@@ -13,7 +13,7 @@ create table if not exists factor_scores (
     mom_12_1        real,                 -- return 12 months ago -> 1 month ago
     rev_chg         real,                 -- EPS estimate change, 30/90 days, this + next year
     rev_breadth     real,                 -- (ups - downs) / analysts, 30 days
-    sue             real,                 -- last EPS surprise (fraction), if recent
+    sue             real,                 -- last EPS surprise (USD per share) over the price, if recent
     ear             real,                 -- price reaction around the last report
     ins_buyers      int,                  -- insiders buying in the open market, 90 days
     ins_buy_value   double precision,
