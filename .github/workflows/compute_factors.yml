@@ -5,9 +5,6 @@ name: compute_factors
 # or backfill_months to rebuild past month-ends (for forward and back tests).
 
 on:
-  push:  # TEMP: first load from the branch, removed before merge
-    branches: [claude/project-thread-05xrjc]
-    paths: [.github/workflows/compute_factors.yml, src/jobs/compute_factors.py, src/transforms/factors.py]
   workflow_run:
     workflows: [ingest_prices]
     types: [completed]
@@ -48,5 +45,5 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           AS_OF: ${{ inputs.as_of && format('--as-of {0}', inputs.as_of) || '' }}
-          BACKFILL: ${{ github.event_name == 'push' && '12' || inputs.backfill_months || '0' }}
+          BACKFILL: ${{ inputs.backfill_months || '0' }}
         run: python -m src.jobs.compute_factors $AS_OF --backfill-months $BACKFILL
