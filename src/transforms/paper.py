@@ -166,6 +166,13 @@ class Book:
         p = self.positions.setdefault(t, Position(0.0, 0.0))
         p.shares += shares
         p.cost_mxn += gross + cost
+        same = next((f for f in reversed(self.fills) if f["exec_day"] == day and f["ticker"] == t
+                     and f["side"] == "buy"), None) if self.fills and self.fills[-1]["exec_day"] == day else None
+        if same:  # a top-up right after the buy is one fill
+            same["shares"] += shares
+            same["amount_mxn"] += gross
+            same["cost_mxn"] += cost
+            return
         self.fills.append({"exec_day": day, "signal_day": signal_day, "ticker": t, "side": "buy",
                            "reason": reason, "shares": shares, "price_usd": price, "usd_mxn": fx,
                            "amount_mxn": gross, "cost_mxn": cost, "gain_mxn": None})

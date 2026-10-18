@@ -166,3 +166,10 @@ def test_whole_shares_rounded_on_the_trade_days_basis():
     # buys 2 shares then, 4 today
     assert paper.shares_for(250.0, 50.0, 1.0, WHOLE, basis=2.0) == 4.0
     assert paper.shares_for(99.0, 100.0, 1.0, WHOLE) == 0.0
+
+
+def test_buy_and_top_up_on_the_same_day_are_one_fill():
+    prices = {t: {"2026-01-01": p, "2026-01-02": p} for t, p in (("B", 50.0), ("C", 25.0))}
+    r = _run(prices, rules=paper.Rules(**{**WHOLE.__dict__, "n": 2}), flows=[("2026-01-01", 5000.0)])
+    keys = [(f["exec_day"], f["ticker"], f["side"]) for f in r["fills"]]
+    assert len(keys) == len(set(keys))

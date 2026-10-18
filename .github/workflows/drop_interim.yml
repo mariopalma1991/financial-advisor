@@ -1,7 +1,7 @@
 name: drop_interim
 
 # One-off: applies db/migrations/0019 (drops interim objects from 0017).
-# Removed from the branch right after it runs.
+# Removed from the branch right after it runs (rerun: view dependency).
 
 on:
   push:
