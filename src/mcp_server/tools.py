@@ -10,6 +10,7 @@ cited number up again (see the MCP sketch doc).
 """
 from __future__ import annotations
 
+import json
 import math
 from datetime import date
 from pathlib import Path
@@ -17,7 +18,9 @@ from typing import Any
 
 import yaml
 
-from src.mcp_server import db
+from src.adapters import sec_risk_factors as rf
+from src.adapters.sec_edgar import EdgarClient, parse_index_url
+from src.mcp_server import db, texts
 from src.mcp_server.envelope import Envelope, error, parse_as_of, row_ref, rows_with_ref, with_ref
 
 _ROOT = Path(__file__).resolve().parents[2]
@@ -407,17 +410,28 @@ def get_analyst_view(ticker: str, as_of: str | None = None) -> dict[str, Any]:
     return env.out()
 
 
+_FINRA_LAG_DAYS = 12
+
+
 def get_short_interest(ticker: str, as_of: str | None = None) -> dict[str, Any]:
-    """Short sellers' positioning: shares short, % of float, days to cover, and the
-    change against the prior month (exchange data published twice a month)."""
+    """Short sellers' positioning: shares short, % of float, days to cover and the
+    change against the prior month (Yahoo), plus FINRA's last 12 settlement dates
+    (twice a month) to see the trend: rising short interest into a report or
+    after bad news is the signal, a stable level is not."""
     env, err = _open("get_short_interest", ticker, as_of)
     if err:
         return err
     row = db.one("select ticker, snapshot_date, short_interest_date, shares_short, short_pct_float, "
                  "short_ratio, short_chg_1m, float_shares from street_at(%(t)s, %(at)s)", _p(env))
-    env.put("short_interest", with_ref(row, "street_latest", "ticker", "snapshot_date"))
+    env.put("short_interest", with_ref(row, "street_latest", "ticker", "snapshot_date"), required=False)
     if env.at.past and not row:
         env.note("El interés en corto de Yahoo empieza el 2026-10-18.")
+    # FINRA disseminates a settlement date about 7 business days after it
+    hist = db.query("select ticker, settlement_date, short_shares, prior_short_shares, change_pct, "
+                    "avg_daily_volume, days_to_cover from finra_short_interest where ticker = %(t)s "
+                    "and (ingested_at <= %(at)s or settlement_date + %(lag)s <= %(day)s) "
+                    "order by settlement_date desc limit 12", _p(env, lag=_FINRA_LAG_DAYS))
+    env.put("finra_history", rows_with_ref(hist, "finra_short_interest", "ticker", "settlement_date"))
     return env.out()
 
 
@@ -520,6 +534,169 @@ def get_catalysts(ticker: str, as_of: str | None = None) -> dict[str, Any]:
         return err
     env.put("catalysts", with_ref(db.one("select * from catalysts_at(%(t)s, %(at)s)", _p(env)),
                                   "catalysts", "ticker"))
+    return env.out()
+
+
+def get_price_series(ticker: str, days: int = 126, as_of: str | None = None) -> dict[str, Any]:
+    """Daily bars (open, high, low, close, volume) for the last `days` trading days
+    (default 126, at most 500), split-adjusted to the read date, with the benchmark
+    ETF's close on the same days. For reading the chart yourself: levels, gaps,
+    volume spikes, how the stock moved around an event."""
+    env, err = _open("get_price_series", ticker, as_of)
+    if err:
+        return err
+    t = env.ticker
+    n = _clamp(days, 5, 500)
+    bench = (db.one("select benchmark from current_tickers where ticker = %s", (t,)) or {}).get("benchmark")
+    sql = ("select distinct on (bar_date) bar_date, open, high, low, close, volume, ingested_at "
+           "from price_bars_daily where ticker = %(t)s and valid_from <= %(at)s and bar_date <= %(day)s "
+           "and bar_date > %(day)s::date - %(cal)s "
+           "order by bar_date, (ingested_at <= %(at)s) desc, ingested_at desc")
+    split_sql = ("select ex_date, ratio from current_corporate_actions where ticker = %(t)s "
+                 "and action_type = 'split' and ratio is not null and ex_date <= %(day)s")
+    cal = int(n * 1.5) + 10  # calendar days that hold n trading days
+    bars = split_adjust(db.query(sql, _p(env, cal=cal)), db.query(split_sql, _p(env)))[-n:]
+    bclose: dict[str, float] = {}
+    if bench and bench != t:
+        bp = _p(env, cal=cal, t=bench)
+        bclose = {b["bar_date"]: b["close"] for b in split_adjust(db.query(sql, bp), db.query(split_sql, bp))}
+    rows = [{"_ref": row_ref("calc:price_series", t, b["bar_date"]), "bar_date": b["bar_date"],
+             **{c: _r(b[c], 4) for c in ("open", "high", "low", "close")}, "volume": b["volume"],
+             "benchmark_close": _r(bclose.get(b["bar_date"]), 4)} for b in bars]
+    env.put("benchmark", bench, required=False)
+    env.put("bars", rows)
+    return env.out()
+
+
+def get_news(ticker: str, days: int = 7, limit: int = 20, as_of: str | None = None) -> dict[str, Any]:
+    """Recent news about the company: headline, publisher, FinBERT tone (-1 to +1),
+    link and the article summary, newest first (default 7 days, 20 articles; news
+    is kept 90 days). Read what happened, not only the tone score."""
+    env, err = _open("get_news", ticker, as_of)
+    if err:
+        return err
+    rows = db.query("select id, ticker, published_at, headline, publisher, sentiment, url, article_id "
+                    "from news_relevant where ticker = %(t)s and published_at <= %(at)s "
+                    "and published_at > %(at)s - make_interval(days => %(n)s) "
+                    "order by published_at desc limit %(lim)s",
+                    _p(env, n=_clamp(days, 1, 90), lim=_clamp(limit, 1, 50)))
+    by_day: dict[str, set[str]] = {}
+    for r in rows:
+        by_day.setdefault(str(r["published_at"])[:10], set()).add(str(r["article_id"]))
+    summaries: dict[str, str] = {}
+    unavailable = False
+    for day, ids in by_day.items():
+        found = texts.rows("news_summaries", day, "article_id", ids)
+        if found is None:
+            unavailable = True
+            continue
+        summaries.update({k: v.get("summary") for k, v in found.items()})
+    for r in rows:
+        r["summary"] = summaries.get(str(r.pop("article_id")))
+    env.put("articles", rows_with_ref(rows, "news_relevant", "id"), required=False)
+    if unavailable:
+        env.note("Algunos resúmenes no se pudieron leer del archivo; los titulares están completos.")
+    return env.out()
+
+
+def get_filing_text(ticker: str, filing_id: int | None = None, as_of: str | None = None) -> dict[str, Any]:
+    """The text of one 8-K/6-K (the press release when there is one, first 6,000
+    characters), by the id get_filing_events returns (default the latest one),
+    with its items and tone.
+    Exact figures come from get_fundamentals or get_earnings, not from this text."""
+    env, err = _open("get_filing_text", ticker, as_of)
+    if err:
+        return err
+    ev = db.one("select id, ticker, form_type, filed_at, url, items, sentiment, is_results, is_red_flag, "
+                "is_leadership_change from filing_events where (id = %(id)s or %(id)s is null) and ticker = %(t)s "
+                "and filed_at <= %(at)s order by filed_at desc limit 1",
+                _p(env, id=int(filing_id) if filing_id is not None else None))
+    if ev is None:
+        return error(env.tool, "not_found", f"no filing {filing_id or ''} for {env.ticker} by the read date",
+                     env.ticker, env.at)
+    parsed = parse_index_url(ev["url"])
+    found = texts.rows("filings_text", str(ev["filed_at"])[:10], "accession", {parsed[1]}) if parsed else None
+    row = (found or {}).get(parsed[1]) if parsed else None
+    ev["text_doc_chars"] = len(row["text"]) if row and row.get("text") else 0
+    env.put("filing", with_ref(ev, "filing_events", "id"))
+    env.put("text", row.get("text") if row else None)
+    if found is None:
+        env.note("No se pudo leer el texto del archivo.")
+    return env.out()
+
+
+_edgar: EdgarClient | None = None
+
+
+def _cik(t: str) -> int | None:
+    """From our stored filings' URLs, else SEC's ticker list."""
+    global _edgar
+    row = db.one("select url from raw_filings where ticker = %s and url like '%%/edgar/data/%%' limit 1", (t,))
+    parsed = parse_index_url(row["url"]) if row else None
+    if parsed:
+        return parsed[0]
+    _edgar = _edgar or EdgarClient()
+    return _edgar.company_tickers().get(t)
+
+
+def get_risk_factors(ticker: str, as_of: str | None = None) -> dict[str, Any]:
+    """What changed in the company's 10-K risk factors (Item 1A) against the prior
+    year: similarity (1 = word for word the same; most companies stay above 0.95),
+    words and paragraphs, and the risks added or removed (first 10 / 5, each cut
+    at 1,200 characters). New or reworded risks often come before bad news;
+    unchanged boilerplate says little. Only 10-K filers (not 20-F)."""
+    global _edgar
+    env, err = _open("get_risk_factors", ticker, as_of)
+    if err:
+        return err
+    t = env.ticker
+    try:
+        _edgar = _edgar or EdgarClient()
+        cik = _cik(t)
+        filings = rf.latest_10ks(_edgar, cik, env.at.day.isoformat()) if cik else []
+    except Exception as exc:  # noqa: BLE001 — EDGAR down or unreachable
+        return error(env.tool, "source_unavailable", f"SEC EDGAR: {type(exc).__name__}", t, env.at)
+    if not filings:
+        env.put("current", None)
+        env.note("Sin 10-K en EDGAR a la fecha (emisoras extranjeras presentan 20-F).")
+        return env.out()
+    cached = texts.rows("risk_factors", t, "accession", {f["accession"] for f in filings}) or {}
+    sections, fresh = [], []
+    for f in filings:
+        hit = cached.get(f["accession"])
+        if hit is not None:
+            paras = hit.get("paragraphs") or "[]"   # stored as JSON text (archive._jsonable)
+            sections.append(json.loads(paras) if isinstance(paras, str) else list(paras))
+            continue
+        try:
+            paras = rf.fetch_item_1a(_edgar, cik, f)
+        except Exception:  # noqa: BLE001
+            paras = []
+        sections.append(paras)
+        fresh.append({"accession": f["accession"], "ticker": t, "filing_date": f["filing_date"],
+                      "report_date": f["report_date"], "paragraphs": paras})
+    if fresh:
+        texts.put("risk_factors", t, fresh, key=("accession",))
+    meta = [{"accession": f["accession"], "filing_date": f["filing_date"], "report_date": f["report_date"]}
+            for f in filings]
+    if not sections[0]:
+        env.put("current", meta[0])
+        env.note("No se encontró la sección Item 1A en el último 10-K (formato no estándar).")
+        return env.out()
+    if len(sections) < 2 or not sections[1]:
+        env.put("current", {**meta[0], "paragraphs": len(sections[0]),
+                            "words": sum(len(p.split()) for p in sections[0])})
+        env.put("change", None, required=False)
+        env.note("Sin 10-K anterior comparable: solo hay el más reciente.")
+        return env.out()
+    c = rf.compare(sections[0], sections[1])
+    cut = rf.MAX_PARAGRAPH
+    env.put("current", meta[0])
+    env.put("prior", meta[1])
+    env.put("change", {"_ref": row_ref("calc:risk_factors", t, meta[0]["accession"]),
+                       **{k: v for k, v in c.items() if k not in ("added", "removed")}})
+    env.put("added", [p[:cut] for p in c["added"][:10]], required=False)
+    env.put("removed", [p[:cut] for p in c["removed"][:5]], required=False)
     return env.out()
 
 
@@ -784,6 +961,7 @@ _VIEW_TOOLS: dict[str, tuple[str, ...]] = {
     "peer_comparison": ("get_peer_valuation",),
     "analyst_consensus": ("get_analyst_view",),
     "street_latest": ("get_analyst_view", "get_short_interest"),
+    "finra_short_interest": ("get_short_interest",),
     "estimate_revisions": ("get_analyst_view",),
     "analyst_rating_changes": ("get_analyst_view",),
     "current_earnings_calendar": ("get_earnings",),
@@ -795,6 +973,9 @@ _VIEW_TOOLS: dict[str, tuple[str, ...]] = {
     "insider_trades": ("get_insider_activity",),
     "raw_insider_sentiment": ("get_insider_activity",),
     "catalysts": ("get_catalysts",),
+    "calc:price_series": ("get_price_series",),
+    "news_relevant": ("get_news",),
+    "calc:risk_factors": ("get_risk_factors",),
     "macro_latest": ("get_macro",),
     "macro_observations": ("get_macro",),
     "job_runs": ("get_data_status",),
@@ -812,6 +993,8 @@ _WIDE: dict[str, dict[str, Any]] = {
     "get_news_sentiment": {"days": 365},
     "get_filing_events": {"days": 730},
     "get_insider_activity": {"days": 365},
+    "get_price_series": {"days": 500},
+    "get_news": {"days": 90, "limit": 50},
 }
 
 
@@ -854,6 +1037,9 @@ def _ticker_for(view: str, key: str) -> str | None:
         return None
     if view in ("filing_events", "insider_trades"):
         row = db.one(f"select ticker from {view} where id::text = %s", (key,))
+        return row["ticker"] if row else None
+    if view == "news_relevant":
+        row = db.one("select payload_json->>'related' as ticker from raw_news_articles where id::text = %s", (key,))
         return row["ticker"] if row else None
     if view == "committee_alerts":
         row = db.one("select ticker from committee_alerts where id::text = %s", (key,))
@@ -941,6 +1127,6 @@ def resolve_refs(refs: list[Any], as_of: str | None = None, rel_tol: float = 0.0
 ALL_TOOLS = {f.__name__: f for f in (
     get_ticker_overview, get_price_technicals, get_fundamentals, get_peer_valuation, get_analyst_view,
     get_short_interest, get_earnings, get_news_sentiment, get_filing_events, get_insider_activity,
-    get_catalysts, get_macro, get_data_status, get_cost_model, get_research_digest,
+    get_catalysts, get_price_series, get_news, get_filing_text, get_risk_factors, get_macro, get_data_status, get_cost_model, get_research_digest,
     screen_universe, get_factor_scores, get_portfolio, get_alert_history, resolve_refs,
 )}

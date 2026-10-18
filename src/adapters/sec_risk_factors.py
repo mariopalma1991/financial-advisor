@@ -49,35 +49,53 @@ def item_1a(blocks: list[str]) -> list[str]:
     return best
 
 
-def _norm(p: str) -> str:
+NEW_BELOW = 0.6       # a paragraph sharing less than this with every prior one is a new risk
+SAME_FROM = 0.95      # at or above this it is the same paragraph (years and amounts aside)
+
+
+def _words(p: str) -> set[str]:
     """Comparison key: words only, so renumbered years and amounts don't count as edits."""
-    return " ".join(_WORD.findall(p.lower()))
+    return set(_WORD.findall(p.lower()))
+
+
+def _best_match(p: set[str], others: list[set[str]]) -> float:
+    """Highest Jaccard overlap of a paragraph's words with any paragraph of the other year."""
+    return max((len(p & o) / len(p | o) for o in others if p or o), default=0.0)
 
 
 def compare(current: list[str], prior: list[str]) -> dict[str, Any]:
-    """Cosine similarity of the two sections' word counts (1 = unchanged) and the
-    paragraphs added or removed (compared on their words, ignoring numbers)."""
+    """Cosine similarity of the two sections' word counts (1 = unchanged), and each
+    paragraph matched to its closest one in the other year: new (overlap below
+    NEW_BELOW), reworded, or the same. Removed = prior paragraphs with no match."""
     a, b = Counter(_WORD.findall(" ".join(current).lower())), Counter(_WORD.findall(" ".join(prior).lower()))
     dot = sum(v * b[k] for k, v in a.items())
     na, nb = sqrt(sum(v * v for v in a.values())), sqrt(sum(v * v for v in b.values()))
-    cur_keys, pri_keys = {_norm(p) for p in current}, {_norm(p) for p in prior}
-    added = [p for p in current if _norm(p) not in pri_keys]
-    removed = [p for p in prior if _norm(p) not in cur_keys]
+    cw, pw = [_words(p) for p in current], [_words(p) for p in prior]
+    cur_best = [_best_match(w, pw) for w in cw]
+    added = [p for p, m in zip(current, cur_best) if m < NEW_BELOW]
+    removed = [p for p, w in zip(prior, pw) if _best_match(w, cw) < NEW_BELOW]
     return {
         "similarity": round(dot / (na * nb), 4) if na and nb else None,
         "words": sum(len(p.split()) for p in current), "prior_words": sum(len(p.split()) for p in prior),
         "paragraphs": len(current), "prior_paragraphs": len(prior),
-        "n_added": len(added), "n_removed": len(removed),
-        "added": added, "removed": removed,
+        "n_added": len(added), "n_reworded": sum(NEW_BELOW <= m < SAME_FROM for m in cur_best),
+        "n_removed": len(removed), "added": added, "removed": removed,
     }
 
 
 def latest_10ks(edgar: EdgarClient, cik: int, on_or_before: str, n: int = 2) -> list[dict[str, Any]]:
-    """The last n annual reports filed on or before a day, newest first."""
-    rows = parse_recent_filings(edgar.submissions_json(cik), "1900-01-01", FORMS)
-    rows = sorted((r for r in rows if r["filing_date"] <= on_or_before), key=lambda r: r["filing_date"],
-                  reverse=True)
-    return rows[:n]
+    """The last n annual reports filed on or before a day, newest first. Busy filers
+    (banks issuing notes daily) push older 10-Ks out of the recent list into extra
+    submission files, read only when needed."""
+    doc = edgar.submissions_json(cik)
+    rows = [r for r in parse_recent_filings(doc, "1900-01-01", FORMS) if r["filing_date"] <= on_or_before]
+    for f in (doc.get("filings") or {}).get("files") or []:
+        if len(rows) >= n:
+            break
+        older = edgar._get(f"{edgar.DATA}/submissions/{f['name']}").json()
+        rows += [r for r in parse_recent_filings({"filings": {"recent": older}}, "1900-01-01", FORMS)
+                 if r["filing_date"] <= on_or_before]
+    return sorted(rows, key=lambda r: r["filing_date"], reverse=True)[:n]
 
 
 def fetch_item_1a(edgar: EdgarClient, cik: int, filing: dict[str, Any]) -> list[str]:

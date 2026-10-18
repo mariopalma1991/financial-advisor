@@ -28,7 +28,7 @@ _TICKER_TOOLS = [n for n in tools.ALL_TOOLS if n not in _GLOBAL_TOOLS + ("resolv
 # date-like fields that must not be later than a past read's as_of
 _DATE_FIELDS = ("bar_date", "last_bar_date", "filed_at", "date", "grade_date", "snapshot_date", "as_of",
                 "period", "obs_date", "last_8k_at", "last_dividend_ex_date", "started_at", "trade_date",
-                "alert_day", "exit_day")
+                "alert_day", "exit_day", "published_at", "filing_date")
 
 
 def _summary(out: dict) -> str:
@@ -86,6 +86,8 @@ def _validate(answers: list[dict], as_of: str | None, label: str) -> int:
     print(f"resolve_refs {label}: {summ} in {time.monotonic() - started:.1f}s")
     for r in bad[:15]:
         print("   ", r)
+    for r in bad[:3]:
+        print(f"::warning title=resolve_refs {label}::{json.dumps(r, default=str)[:400]}")
     return len(bad)
 
 
@@ -113,6 +115,7 @@ def _run(tickers: list[str], as_of: str | None) -> tuple[int, list[dict]]:
                 answers.append(out)
             except Exception as exc:  # noqa: BLE001 — reported and counted
                 line, failures = f"RAISED {type(exc).__name__}: {exc}", failures + 1
+                print(f"::warning title={name} {t}::{line[:300]}")
             print(f"{t:6} {name:22} {time.monotonic() - started:5.2f}s {line}"[:600])
     for name in _GLOBAL_TOOLS:
         out = tools.ALL_TOOLS[name](as_of=as_of)
@@ -149,6 +152,8 @@ def main(tickers: list[str]) -> int:
         failures += not ok
         print(f"role {role}: {'OK' if ok else 'MISMATCH'} {listed}")
     print(f"\nfailures: {failures}")
+    # annotations are readable through the API even where the log download is not
+    print(f"::notice title=mcp_smoke::failures={failures}")
     return 1 if failures else 0
 
 

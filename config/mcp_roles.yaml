@@ -7,22 +7,25 @@ roles:
   optimista:
     max_calls: 12
     tools: [get_ticker_overview, get_price_technicals, get_fundamentals, get_peer_valuation,
-            get_analyst_view, get_earnings, get_news_sentiment, get_catalysts, get_data_status]
+            get_analyst_view, get_earnings, get_news_sentiment, get_news, get_price_series, get_catalysts,
+            get_data_status]
   pesimista:
     max_calls: 12
     tools: [get_ticker_overview, get_fundamentals, get_peer_valuation, get_short_interest,
-            get_filing_events, get_insider_activity, get_catalysts, get_macro, get_data_status]
+            get_filing_events, get_filing_text, get_risk_factors, get_insider_activity, get_news,
+            get_catalysts, get_macro, get_data_status]
   contrario:
     max_calls: 12
     tools: [get_ticker_overview, get_price_technicals, get_peer_valuation, get_analyst_view,
-            get_short_interest, get_news_sentiment, get_insider_activity, get_catalysts, get_data_status]
+            get_short_interest, get_news_sentiment, get_news, get_price_series, get_insider_activity,
+            get_catalysts, get_data_status]
   especialista:
     max_calls: 10
-    tools: [get_ticker_overview, get_earnings, get_filing_events, get_insider_activity,
-            get_catalysts, get_data_status]
+    tools: [get_ticker_overview, get_earnings, get_filing_events, get_filing_text, get_risk_factors,
+            get_insider_activity, get_news, get_catalysts, get_data_status]
   riesgo_timing:
     max_calls: 10
-    tools: [get_ticker_overview, get_price_technicals, get_short_interest, get_earnings,
+    tools: [get_ticker_overview, get_price_technicals, get_price_series, get_short_interest, get_earnings,
             get_catalysts, get_macro, get_data_status]
   presidente:
     max_calls: 8
