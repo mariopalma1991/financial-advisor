@@ -108,3 +108,72 @@ def test_missing_sections_are_reported(monkeypatch):
     monkeypatch.setattr(tools.db, "query", lambda sql, params=(): [])
     out = tools.get_earnings("AAPL")
     assert out["data_status"]["missing"] == ["surprises"]
+
+
+def test_parse_as_of_day_means_end_of_that_day():
+    from src.mcp_server.envelope import parse_as_of
+    at = parse_as_of("2026-10-09")
+    assert at.past and at.iso == "2026-10-09T23:59:59Z" and at.day == date(2026, 10, 9)
+    assert parse_as_of("2026-10-09T14:30:00-06:00").iso == "2026-10-09T20:30:00Z"
+    assert not parse_as_of(None).past
+    assert not parse_as_of("2999-01-01").past  # the future reads the latest data
+    with pytest.raises(ValueError):
+        parse_as_of("ayer")
+
+
+def test_past_read_is_marked_in_envelope(monkeypatch):
+    monkeypatch.setattr(tools.db, "one", lambda sql, params=(): {"ok": 1} if "current_tickers" in sql
+                        else {"ticker": "AAPL", "n_8k_30d": 1})
+    out = tools.get_catalysts("AAPL", as_of="2026-10-09")
+    assert out["as_of"] == "2026-10-09T23:59:59Z"
+    assert out["snapshot_id"] == "snap_2026-10-09T23:59:59Z"
+    assert tools.get_catalysts("AAPL", as_of="nope")["error"]["code"] == "bad_as_of"
+
+
+def test_parse_ref_splits_view_key_and_field():
+    assert tools.parse_ref("street_latest:AAPL|2026-10-18#target_upside") == \
+        ("street_latest", "AAPL|2026-10-18", "target_upside")
+    assert tools.parse_ref("calc:price_metrics:AAPL|2026-10-16#returns.5d") == \
+        ("calc:price_metrics", "AAPL|2026-10-16", "returns.5d")
+    with pytest.raises(ValueError):
+        tools.parse_ref("sin ref")
+
+
+def test_matches_accepts_rounding_and_percent_form():
+    assert tools._matches(3.77, 3.7712, 0.005)
+    assert tools._matches(-4.1, -0.041, 0.005)
+    assert not tools._matches(4.5, 3.77, 0.005)
+    assert tools._matches("amc", "AMC", 0.005)
+
+
+def test_resolve_refs_reruns_the_owning_tool(monkeypatch):
+    calls = []
+
+    def fake_peers(ticker, as_of=None):
+        calls.append((ticker, as_of))
+        return {"data": {"comparison": {"_ref": "peer_comparison:JPM", "pe_ttm": 13.45,
+                                        "ratio_vs_peers": {"pe_ttm": 1.2534}}}}
+
+    monkeypatch.setitem(tools.ALL_TOOLS, "get_peer_valuation", fake_peers)
+    out = tools.resolve_refs([
+        {"cite": "peer_comparison:JPM#pe_ttm", "value": 13.0},
+        {"cite": "peer_comparison:JPM#ratio_vs_peers.pe_ttm", "value": 1.25},
+        "peer_comparison:JPM#nope",
+        "peer_comparison:MSFT#pe_ttm",
+        "made_up:JPM#x",
+    ], as_of="2026-10-09")
+    res = out["data"]["results"]
+    assert [r["status"] for r in res] == ["found", "found", "field_not_found", "ref_not_found", "unknown_view"]
+    assert res[0]["match"] is False and res[1]["match"] is True  # 13.0 is 3% off; 1.25 rounds 1.2534
+    assert calls == [("JPM", "2026-10-09"), ("MSFT", "2026-10-09")]  # one call per ticker
+    assert out["data"]["summary"]["mismatches"] == 1
+
+
+def test_resolve_refs_merges_fields_across_tools(monkeypatch):
+    ref = "street_latest:AAPL|2026-10-18"
+    monkeypatch.setitem(tools.ALL_TOOLS, "get_analyst_view",
+                        lambda t, as_of=None: {"data": {"price_targets": {"_ref": ref, "target_mean": 329.4}}})
+    monkeypatch.setitem(tools.ALL_TOOLS, "get_short_interest",
+                        lambda t, as_of=None: {"data": {"short_interest": {"_ref": ref, "short_ratio": 2.82}}})
+    res = tools.resolve_refs([f"{ref}#target_mean", f"{ref}#short_ratio"])["data"]["results"]
+    assert [r["value"] for r in res] == [329.4, 2.82]
