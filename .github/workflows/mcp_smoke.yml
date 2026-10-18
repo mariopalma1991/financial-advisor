@@ -1,15 +1,22 @@
 name: mcp_smoke
 
-# Calls every MCP tool against the real database for a few tickers and checks
-# each committee role sees only its tools. Manual; run after changing the MCP.
+# Calls every MCP tool against the real database for a few tickers, live and as
+# of a past date, checks every number resolves back through resolve_refs, and
+# checks each committee role sees only its tools. Manual; run after changing the MCP.
 
 on:
+  push:  # TEMP: run from the branch, removed before merge
+    branches: [claude/project-thread-05xrjc]
+    paths: [.github/workflows/mcp_smoke.yml, scripts/mcp_smoke.py, src/mcp_server/**]
   workflow_dispatch:
     inputs:
       tickers:
         description: "Space-separated tickers"
         required: false
         default: "AAPL NVDA AON APA JPM"
+      as_of:
+        description: "Past date to replay (YYYY-MM-DD); default a week ago"
+        required: false
 
 jobs:
   run:
@@ -32,4 +39,5 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          MCP_SMOKE_AS_OF: ${{ inputs.as_of }}
         run: python -m scripts.mcp_smoke ${{ inputs.tickers || 'AAPL NVDA AON APA JPM' }}
