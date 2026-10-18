@@ -44,14 +44,16 @@ def _clamp(n: int, lo: int, hi: int) -> int:
 
 def split_adjust(bars: list[dict], splits: list[dict]) -> list[dict]:
     """Divide prices before each split's ex_date by its ratio (volume multiplied),
-    so levels and returns are comparable with today's price. Bars ascending."""
+    so levels and returns are comparable with today's price. Bars ascending.
+    Yahoo serves split-adjusted closes, so only bars fetched before the split
+    (ingested_at earlier than ex_date) are still raw and get adjusted."""
     out = [dict(b) for b in bars]
     for s in splits:
         ratio = s.get("ratio")
         if not ratio:
             continue
         for b in out:
-            if b["bar_date"] < s["ex_date"]:
+            if b["bar_date"] < s["ex_date"] and str(b.get("ingested_at") or "")[:10] < s["ex_date"]:
                 for c in ("open", "high", "low", "close"):
                     if b.get(c) is not None:
                         b[c] = b[c] / ratio
@@ -244,7 +246,7 @@ def get_price_technicals(ticker: str, as_of: str | None = None) -> dict[str, Any
     if err:
         return err
     t = env.ticker
-    bars = db.query("select distinct on (bar_date) bar_date, open, high, low, close, volume "
+    bars = db.query("select distinct on (bar_date) bar_date, open, high, low, close, volume, ingested_at "
                     "from price_bars_daily where ticker = %(t)s and valid_from <= %(at)s "
                     "and bar_date >= %(day)s::date - 400 "
                     "order by bar_date, (ingested_at <= %(at)s) desc, ingested_at desc", _p(env))

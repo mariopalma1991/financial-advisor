@@ -53,3 +53,12 @@ def test_dividend_adjustment_reduces_prior_bars():
     adj = adjust_bars(_bars(), actions)
     assert adj["close"].iloc[0] < 100.0   # prior bars reduced
     assert adj["close"].iloc[-1] == 50.0  # ex-date and later unchanged
+
+
+def test_split_not_applied_to_bars_fetched_after_it():
+    # Yahoo serves split-adjusted closes: bars stored after the split are already adjusted
+    bars = _bars().assign(close=[50.0, 50.0, 50.0, 50.0], ingested_at="2024-02-01T00:00:00+00:00")
+    adj = adjust_bars(bars, _split())
+    assert list(adj["close"]) == [50.0, 50.0, 50.0, 50.0]
+    bars.loc[date(2024, 1, 2), ["close", "ingested_at"]] = [100.0, "2024-01-02T23:00:00+00:00"]
+    assert adjust_bars(bars, _split()).loc[date(2024, 1, 2), "close"] == 50.0

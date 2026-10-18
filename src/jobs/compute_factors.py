@@ -72,12 +72,12 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
                           "left join company_profiles p using (ticker) where t.enabled", p)
 
     bars: dict[str, list[dict]] = defaultdict(list)
-    for r in _rows(cur, "select distinct on (ticker, bar_date) ticker, bar_date, close, volume "
+    for r in _rows(cur, "select distinct on (ticker, bar_date) ticker, bar_date, close, volume, ingested_at "
                         "from price_bars_daily where bar_date > %(day)s::date - 400 and bar_date <= %(day)s "
                         "and valid_from <= %(at)s and close > 0 "
                         "order by ticker, bar_date, (ingested_at <= %(at)s) desc, ingested_at desc", p):
         bars[r["ticker"]].append({"bar_date": _iso(r["bar_date"]), "close": float(r["close"]),
-                                  "volume": float(r["volume"] or 0)})
+                                  "volume": float(r["volume"] or 0), "ingested_at": _iso(r["ingested_at"])})
     splits: dict[str, list[dict]] = defaultdict(list)
     for r in _rows(cur, "select distinct ticker, ex_date, ratio from raw_corporate_actions "
                         "where action_type = 'split' and ratio > 0 and ex_date <= %(day)s", p):

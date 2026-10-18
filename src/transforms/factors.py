@@ -29,14 +29,16 @@ LOOKBACK_DAYS = 252
 
 def adjust_for_splits(bars: Sequence[dict], splits: Iterable[dict]) -> list[float]:
     """Closes (ascending bars) divided by every later split's ratio, so a return
-    across a split is not mistaken for a crash or a jump."""
+    across a split is not mistaken for a crash or a jump. Yahoo's closes are
+    already split-adjusted when fetched, so only bars stored before the split's
+    ex_date (ingested_at earlier) are adjusted."""
     closes = [b["close"] for b in bars]
     for s in splits:
         ratio = s.get("ratio")
         if not ratio:
             continue
         for i, b in enumerate(bars):
-            if b["bar_date"] < s["ex_date"]:
+            if b["bar_date"] < s["ex_date"] and str(b.get("ingested_at") or "")[:10] < s["ex_date"]:
                 closes[i] = closes[i] / ratio
     return closes
 

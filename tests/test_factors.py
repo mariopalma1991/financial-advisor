@@ -88,3 +88,14 @@ def test_insider_is_a_fixed_scale_not_a_z_score():
     })
     out = fx.score_frame(df)
     assert out.iloc[0]["z_insider"] == 0.5 and out.iloc[1]["z_insider"] == 0.0
+
+
+def test_split_skips_bars_fetched_after_it():
+    bars = _bars([100, 100, 100])
+    for b in bars:
+        b["ingested_at"] = "2026-10-17T00:00:00+00:00"  # fetched after the split: already adjusted
+    split = [{"ex_date": bars[1]["bar_date"], "ratio": 4.0}]
+    assert fx.adjust_for_splits(bars, split) == [100, 100, 100]
+    bars[0]["ingested_at"] = "2024-12-31T00:00:00+00:00"  # stored before the split: raw
+    bars[0]["close"] = 400
+    assert fx.adjust_for_splits(bars, split) == [100, 100, 100]

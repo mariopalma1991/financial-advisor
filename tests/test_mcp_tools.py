@@ -177,3 +177,10 @@ def test_resolve_refs_merges_fields_across_tools(monkeypatch):
                         lambda t, as_of=None: {"data": {"short_interest": {"_ref": ref, "short_ratio": 2.82}}})
     res = tools.resolve_refs([f"{ref}#target_mean", f"{ref}#short_ratio"])["data"]["results"]
     assert [r["value"] for r in res] == [329.4, 2.82]
+
+
+def test_split_adjust_leaves_already_adjusted_bars():
+    bars = [{"bar_date": "2026-01-01", "close": 100, "volume": 40, "ingested_at": "2026-10-17T00:00:00"},
+            {"bar_date": "2026-01-02", "close": 100, "volume": 40, "ingested_at": "2026-10-17T00:00:00"}]
+    adj = tools.split_adjust(bars, [{"ex_date": "2026-01-02", "ratio": 4.0}])
+    assert adj[0]["close"] == 100 and adj[0]["volume"] == 40
