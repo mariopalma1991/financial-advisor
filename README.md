@@ -69,7 +69,8 @@ python -m src.mcp_server.server --role optimista   # stdio transport; needs SUPA
 Read-only tools over the curated views: `get_ticker_overview`, `get_price_technicals`,
 `get_fundamentals`, `get_peer_valuation`, `get_analyst_view`, `get_short_interest`,
 `get_earnings`, `get_news_sentiment`, `get_filing_events`, `get_insider_activity`,
-`get_catalysts`, `get_macro`, `get_data_status`, `get_cost_model`, `get_research_digest`.
+`get_catalysts`, `get_macro`, `get_data_status`, `get_cost_model`, `get_research_digest`,
+`screen_universe`, `get_factor_scores`.
 Every answer carries a `snapshot_id` and a `_ref` per row that agents cite as
 `<_ref>#<field>`. `config/mcp_roles.yaml` sets which tools each committee role sees.
 
@@ -80,6 +81,16 @@ returns only what was known then, so a committee can be replayed on a past date
 `as_of` and flags mismatches, with no LLM involved.
 `mcp_smoke` (manual workflow) checks every tool live and on a past date, and that
 every number in the answers resolves back through `resolve_refs`.
+
+## Factor scores
+
+`compute_factors` (after every `ingest_prices` run) scores each tracked stock as of the
+day's close on five factors, each a z-score within its industry: 12-1 momentum, EPS
+estimate revisions, post-earnings drift, insider buying (fixed scale; routine board
+buys excluded) and quality. `score` is their mean (a missing factor counts as 0) and
+`rank` orders stocks that trade at least 1M USD a day. Inputs are read point in time,
+so past month-ends can be rebuilt (`--backfill-months`). Table `factor_scores` keeps
+40 daily days plus every month-end; view `factor_latest`.
 
 ## Cloud operation
 

@@ -26,7 +26,7 @@ roles:
             get_catalysts, get_macro, get_data_status]
   presidente:
     max_calls: 6
-    tools: [get_research_digest, get_cost_model, get_data_status]
+    tools: [get_research_digest, screen_universe, get_factor_scores, get_cost_model, get_data_status]
   validador:  # the non-LLM checker after each committee run, never an agent
     max_calls: 100
     tools: [resolve_refs]

@@ -1,0 +1,49 @@
+name: compute_factors
+
+# Daily factor scores (src/jobs/compute_factors.py) into factor_scores. Runs after
+# every successful ingest_prices run. Dispatch with as_of to rebuild one past day,
+# or backfill_months to rebuild past month-ends (for forward and back tests).
+
+on:
+  workflow_run:
+    workflows: [ingest_prices]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      as_of:
+        description: "Day to rebuild (YYYY-MM-DD); default the latest trading day"
+        required: false
+      backfill_months:
+        description: "Also rebuild the last N month-ends"
+        required: false
+        default: "0"
+
+concurrency:
+  group: compute-factors
+  cancel-in-progress: false
+
+jobs:
+  run:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Compute factor scores
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          AS_OF: ${{ inputs.as_of && format('--as-of {0}', inputs.as_of) || '' }}
+          BACKFILL: ${{ inputs.backfill_months || '0' }}
+        run: python -m src.jobs.compute_factors $AS_OF --backfill-months $BACKFILL

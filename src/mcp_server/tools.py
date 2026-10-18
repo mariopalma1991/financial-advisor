@@ -44,14 +44,16 @@ def _clamp(n: int, lo: int, hi: int) -> int:
 
 def split_adjust(bars: list[dict], splits: list[dict]) -> list[dict]:
     """Divide prices before each split's ex_date by its ratio (volume multiplied),
-    so levels and returns are comparable with today's price. Bars ascending."""
+    so levels and returns are comparable with today's price. Bars ascending.
+    Yahoo serves split-adjusted closes, so only bars fetched before the split
+    (ingested_at earlier than ex_date) are still raw and get adjusted."""
     out = [dict(b) for b in bars]
     for s in splits:
         ratio = s.get("ratio")
         if not ratio:
             continue
         for b in out:
-            if b["bar_date"] < s["ex_date"]:
+            if b["bar_date"] < s["ex_date"] and str(b.get("ingested_at") or "")[:10] < s["ex_date"]:
                 for c in ("open", "high", "low", "close"):
                     if b.get(c) is not None:
                         b[c] = b[c] / ratio
@@ -244,7 +246,7 @@ def get_price_technicals(ticker: str, as_of: str | None = None) -> dict[str, Any
     if err:
         return err
     t = env.ticker
-    bars = db.query("select distinct on (bar_date) bar_date, open, high, low, close, volume "
+    bars = db.query("select distinct on (bar_date) bar_date, open, high, low, close, volume, ingested_at "
                     "from price_bars_daily where ticker = %(t)s and valid_from <= %(at)s "
                     "and bar_date >= %(day)s::date - 400 "
                     "order by bar_date, (ingested_at <= %(at)s) desc, ingested_at desc", _p(env))
@@ -579,6 +581,62 @@ def get_research_digest(ticker: str, as_of: str | None = None) -> dict[str, Any]
     return env.out()
 
 
+_FACTOR_COLS = ("ticker, as_of, industry, eligible, rank, score, n_factors, z_momentum, z_revisions, z_pead, "
+                "z_insider, z_quality")
+_FACTOR_INPUTS = ("adv_20d, mom_12_1, rev_chg, rev_breadth, sue, ear, ins_buyers, ins_buy_value, roe_ttm, "
+                  "gross_margin, debt_to_equity, op_margin_std, last_bar_date")
+_FACTOR_HELP = ("z-scores within the industry (0 = average, +1 = one standard deviation better); "
+                "score = mean of the five, missing factor = 0; rank 1 = best of the day.")
+
+
+def _factor_day(env: Envelope) -> str | None:
+    row = db.one("select max(as_of) as d from factor_scores where as_of <= %(day)s", _p(env))
+    return row["d"] if row else None
+
+
+def screen_universe(top_n: int = 30, industry: str | None = None, as_of: str | None = None) -> dict[str, Any]:
+    """The stock screen: the best-ranked eligible stocks (fresh price, >= 1M USD a
+    day traded) by the five-factor score (momentum 12-1, EPS estimate revisions,
+    post-earnings drift, insider buying, quality), with each factor's z-score.
+    Optionally one industry. These are candidates for the committee, not picks."""
+    env, err = _open("screen_universe", None, as_of, check=False)
+    if err:
+        return err
+    day = _factor_day(env)
+    rows = db.query(f"select {_FACTOR_COLS} from factor_scores where as_of = %(d)s and eligible "
+                    "and (%(ind)s::text is null or industry = %(ind)s) order by rank limit %(n)s",
+                    _p(env, d=day, ind=industry, n=_clamp(top_n, 1, 200))) if day else []
+    env.put("candidates", rows_with_ref(rows, "factor_scores", "ticker", "as_of"))
+    if day:
+        n = db.one("select count(*) filter (where eligible) as eligible, count(*) as total "
+                   "from factor_scores where as_of = %(d)s", _p(env, d=day))
+        env.put("universe", {"as_of": day, **n}, required=False)
+    env.note(_FACTOR_HELP)
+    return env.out()
+
+
+def get_factor_scores(ticker: str, as_of: str | None = None) -> dict[str, Any]:
+    """One stock's five-factor score and rank, the raw inputs behind each factor
+    (12-1 return, estimate change and breadth, last surprise and price reaction,
+    insider buyers, ROE, margins, debt, margin stability) and its rank over the
+    last month-ends."""
+    env, err = _open("get_factor_scores", ticker, as_of)
+    if err:
+        return err
+    day = _factor_day(env)
+    row = db.one(f"select {_FACTOR_COLS}, {_FACTOR_INPUTS} from factor_scores where ticker = %(t)s "
+                 "and as_of = %(d)s", _p(env, d=day)) if day else None
+    env.put("scores", with_ref(row, "factor_scores", "ticker", "as_of"))
+    hist = db.query("select distinct on (date_trunc('month', as_of)) ticker, as_of, rank, score "
+                    "from factor_scores where ticker = %(t)s and as_of <= %(day)s "
+                    "order by date_trunc('month', as_of) desc, as_of desc limit 12", _p(env))
+    env.put("monthly_history", rows_with_ref(hist, "factor_scores", "ticker", "as_of"), required=False)
+    if row and not row["eligible"]:
+        env.note("No es elegible ese día (precio viejo o menos de 1 millón de dólares operados al día).")
+    env.note(_FACTOR_HELP)
+    return env.out()
+
+
 # ---------- validator ----------
 #
 # resolve_refs looks every cited number up again, with no LLM: it re-runs the tool
@@ -615,6 +673,7 @@ _VIEW_TOOLS: dict[str, tuple[str, ...]] = {
     "macro_observations": ("get_macro",),
     "job_runs": ("get_data_status",),
     "config": ("get_cost_model",),
+    "factor_scores": ("get_factor_scores",),
 }
 
 # widest windows, so whatever the agent asked for is a subset
@@ -747,5 +806,6 @@ def resolve_refs(refs: list[Any], as_of: str | None = None, rel_tol: float = 0.0
 ALL_TOOLS = {f.__name__: f for f in (
     get_ticker_overview, get_price_technicals, get_fundamentals, get_peer_valuation, get_analyst_view,
     get_short_interest, get_earnings, get_news_sentiment, get_filing_events, get_insider_activity,
-    get_catalysts, get_macro, get_data_status, get_cost_model, get_research_digest, resolve_refs,
+    get_catalysts, get_macro, get_data_status, get_cost_model, get_research_digest,
+    screen_universe, get_factor_scores, resolve_refs,
 )}
