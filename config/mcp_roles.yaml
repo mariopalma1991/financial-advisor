@@ -1,0 +1,32 @@
+# Which MCP tools each committee role may call (src/mcp_server/server.py --role).
+# Separate allowlists keep members independent: each builds its case from its own
+# evidence, and only the chair sees the whole digest. See the MCP sketch doc.
+# max_calls is the per-agent budget the committee runner enforces.
+
+roles:
+  optimista:
+    max_calls: 12
+    tools: [get_ticker_overview, get_price_technicals, get_fundamentals, get_peer_valuation,
+            get_analyst_view, get_earnings, get_news_sentiment, get_catalysts, get_data_status]
+  pesimista:
+    max_calls: 12
+    tools: [get_ticker_overview, get_fundamentals, get_peer_valuation, get_short_interest,
+            get_filing_events, get_insider_activity, get_catalysts, get_macro, get_data_status]
+  contrario:
+    max_calls: 12
+    tools: [get_ticker_overview, get_price_technicals, get_peer_valuation, get_analyst_view,
+            get_short_interest, get_news_sentiment, get_insider_activity, get_catalysts, get_data_status]
+  especialista:
+    max_calls: 10
+    tools: [get_ticker_overview, get_earnings, get_filing_events, get_insider_activity,
+            get_catalysts, get_data_status]
+  riesgo_timing:
+    max_calls: 10
+    tools: [get_ticker_overview, get_price_technicals, get_short_interest, get_earnings,
+            get_catalysts, get_macro, get_data_status]
+  presidente:
+    max_calls: 6
+    tools: [get_research_digest, get_cost_model, get_data_status]
+  all:  # development and smoke tests only
+    max_calls: 100
+    tools: "*"

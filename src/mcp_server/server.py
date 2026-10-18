@@ -1,34 +1,47 @@
-"""MCP server — stdio transport (plan §10).
+"""MCP server over the Capa 1 catalog — stdio transport.
 
-Run locally:  python -m src.mcp_server.server
-Register in Claude Desktop / agent frameworks as a stdio MCP server.
+Run:  python -m src.mcp_server.server --role optimista
+The role (config/mcp_roles.yaml) decides which tools are registered, so each
+committee member only discovers the tools of its role. Default role: all.
 """
 from __future__ import annotations
 
+import argparse
+import os
+from pathlib import Path
+
+import yaml
 from mcp.server.fastmcp import FastMCP
 
 from src.mcp_server import tools
 
-mcp = FastMCP("financial-advisor-data")
+_ROLES = Path(__file__).resolve().parents[2] / "config" / "mcp_roles.yaml"
 
-for fn in (
-    tools.get_research_package,
-    tools.get_feed,
-    tools.get_price_history,
-    tools.get_fundamentals,
-    tools.search_news,
-    tools.get_news_sentiment,
-    tools.run_screener,
-    tools.get_screener_results,
-    tools.list_tickers,
-    tools.get_pipeline_runs,
-    tools.get_pipeline_events,
-):
-    mcp.tool()(fn)
+
+def role_tools(role: str) -> list:
+    roles = yaml.safe_load(_ROLES.read_text())["roles"]
+    if role not in roles:
+        raise SystemExit(f"unknown role {role!r}; choose one of {sorted(roles)}")
+    names = roles[role]["tools"]
+    if names == "*":
+        return list(tools.ALL_TOOLS.values())
+    unknown = [n for n in names if n not in tools.ALL_TOOLS]
+    if unknown:
+        raise SystemExit(f"role {role!r} lists unknown tools: {unknown}")
+    return [tools.ALL_TOOLS[n] for n in names]
+
+
+def build(role: str) -> FastMCP:
+    mcp = FastMCP(f"financial-advisor-{role}")
+    for fn in role_tools(role):
+        mcp.tool()(fn)
+    return mcp
 
 
 def main() -> None:
-    mcp.run()  # stdio transport
+    p = argparse.ArgumentParser()
+    p.add_argument("--role", default=os.getenv("MCP_ROLE", "all"))
+    build(p.parse_args().role).run()  # stdio
 
 
 if __name__ == "__main__":
