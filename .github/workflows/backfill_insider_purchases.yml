@@ -1,0 +1,46 @@
+name: backfill_insider_purchases
+
+# Open-market insider buys from SEC's quarterly Insider Transactions Data Sets
+# (history for the insider factor before our own Form 4 loads). Manual: run it
+# once for the past, and again for a new quarter if ever needed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      quarters:
+        description: "Quarters, space separated"
+        required: false
+        default: "2024q3 2024q4 2025q1 2025q2 2025q3 2025q4 2026q1 2026q2 2026q3"
+  push:  # TEMP: first load from the PR branch; removed before merge
+    branches: [claude/project-thread-05xrjc]
+    paths: [.github/workflows/backfill_insider_purchases.yml, src/jobs/backfill_insider_purchases.py,
+            src/adapters/sec_insider_datasets.py]
+
+concurrency:
+  group: sec-edgar
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Load insider purchases
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python -m src.jobs.backfill_insider_purchases --quarters ${{ inputs.quarters || '2024q3 2024q4 2025q1 2025q2 2025q3 2025q4 2026q1 2026q2 2026q3' }}
