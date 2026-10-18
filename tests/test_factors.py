@@ -67,6 +67,7 @@ def test_score_frame_ranks_eligible_and_missing_is_neutral():
     df = pd.DataFrame({
         "ticker": [f"T{i}" for i in range(n)], "industry": ["x"] * n, "eligible": [True] * (n - 1) + [False],
         "mom_12_1": [i / 10 for i in range(n)], "rev_chg": [None] * n, "rev_breadth": [None] * n,
+        "tgt_chg": [None] * n, "rating_breadth": [None] * n,
         "sue": [None] * n, "ear": [None] * n, "insider_raw": [0.0] * n,
         "roe_ttm": [None] * n, "gross_margin": [None] * n, "debt_to_equity": [None] * n, "op_margin_std": [None] * n,
     })
@@ -83,6 +84,7 @@ def test_insider_is_a_fixed_scale_not_a_z_score():
     df = pd.DataFrame({
         "ticker": [f"T{i}" for i in range(n)], "industry": ["x"] * n, "eligible": [True] * n,
         "mom_12_1": [None] * n, "rev_chg": [None] * n, "rev_breadth": [None] * n, "sue": [None] * n,
+        "tgt_chg": [None] * n, "rating_breadth": [None] * n,
         "ear": [None] * n, "insider_raw": [fx.insider_signal(1, 0)] + [0.0] * (n - 1),
         "roe_ttm": [None] * n, "gross_margin": [None] * n, "debt_to_equity": [None] * n, "op_margin_std": [None] * n,
     })
@@ -99,3 +101,26 @@ def test_split_skips_bars_fetched_after_it():
     bars[0]["ingested_at"] = "2024-12-31T00:00:00+00:00"  # stored before the split: raw
     bars[0]["close"] = 400
     assert fx.adjust_for_splits(bars, split) == [100, 100, 100]
+
+
+def test_rating_signals_need_three_actions():
+    few = [{"action": "up", "current_price_target": 120.0, "prior_price_target": 100.0}] * 2
+    assert fx.rating_signals(few) == {"tgt_chg": None, "rating_breadth": None, "n_rating_actions": 2}
+    rows = few + [{"action": "down", "current_price_target": 50.0, "prior_price_target": 200.0},
+                  {"action": "main", "current_price_target": None, "prior_price_target": None}]
+    r = fx.rating_signals(rows)
+    assert r["n_rating_actions"] == 4 and r["rating_breadth"] == 0.25      # (2 up - 1 down) / 4
+    assert r["tgt_chg"] == pytest.approx((0.2 + 0.2 - 0.5) / 3)            # -75% capped at -50%
+
+
+def test_revisions_use_ratings_when_estimates_are_missing():
+    n = 12
+    df = pd.DataFrame({
+        "ticker": [f"T{i}" for i in range(n)], "industry": ["x"] * n, "eligible": [True] * n,
+        "mom_12_1": [None] * n, "rev_chg": [None] * n, "rev_breadth": [None] * n,
+        "tgt_chg": [i / 100 for i in range(n)], "rating_breadth": [None] * n, "sue": [None] * n,
+        "ear": [None] * n, "insider_raw": [None] * n,
+        "roe_ttm": [None] * n, "gross_margin": [None] * n, "debt_to_equity": [None] * n, "op_margin_std": [None] * n,
+    })
+    out = fx.score_frame(df)
+    assert out["z_revisions"].notna().all() and out.iloc[-1]["z_revisions"] > out.iloc[0]["z_revisions"]

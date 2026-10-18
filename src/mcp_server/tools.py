@@ -616,7 +616,7 @@ def get_research_digest(ticker: str, as_of: str | None = None) -> dict[str, Any]
 
 _FACTOR_COLS = ("ticker, as_of, industry, eligible, rank, score, n_factors, z_momentum, z_revisions, z_pead, "
                 "z_insider, z_quality")
-_FACTOR_INPUTS = ("adv_20d, mom_12_1, rev_chg, rev_breadth, sue, ear, ins_buyers, ins_buy_value, roe_ttm, "
+_FACTOR_INPUTS = ("adv_20d, mom_12_1, rev_chg, rev_breadth, tgt_chg, rating_breadth, n_rating_actions, sue, ear, ins_buyers, ins_buy_value, roe_ttm, "
                   "gross_margin, debt_to_equity, op_margin_std, last_bar_date")
 _FACTOR_HELP = ("z-scores within the industry (0 = average, +1 = one standard deviation better); "
                 "score = mean of the five, missing factor = 0; rank 1 = best of the day.")

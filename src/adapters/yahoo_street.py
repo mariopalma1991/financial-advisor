@@ -15,7 +15,7 @@ from yfinance.exceptions import YFRateLimitError
 
 _MODULES = ["earningsTrend", "financialData", "defaultKeyStatistics", "upgradeDowngradeHistory"]
 _PERIODS = ("0q", "+1q", "0y", "+1y")
-RATING_LOOKBACK_DAYS = 365
+RATING_LOOKBACK_DAYS = 730   # two years: the revisions factor needs 90 days before each past month-end
 
 
 def _raw(v: Any) -> Any:

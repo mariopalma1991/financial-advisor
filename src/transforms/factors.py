@@ -96,6 +96,29 @@ def revision_signals(trends: Iterable[dict]) -> tuple[float | None, float | None
     return _mean(chg), _mean(breadth)
 
 
+MIN_RATING_ACTIONS = 3
+
+
+def rating_signals(changes: Iterable[dict]) -> dict[str, float | int | None]:
+    """Analyst actions over a window (analyst_rating_changes rows): tgt_chg = mean
+    relative price-target change where both targets are known (capped at +-50%),
+    rating_breadth = (upgrades - downgrades) / actions. Under MIN_RATING_ACTIONS
+    actions both stay empty: one note is not a trend."""
+    rows = list(changes)
+    tgt = []
+    for r in rows:
+        v = _rel(r.get("current_price_target"), r.get("prior_price_target"))
+        if v is not None:
+            tgt.append(max(-0.5, min(0.5, v)))
+    n = len(rows)
+    ups = sum(r.get("action") == "up" for r in rows)
+    downs = sum(r.get("action") == "down" for r in rows)
+    enough = n >= MIN_RATING_ACTIONS
+    return {"tgt_chg": _mean(tgt) if enough and len(tgt) >= MIN_RATING_ACTIONS else None,
+            "rating_breadth": (ups - downs) / n if enough else None,
+            "n_rating_actions": n}
+
+
 def insider_signal(n_buyers: int, buy_value: float) -> float:
     """More distinct buyers is the stronger signal (clusters); a large buy adds a bit."""
     return min(n_buyers, 4) + (0.5 if buy_value >= 100_000 else 0.0)
@@ -145,7 +168,7 @@ def _mean_z(parts: list[pd.Series]) -> pd.Series:
     return pd.concat(parts, axis=1).mean(axis=1, skipna=True)
 
 
-_INPUTS = ("mom_12_1", "rev_chg", "rev_breadth", "sue", "ear", "insider_raw",
+_INPUTS = ("mom_12_1", "rev_chg", "rev_breadth", "tgt_chg", "rating_breadth", "sue", "ear", "insider_raw",
            "roe_ttm", "gross_margin", "debt_to_equity", "op_margin_std")
 
 
@@ -166,7 +189,10 @@ def score_frame(df: pd.DataFrame) -> pd.DataFrame:
     g = el["industry"].fillna("_none")
     z = {
         "momentum": group_z(el["mom_12_1"], g),
-        "revisions": _mean_z([group_z(el["rev_chg"], g), group_z(el["rev_breadth"], g)]),
+        # EPS estimate moves (live from 2026-10-19) and analysts' price targets and
+        # up/downgrades (two years of history): whichever a stock has
+        "revisions": _mean_z([group_z(el["rev_chg"], g), group_z(el["rev_breadth"], g),
+                              group_z(el["tgt_chg"], g), group_z(el["rating_breadth"], g)]),
         "pead": _mean_z([group_z(el["sue"], g), group_z(el["ear"], g)]),
         # sparse (most stocks have no insider buys), so a z-score would hand any single
         # buy +2 or more; a fixed scale keeps one buyer at +0.5 and a cluster at +2

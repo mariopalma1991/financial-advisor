@@ -8,7 +8,7 @@ For filings already in raw_filings that have no `enriched` flag yet:
   the 10b5-1 plan flag.
 Results go into payload_json; the filing_events / insider_trades views read them.
 Runs outside the Finnhub group (EDGAR has its own 10 requests/s limit).
-Usage: python -m src.jobs.enrich_filings --days 3 [--max-minutes 100]
+Usage: python -m src.jobs.enrich_filings --days 3 [--max-minutes 100] [--insider-only]
 """
 from __future__ import annotations
 
@@ -29,12 +29,12 @@ INSIDER_FORMS = ("4", "4/A")
 _CHUNK = 50  # filings per write
 
 
-def select_pending(cur, days: int) -> list[tuple]:
+def select_pending(cur, days: int, forms: tuple[str, ...] = EVENT_FORMS + INSIDER_FORMS) -> list[tuple]:
     cur.execute(
         "select id, ticker, form_type, filed_at, url from raw_filings "
         "where filed_at >= now() - make_interval(days => %s) and form_type = any(%s) "
         "and not coalesce(payload_json, '{}'::jsonb) ? 'enriched' order by filed_at desc",
-        (days, list(EVENT_FORMS + INSIDER_FORMS)),
+        (days, list(forms)),
     )
     return cur.fetchall()
 
@@ -57,12 +57,13 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=3)
     ap.add_argument("--max-minutes", type=float, default=50)
+    ap.add_argument("--insider-only", action="store_true", help="Form 4 only (insider-factor backfills)")
     args = ap.parse_args()
     deadline = time.monotonic() + args.max_minutes * 60
     with job_run("enrich_filings") as em, pg_connection() as conn:
         conn.autocommit = True
         cur = conn.cursor()
-        pending = select_pending(cur, args.days)
+        pending = select_pending(cur, args.days, INSIDER_FORMS if args.insider_only else EVENT_FORMS + INSIDER_FORMS)
         by_cik: dict[int, list] = defaultdict(list)
         for row in pending:
             parsed = parse_index_url(row[4])
