@@ -21,6 +21,19 @@ def test_adapter_calls_existing_client_methods(path):
         assert hasattr(finnhub.Client, method), f"{path.name}: finnhub.Client has no {method}()"
 
 
+def test_earnings_calendar_whole_market_passes_empty_symbol(monkeypatch):
+    # finnhub.Client.earnings_calendar has `symbol` as a required argument: leaving
+    # it out raised TypeError on every day and the calendar job wrote nothing.
+    from src.adapters.finnhub_earnings_calendar import FinnhubEarningsCalendarAdapter
+
+    calls = []
+    monkeypatch.setattr(
+        finnhub.Client, "_get", lambda self, path, params=None: calls.append(params) or {}
+    )
+    FinnhubEarningsCalendarAdapter(api_key="x")._fetch("2026-10-19", "2026-10-19")
+    assert calls[0]["symbol"] == ""
+
+
 def test_programming_errors_are_not_retried():
     assert not _is_retryable(AttributeError("no such method"))
     assert _is_retryable(ConnectionError("reset"))
