@@ -59,10 +59,8 @@ class FinnhubEarningsCalendarAdapter:
             if not self._api_key
             else finnhub.Client(api_key=self._api_key)
         )
-        kwargs: dict[str, Any] = {"_from": _from, "to": to}
-        if symbol:
-            kwargs["symbol"] = symbol
-        return client.earnings_calendar(**kwargs)
+        # finnhub-python requires `symbol`; an empty string means the whole market.
+        return client.earnings_calendar(_from=_from, to=to, symbol=symbol or "")
 
     def fetch(
         self,
