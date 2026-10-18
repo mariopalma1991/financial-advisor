@@ -13,9 +13,6 @@ on:
         description: "Load settlement dates since (YYYY-MM-DD); default two years"
         required: false
         default: ""
-  push:  # TEMP: first load from the PR branch; removed before merge
-    branches: [claude/project-thread-05xrjc]
-    paths: [.github/workflows/ingest_finra_short.yml]
 
 concurrency:
   group: finra-api
