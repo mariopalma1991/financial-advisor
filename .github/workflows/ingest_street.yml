@@ -45,5 +45,5 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
-          MAX_SYMBOLS: ${{ inputs.max_symbols || (github.event_name == 'push' && '40') || '' }}
+          MAX_SYMBOLS: ${{ inputs.max_symbols || (github.event_name == 'push' && '') || '' }}
         run: python -m src.jobs.ingest_street
