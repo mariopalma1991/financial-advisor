@@ -24,6 +24,7 @@ from mcp.client.stdio import stdio_client
 from src.mcp_server import server, tools
 
 _GLOBAL_TOOLS = ("get_macro", "get_cost_model", "get_data_status", "screen_universe", "get_portfolio")
+_TEXT_TOOLS = ("get_news", "get_filing_text", "get_risk_factors", "get_short_interest", "get_price_series")
 _TICKER_TOOLS = [n for n in tools.ALL_TOOLS if n not in _GLOBAL_TOOLS + ("resolve_refs",)]
 # date-like fields that must not be later than a past read's as_of
 _DATE_FIELDS = ("bar_date", "last_bar_date", "filed_at", "date", "grade_date", "snapshot_date", "as_of",
@@ -117,6 +118,8 @@ def _run(tickers: list[str], as_of: str | None) -> tuple[int, list[dict]]:
                 line, failures = f"RAISED {type(exc).__name__}: {exc}", failures + 1
                 print(f"::warning title={name} {t}::{line[:300]}")
             print(f"{t:6} {name:22} {time.monotonic() - started:5.2f}s {line}"[:600])
+            if t == tickers[0] and name in _TEXT_TOOLS and as_of is None:
+                print(f"::notice title={name} {t}::{line[:400]}")
     for name in _GLOBAL_TOOLS:
         out = tools.ALL_TOOLS[name](as_of=as_of)
         failures += "error" in out
