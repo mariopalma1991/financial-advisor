@@ -526,7 +526,8 @@ def get_data_status(ticker: str | None = None, as_of: str | None = None) -> dict
     runs = db.query("select distinct on (job_name) run_id, job_name, status, started_at, ended_at, rows_written "
                     "from job_runs where job_name = any(%(jobs)s) and started_at <= %(at)s "
                     "order by job_name, started_at desc", _p(env, jobs=list(_SOURCE_JOBS)))
-    env.put("last_runs", rows_with_ref(runs, "job_runs", "run_id"))
+    # one workflow run (run_id) can hold several jobs, so the job name is part of the key
+    env.put("last_runs", rows_with_ref(runs, "job_runs", "run_id", "job_name"))
     bad = [r["job_name"] for r in runs if r["status"] in ("failed", "abandoned")]
     if bad:
         env.note("Fuentes con la última corrida fallida: " + ", ".join(bad))
