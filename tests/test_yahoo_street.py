@@ -79,3 +79,18 @@ def test_fetch_raises_on_missing_or_error_response(monkeypatch, payload):
 def test_fetch_returns_rows(monkeypatch):
     monkeypatch.setattr(yahoo_street.yf, "Ticker", lambda s: type("T", (), {"_quote": _FakeQuote(_payload())})())
     assert len(YahooStreetAdapter(SNAP).fetch("AAPL")) == 3
+
+
+def test_rate_limit_maps_to_429_so_the_loop_backs_off(monkeypatch):
+    from yfinance.exceptions import YFRateLimitError
+
+    from src.jobs._symbol_loop import status_code_of
+
+    class _Limited:
+        def _fetch(self, modules):
+            raise YFRateLimitError()
+
+    monkeypatch.setattr(yahoo_street.yf, "Ticker", lambda s: type("T", (), {"_quote": _Limited()})())
+    with pytest.raises(yahoo_street.YahooRateLimited) as exc:
+        YahooStreetAdapter(SNAP).fetch("AAPL")
+    assert status_code_of(exc.value) == 429

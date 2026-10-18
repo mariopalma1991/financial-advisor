@@ -11,6 +11,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Any
 
 import yfinance as yf
+from yfinance.exceptions import YFRateLimitError
 
 _MODULES = ["earningsTrend", "financialData", "defaultKeyStatistics", "upgradeDowngradeHistory"]
 _PERIODS = ("0q", "+1q", "0y", "+1y")
@@ -127,6 +128,11 @@ def parse_summary(ticker: str, payload: dict | None, snapshot: date) -> list[dic
     return out
 
 
+class YahooRateLimited(RuntimeError):
+    """Yahoo answered 429/999; status_code lets the symbol loop back off and retry."""
+    status_code = 429
+
+
 class YahooStreetAdapter:
     name = "yahoo"
 
@@ -136,7 +142,10 @@ class YahooStreetAdapter:
     def fetch(self, ticker: str) -> list[dict]:
         # Quote._fetch is yfinance's own quoteSummary call (pinned yfinance==1.7.0);
         # it lets one request carry all four modules.
-        payload = yf.Ticker(ticker)._quote._fetch(modules=list(_MODULES))
+        try:
+            payload = yf.Ticker(ticker)._quote._fetch(modules=list(_MODULES))
+        except YFRateLimitError as exc:
+            raise YahooRateLimited(f"yahoo rate limit on {ticker}") from exc
         # yfinance logs HTTP errors and returns None; raise so the loop counts them
         # (a blocked run must turn red, not "complete" with zero rows).
         if payload is None:
