@@ -30,13 +30,14 @@ SURPRISE_MAX_AGE_DAYS = 150   # quarter end within ~5 months: reported in the la
 REPORT_LAG_DAYS = 45
 EAR_MAX_AGE_DAYS = 60
 MAX_SUE = 0.2
+RATING_DAYS = 90
 INSIDER_DAYS = 90
 INSIDER_SLACK_DAYS = 7
 ROUTINE_SAME_DAY_BUYERS = 4   # e.g. SPG: 11 directors "bought" on the same day (board fees in stock)
 MIN_INSIDER_BUY_USD = 5_000
 
 _COLS = ("as_of", "ticker", "industry", "eligible", "last_bar_date", "adv_20d", "mom_12_1",
-         "rev_chg", "rev_breadth", "sue", "ear", "ins_buyers", "ins_buy_value", "insider_raw",
+         "rev_chg", "rev_breadth", "tgt_chg", "rating_breadth", "n_rating_actions", "sue", "ear", "ins_buyers", "ins_buy_value", "insider_raw",
          "roe_ttm", "gross_margin", "debt_to_equity", "op_margin_std",
          "z_momentum", "z_revisions", "z_pead", "z_insider", "z_quality",
          "score", "n_factors", "rank", "run_id")
@@ -90,6 +91,15 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
                         "order by ticker, period, snapshot_date desc", p):
         trends[r["ticker"]].append(r)
 
+    # by the day the note came out (Yahoo keeps the history; ingest_street keeps 2 years)
+    ratings: dict[str, list[dict]] = defaultdict(list)
+    for r in _rows(cur, "select ticker, action, current_price_target, prior_price_target "
+                        "from analyst_rating_changes where grade_date <= %(day)s "
+                        "and grade_date > %(day)s::date - %(n)s", {**p, "n": RATING_DAYS}):
+        ratings[r["ticker"]].append({"action": r["action"],
+                                     "current_price_target": _num(r["current_price_target"]),
+                                     "prior_price_target": _num(r["prior_price_target"])})
+
     surprise = {r["ticker"]: r for r in _rows(
         cur, "select distinct on (ticker) ticker, period, surprise from raw_earnings_surprises "
              "where period > %(day)s::date - %(age)s "
@@ -101,12 +111,22 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
              "where event_date <= %(day)s and event_date > %(day)s::date - %(age)s group by ticker",
         {**p, "age": EAR_MAX_AGE_DAYS})}
 
-    ins_start = _rows(cur, "select min(filed_at) as first from insider_trades", p)[0]["first"]
-    # Form 4s were loaded from 2026-07-19; a window that starts a few days before still counts
-    ins_covered = ins_start is not None and ins_start <= p["at"] - timedelta(days=INSIDER_DAYS - INSIDER_SLACK_DAYS)
+    # our own Form 4 loads start 2026-07-20; before that, buys from SEC's quarterly
+    # data sets (insider_purchases), so the two never double count a filing
+    own_start = _rows(cur, "select min(filed_at) as first from insider_trades", p)[0]["first"]
+    hist_start = _rows(cur, "select min(filed_at) as first from insider_purchases", p)[0]["first"]
+    starts = [d for d in (own_start and own_start.date(), hist_start) if d is not None]
+    ins_start = min(starts) if starts else None
+    # a window that starts a few days before the first load still counts
+    ins_covered = ins_start is not None and ins_start <= as_of - timedelta(days=INSIDER_DAYS - INSIDER_SLACK_DAYS)
     insider = {r["ticker"]: r for r in _rows(
-        cur, "with b as (select ticker, filed_at::date as d, owner, buy_value from insider_trades "
-             "  where filed_at <= %(at)s and filed_at > %(at)s - make_interval(days => %(n)s) "
+        cur, "with src as ("
+             "  select ticker, filed_at::date as d, owner, buy_value, is_10b5_1 from insider_trades "
+             "  union all "
+             "  select ticker, filed_at, owner, buy_value, is_10b5_1 from insider_purchases "
+             "  where filed_at < coalesce((select min(filed_at)::date from insider_trades), 'infinity'::date)), "
+             "b as (select ticker, d, owner, buy_value from src "
+             "  where d <= %(day)s and d > %(day)s::date - %(n)s "
              "  and buy_value > 0 and not coalesce(is_10b5_1, false)), "
              # many insiders filing buys the same day is a board fee or purchase plan, not conviction
              "routine as (select ticker, d from b group by ticker, d having count(distinct owner) >= %(routine)s) "
@@ -145,7 +165,7 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
             "as_of": as_of.isoformat(), "ticker": t, "industry": u["industry"],
             "eligible": bool(fresh and adv is not None and adv >= MIN_ADV_USD),
             "last_bar_date": last, "adv_20d": adv, "mom_12_1": fx.momentum_12_1(closes),
-            "rev_chg": rev_chg, "rev_breadth": rev_breadth,
+            "rev_chg": rev_chg, "rev_breadth": rev_breadth, **fx.rating_signals(ratings.get(t, [])),
             # surprise in dollars per share over the price: a percent surprise explodes
             # when the estimate is near zero
             "sue": _sue(s, b) if u["country"] == "US" else None,
