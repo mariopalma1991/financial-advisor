@@ -1,8 +1,20 @@
 """TEMP probe (removed before merge): 10-K Item 1A extraction and FINRA endpoints from Actions."""
+import builtins
+
 import httpx
 
 from src.adapters.sec_edgar import EdgarClient
 from src.adapters.sec_risk_factors import compare, fetch_item_1a, latest_10ks
+from src.quality.run_metadata import job_run
+
+_cm = job_run("probe_mcp_phase4")
+em = _cm.__enter__()
+
+
+def print(*a):
+    builtins.print(*a)
+    em.emit("INFO", "probe", " ".join(str(x) for x in a)[:3000])
+
 
 edgar = EdgarClient()
 ciks = edgar.company_tickers()
@@ -39,3 +51,5 @@ for url, body in [
         print("POST", url, r.status_code, r.text[:600].replace("\n", " | "))
     except Exception as e:  # noqa: BLE001
         print(url, "ERROR", e)
+
+_cm.__exit__(None, None, None)
