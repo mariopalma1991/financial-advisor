@@ -191,11 +191,15 @@ def all_symbols() -> list[str]:
     return load_curated_universe().symbols
 
 
+# VOO is what the investor would buy instead (config/paper_portfolio.yaml)
+EXTRA_BENCHMARKS = ("VOO",)
+
+
 def benchmark_symbols() -> list[str]:
     """Benchmark ETFs of the enabled universe that are not universe members themselves.
-    Their prices feed relative strength in indicators_daily."""
+    Their prices feed relative strength in indicators_daily, plus VOO for the paper portfolio."""
     universe = load_curated_universe()
-    return sorted({t.benchmark for t in universe.enabled()} - set(universe.symbols))
+    return sorted(({t.benchmark for t in universe.enabled()} | set(EXTRA_BENCHMARKS)) - set(universe.symbols))
 
 
 def tier_of(symbol: str) -> Literal["analysis", "screening"]:

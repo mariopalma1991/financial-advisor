@@ -92,6 +92,27 @@ buys excluded) and quality. `score` is their mean (a missing factor counts as 0)
 so past month-ends can be rebuilt (`--backfill-months`). Table `factor_scores` keeps
 40 daily days plus every month-end; view `factor_latest`.
 
+## Model portfolio and committee log
+
+Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
+
+- `paper_portfolio` (after `compute_factors`, settings in `config/paper_portfolio.yaml`)
+  runs the model portfolio: the best factor-ranked stocks, at most 25% per industry,
+  held while ranked within 40, rebalanced at month-ends at the next day's close, with
+  GBM costs, dividend withholding and 10% ISR. Whole shares only: the investor's budget
+  (an initial deposit plus later ones in `investor_contributions`) sets how many
+  positions fit (`min_position_mxn`), and a stock whose one share costs more than a
+  position is skipped until the budget grows. VOO gets the same pesos on the same days.
+  `forward_top20` stores each decision once (from `forward_start`); `backtest_top20`
+  replays the past year. Tables `paper_decisions`, `paper_fills`, `paper_nav`; view
+  `paper_performance`; MCP `get_portfolio`.
+- `committee_runs`, `committee_opinions`, `committee_alerts`: written by the committee
+  runner: each run's as_of (replayable), each agent's stance, reasoning, cited refs and
+  tool calls, and the alerts that reach the investor (vetoed buys kept, to score the veto).
+- `score_alerts` (after `compute_factors`) fills `alert_outcomes`: each alert against
+  VOO in MXN after 21, 63 and 126 trading days, from the next day's close. Views
+  `alert_scorecard` and `agent_scorecard`; MCP `get_alert_history` shows past calls.
+
 ## Cloud operation
 
 GitHub Actions runs the pipeline on schedule (see `.github/workflows/`):

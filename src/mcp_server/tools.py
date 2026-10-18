@@ -165,6 +165,39 @@ def round_trip_cost(cfg: dict, amount_mxn: float | None = None, sic: bool = True
     }
 
 
+def positions_from_trades(trades: list[dict], splits: dict[str, list[dict]]) -> dict[str, Any]:
+    """Open positions from the investor's trades (ascending), at average cost in MXN
+    (fees included), and the realized gain of each calendar year. Shares are put on
+    today's basis by every split after the trade date."""
+    pos: dict[str, dict[str, Any]] = {}
+    realized: dict[str, float] = {}
+    for tr in trades:
+        t, day = tr["ticker"], str(tr["trade_date"])[:10]
+        f = 1.0
+        for s in splits.get(t, []):
+            if s.get("ratio") and str(s["ex_date"])[:10] > day:
+                f *= s["ratio"]
+        sh = float(tr["shares"]) * f
+        p = pos.setdefault(t, {"ticker": t, "shares": 0.0, "cost_mxn": 0.0, "first_buy": None, "trade_ids": []})
+        p["trade_ids"].append(tr["id"])
+        if tr["side"] == "buy":
+            p["shares"] += sh
+            p["cost_mxn"] += float(tr["shares"]) * float(tr["price_mxn"]) + float(tr.get("fees_mxn") or 0)
+            p["first_buy"] = p["first_buy"] or day
+        else:
+            sold = min(sh, p["shares"])
+            avg = p["cost_mxn"] / p["shares"] if p["shares"] else 0.0
+            proceeds = float(tr["shares"]) * float(tr["price_mxn"]) - float(tr.get("fees_mxn") or 0)
+            realized[day[:4]] = realized.get(day[:4], 0.0) + proceeds - avg * sold
+            p["shares"] -= sold
+            p["cost_mxn"] -= avg * sold
+            if p["shares"] <= 1e-9:
+                del pos[t]
+    for p in pos.values():
+        p["avg_cost_mxn"] = p["cost_mxn"] / p["shares"]
+    return {"positions": pos, "realized_by_year": realized}
+
+
 # ---------- tools ----------
 #
 # Every tool takes as_of (None = now, or 'YYYY-MM-DD' / an ISO timestamp) and reads
@@ -637,6 +670,99 @@ def get_factor_scores(ticker: str, as_of: str | None = None) -> dict[str, Any]:
     return env.out()
 
 
+def get_portfolio(portfolio: str = "forward_top20", as_of: str | None = None) -> dict[str, Any]:
+    """The model portfolio, in Mexican pesos: each position's shares, average cost
+    with GBM costs, last close in USD and MXN, value, gain in MXN and %, weight,
+    days held and today's factor rank (it is sold at the month-end once below 40),
+    cash, the pesos the investor has put in, value and time-weighted return (twr)
+    against the same pesos in VOO, the realized gain this year (ISR is 10% of the
+    year's net gain) and the latest trades."""
+    env, err = _open("get_portfolio", None, as_of, check=False)
+    if err:
+        return err
+    fills = db.query("select portfolio, exec_day, signal_day, ticker, side, reason, shares, price_usd, usd_mxn, "
+                     "amount_mxn, cost_mxn, gain_mxn from paper_fills where portfolio = %(pf)s "
+                     "and exec_day <= %(day)s order by exec_day, side desc, ticker", _p(env, pf=portfolio))
+    # fills carry today's share basis already, so no splits; costs go into the buy price
+    trades = [{"id": f"{f['exec_day']}|{f['ticker']}|{f['side']}", "ticker": f["ticker"], "side": f["side"],
+               "trade_date": f["exec_day"], "shares": f["shares"],
+               "price_mxn": (f["amount_mxn"] + (f["cost_mxn"] if f["side"] == "buy" else 0)) / f["shares"],
+               "fees_mxn": f["cost_mxn"] if f["side"] == "sell" else 0} for f in fills if f["shares"]]
+    book = positions_from_trades(trades, {})
+    tickers = sorted(book["positions"])
+    fx = db.one("select series_id, obs_date, value from macro_at(%(at)s, array['DEXMXUS'])", _p(env))
+    rate = fx["value"] if fx else None
+    day = _factor_day(env)
+    ranks = {r["ticker"]: r for r in db.query(
+        "select ticker, rank, eligible from factor_scores where as_of = %(d)s and ticker = any(%(ts)s)",
+        _p(env, d=day, ts=tickers))} if day and tickers else {}
+    nav = db.one("select portfolio, day, nav_mxn, cash_mxn, liquidation_mxn, contributed_mxn, twr, bench_ticker, "
+                 "bench_nav_mxn, bench_liquidation_mxn, bench_twr from paper_nav where portfolio = %(pf)s and day <= %(day)s "
+                 "order by day desc limit 1", _p(env, pf=portfolio))
+    rows = []
+    for t, p in sorted(book["positions"].items()):
+        bar = db.one("select bar_date, close from price_bars_daily where ticker = %(t)s and valid_from <= %(at)s "
+                     "order by bar_date desc, ingested_at desc limit 1", {**_p(env), "t": t})
+        price_mxn = bar["close"] * rate if bar and rate else None
+        value = p["shares"] * price_mxn if price_mxn else None
+        fr = ranks.get(t) or {}
+        rows.append({
+            "_ref": row_ref("calc:position", portfolio, t), "ticker": t, "shares": _r(p["shares"], 6),
+            "avg_cost_mxn": _r(p["avg_cost_mxn"], 2), "cost_mxn": _r(p["cost_mxn"], 2),
+            "last_close_usd": _r(bar["close"]) if bar else None, "bar_date": bar["bar_date"] if bar else None,
+            "price_mxn": _r(price_mxn, 2), "value_mxn": _r(value, 2),
+            "gain_mxn": _r(value - p["cost_mxn"], 2) if value is not None else None,
+            "gain_pct": _r(value / p["cost_mxn"] - 1) if value is not None and p["cost_mxn"] else None,
+            "first_buy": p["first_buy"],
+            "days_held": (date.fromisoformat(str(env.at.day)) - date.fromisoformat(str(p["first_buy"]))).days,
+            "factor_rank": fr.get("rank"), "factor_eligible": fr.get("eligible"),
+        })
+    invested = sum(r["value_mxn"] or 0 for r in rows)
+    total = invested + (nav["cash_mxn"] if nav else 0)
+    for r in rows:
+        r["weight"] = _r(r["value_mxn"] / total) if total and r["value_mxn"] else None
+    env.put("positions", rows, required=False)
+    year = str(env.at.day)[:4]
+    if nav:
+        env.put("totals", with_ref({
+            **nav, "invested_mxn": _r(invested, 2), "n_positions": len(rows),
+            "realized_gain_mxn_this_year": _r(book["realized_by_year"].get(year, 0.0), 2)},
+            "paper_nav", "portfolio", "day"), required=False)
+    env.put("usd_mxn", with_ref(fx, "macro_latest", "series_id", "obs_date"), required=False)
+    env.put("factor_day", day, required=False)
+    env.put("recent_trades", rows_with_ref(fills[-40:], "paper_fills", "exec_day", "ticker", "side"), required=False)
+    if not fills:
+        env.note("El portafolio aún no tiene operaciones (arranca el primer día hábil después de forward_start).")
+    env.note("Montos en pesos. Valor y precios del día con el último tipo de cambio publicado (FRED, con días de rezago); "
+             "totals viene del cierre calculado por el job.")
+    return env.out()
+
+
+def get_alert_history(ticker: str, as_of: str | None = None) -> dict[str, Any]:
+    """What the committee said about this stock before (buy, sell or hold, vetoed or
+    not, price in MXN, the chair's reasoning) and how each alert did against VOO in
+    pesos after 1, 3 and 6 months, as known on as_of. Use it to stay consistent
+    with, or say why you depart from, earlier calls."""
+    env, err = _open("get_alert_history", ticker, as_of)
+    if err:
+        return err
+    alerts = db.query("select id, ticker, alert_day, owner, alert, vetoed, veto_reason, conviction, horizon_months, "
+                      "price_mxn, target_mxn, stop_mxn, rationale from committee_alerts "
+                      "where ticker = %(t)s and created_at <= %(at)s order by alert_day desc limit 20", _p(env))
+    ids = [a["id"] for a in alerts]
+    outs: dict[Any, dict] = {}
+    for o in db.query("select alert_id, horizon_days, exit_day, ret_mxn, bench_ret_mxn, excess from alert_outcomes "
+                      "where alert_id = any(%(ids)s) and exit_day <= %(day)s", _p(env, ids=ids)) if ids else []:
+        outs.setdefault(o["alert_id"], {})[f"{o['horizon_days']}d"] = {
+            k: _r(o[k]) for k in ("ret_mxn", "bench_ret_mxn", "excess")} | {"exit_day": o["exit_day"]}
+    for a in alerts:
+        a["outcomes"] = outs.get(a["id"], {})
+    env.put("alerts", rows_with_ref(alerts, "committee_alerts", "id"), required=False)
+    if not alerts:
+        env.note("El comité no ha emitido alertas sobre esta acción.")
+    return env.out()
+
+
 # ---------- validator ----------
 #
 # resolve_refs looks every cited number up again, with no LLM: it re-runs the tool
@@ -674,6 +800,10 @@ _VIEW_TOOLS: dict[str, tuple[str, ...]] = {
     "job_runs": ("get_data_status",),
     "config": ("get_cost_model",),
     "factor_scores": ("get_factor_scores",),
+    "paper_fills": ("get_portfolio",),
+    "paper_nav": ("get_portfolio",),
+    "calc:position": ("get_portfolio",),
+    "committee_alerts": ("get_alert_history",),
 }
 
 # widest windows, so whatever the agent asked for is a subset
@@ -725,6 +855,11 @@ def _ticker_for(view: str, key: str) -> str | None:
     if view in ("filing_events", "insider_trades"):
         row = db.one(f"select ticker from {view} where id::text = %s", (key,))
         return row["ticker"] if row else None
+    if view == "committee_alerts":
+        row = db.one("select ticker from committee_alerts where id::text = %s", (key,))
+        return row["ticker"] if row else None
+    if view == "paper_fills":  # the subject is the portfolio (get_portfolio)
+        return "forward_top20"
     return key.split("|", 1)[0]
 
 
@@ -807,5 +942,5 @@ ALL_TOOLS = {f.__name__: f for f in (
     get_ticker_overview, get_price_technicals, get_fundamentals, get_peer_valuation, get_analyst_view,
     get_short_interest, get_earnings, get_news_sentiment, get_filing_events, get_insider_activity,
     get_catalysts, get_macro, get_data_status, get_cost_model, get_research_digest,
-    screen_universe, get_factor_scores, resolve_refs,
+    screen_universe, get_factor_scores, get_portfolio, get_alert_history, resolve_refs,
 )}
