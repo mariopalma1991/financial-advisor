@@ -72,7 +72,14 @@ Read-only tools over the curated views: `get_ticker_overview`, `get_price_techni
 `get_catalysts`, `get_macro`, `get_data_status`, `get_cost_model`, `get_research_digest`.
 Every answer carries a `snapshot_id` and a `_ref` per row that agents cite as
 `<_ref>#<field>`. `config/mcp_roles.yaml` sets which tools each committee role sees.
-`mcp_smoke` (manual workflow) checks every tool against the real database.
+
+Every tool takes `as_of` (`YYYY-MM-DD` = end of that day, or an ISO timestamp) and
+returns only what was known then, so a committee can be replayed on a past date
+(SQL functions `*_at` in `db/migrations/0015_point_in_time.sql`). `resolve_refs`
+(role `validador`, never an agent) looks each cited number up again at the same
+`as_of` and flags mismatches, with no LLM involved.
+`mcp_smoke` (manual workflow) checks every tool live and on a past date, and that
+every number in the answers resolves back through `resolve_refs`.
 
 ## Cloud operation
 
