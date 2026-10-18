@@ -167,3 +167,13 @@ def test_resolve_refs_reruns_the_owning_tool(monkeypatch):
     assert res[0]["match"] is False and res[1]["match"] is True  # 13.0 is 3% off; 1.25 rounds 1.2534
     assert calls == [("JPM", "2026-10-09"), ("MSFT", "2026-10-09")]  # one call per ticker
     assert out["data"]["summary"]["mismatches"] == 1
+
+
+def test_resolve_refs_merges_fields_across_tools(monkeypatch):
+    ref = "street_latest:AAPL|2026-10-18"
+    monkeypatch.setitem(tools.ALL_TOOLS, "get_analyst_view",
+                        lambda t, as_of=None: {"data": {"price_targets": {"_ref": ref, "target_mean": 329.4}}})
+    monkeypatch.setitem(tools.ALL_TOOLS, "get_short_interest",
+                        lambda t, as_of=None: {"data": {"short_interest": {"_ref": ref, "short_ratio": 2.82}}})
+    res = tools.resolve_refs([f"{ref}#target_mean", f"{ref}#short_ratio"])["data"]["results"]
+    assert [r["value"] for r in res] == [329.4, 2.82]

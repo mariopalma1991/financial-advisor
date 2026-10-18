@@ -297,7 +297,11 @@ def get_fundamentals(ticker: str, quarters: int = 8, as_of: str | None = None) -
                  ", pe_ttm, pb, ps_ttm, ingested_at > %(at)s as _late from fundamentals_quarterly "
                  "where ticker = %(t)s and (ingested_at <= %(at)s or period_end + %(lag)s <= %(day)s) "
                  "order by period_end desc, (ingested_at <= %(at)s) desc, ingested_at desc limit %(n)s",
-                 _p(env, lag=_REPORT_LAG_DAYS, n=_clamp(quarters, 1, 16)))
+                 _p(env, lag=_REPORT_LAG_DAYS, n=max(_clamp(quarters, 1, 16), 5)))
+    # trends always use 5 quarters (4 steps), whatever `quarters` shows, so the same
+    # calc ref means the same numbers in every answer
+    trends = {f: trend_of([r.get(f) for r in q]) for f in _TREND_FIELDS}
+    q = q[:_clamp(quarters, 1, 16)]
     if any(r.pop("_late") for r in q):
         env.note(f"Algunos trimestres se cargaron después; se asume que eran públicos {_REPORT_LAG_DAYS} "
                  "días después del cierre del trimestre.")
@@ -305,7 +309,7 @@ def get_fundamentals(ticker: str, quarters: int = 8, as_of: str | None = None) -
     if q:
         env.put("trends", {
             "_ref": row_ref("calc:quarterly_trend", t, q[0]["period_end"]),
-            **{f: trend_of([r.get(f) for r in q]) for f in _TREND_FIELDS},
+            **trends,
         })
     return env.out()
 
@@ -696,8 +700,8 @@ def resolve_refs(refs: list[Any], as_of: str | None = None, rel_tol: float = 0.0
             continue
         subject = _ticker_for(view, key)
         ref = cite.partition("#")[0]
-        row = None
-        for tool_name in _VIEW_TOOLS[view]:
+        row: dict | None = None
+        for tool_name in _VIEW_TOOLS[view]:  # a view served by two tools may split its fields
             ck = (tool_name, subject)
             if ck not in cache:
                 kwargs = dict(_WIDE.get(tool_name, {}), as_of=as_of)
@@ -710,9 +714,11 @@ def resolve_refs(refs: list[Any], as_of: str | None = None, rel_tol: float = 0.0
                 idx: dict[str, dict] = {}
                 _index_refs(out.get("data"), idx)
                 cache[ck] = idx
-            row = cache[ck].get(ref)
-            if row is not None:
-                break
+            part = cache[ck].get(ref)
+            if part is not None:
+                row = {**(row or {}), **part}
+                if not field or _field(row, field)[0]:
+                    break
         if row is None:
             results.append({**res, "status": "ref_not_found"})
             continue
