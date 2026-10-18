@@ -76,3 +76,15 @@ def test_score_frame_ranks_eligible_and_missing_is_neutral():
     assert pd.isna(out.iloc[-1]["score"])                       # ineligible is not ranked
     assert set(el["n_factors"]) == {2}                          # momentum + insider (all zero)
     assert el["z_insider"].eq(0).all()
+
+
+def test_insider_is_a_fixed_scale_not_a_z_score():
+    n = 12
+    df = pd.DataFrame({
+        "ticker": [f"T{i}" for i in range(n)], "industry": ["x"] * n, "eligible": [True] * n,
+        "mom_12_1": [None] * n, "rev_chg": [None] * n, "rev_breadth": [None] * n, "sue": [None] * n,
+        "ear": [None] * n, "insider_raw": [fx.insider_signal(1, 0)] + [0.0] * (n - 1),
+        "roe_ttm": [None] * n, "gross_margin": [None] * n, "debt_to_equity": [None] * n, "op_margin_std": [None] * n,
+    })
+    out = fx.score_frame(df)
+    assert out.iloc[0]["z_insider"] == 0.5 and out.iloc[1]["z_insider"] == 0.0

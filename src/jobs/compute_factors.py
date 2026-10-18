@@ -29,6 +29,7 @@ SURPRISE_MAX_AGE_DAYS = 150   # quarter end within ~5 months: reported in the la
 # (the price reaction needs the report date; the earnings calendar starts 2026-09-14)
 REPORT_LAG_DAYS = 45
 EAR_MAX_AGE_DAYS = 60
+MAX_SUE = 0.2
 INSIDER_DAYS = 90
 INSIDER_SLACK_DAYS = 7
 
@@ -46,6 +47,15 @@ def _rows(cur, sql: str, params: dict) -> list[dict]:
 
 def _num(v) -> float | None:
     return None if v is None else float(v)
+
+
+def _sue(surprise: dict | None, bars: list[dict]) -> float | None:
+    """EPS surprise over the price. Above MAX_SUE it is a unit mismatch, not news
+    (ADRs whose EPS is in pesos or reais while the price is in dollars)."""
+    if not surprise or not bars:
+        return None
+    v = _num(surprise["surprise"]) / bars[-1]["close"]
+    return v if abs(v) <= MAX_SUE else None
 
 
 def _iso(v) -> str | None:
@@ -130,7 +140,7 @@ def load_inputs(cur, as_of: date) -> pd.DataFrame:
             "rev_chg": rev_chg, "rev_breadth": rev_breadth,
             # surprise in dollars per share over the price: a percent surprise explodes
             # when the estimate is near zero
-            "sue": _num(s["surprise"]) / b[-1]["close"] if s and b else None,
+            "sue": _sue(s, b),
             "ear": fx.window_return(b, closes, rd) if rd else None,
             "ins_buyers": n_buyers if ins_covered else None,
             "ins_buy_value": buy_value if ins_covered else None,

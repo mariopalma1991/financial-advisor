@@ -7,7 +7,8 @@ within the company's industry:
              over 30/90 days, and the share of revisions that went up
   pead       post-earnings drift: the last EPS surprise (if recent) and the
              stock's reaction around the report
-  insider    open-market buys by insiders in 90 days (sales and 10b5-1 plans ignored)
+  insider    open-market buys by insiders in 90 days (sales and 10b5-1 plans ignored),
+             on a fixed 0 to 2.25 scale instead of a z-score because most stocks have none
   quality    ROE, gross margin, low debt and stable operating margin
 The score is the mean of the five; a factor with no data counts as 0 (neutral).
 """
@@ -165,7 +166,9 @@ def score_frame(df: pd.DataFrame) -> pd.DataFrame:
         "momentum": group_z(el["mom_12_1"], g),
         "revisions": _mean_z([group_z(el["rev_chg"], g), group_z(el["rev_breadth"], g)]),
         "pead": _mean_z([group_z(el["sue"], g), group_z(el["ear"], g)]),
-        "insider": group_z(el["insider_raw"], g),
+        # sparse (most stocks have no insider buys), so a z-score would hand any single
+        # buy +2 or more; a fixed scale keeps one buyer at +0.5 and a cluster at +2
+        "insider": el["insider_raw"] / 2,
         "quality": _mean_z([group_z(el["roe_ttm"], g), group_z(el["gross_margin"], g),
                             group_z(-el["debt_to_equity"], g), group_z(-el["op_margin_std"], g)]),
     }
