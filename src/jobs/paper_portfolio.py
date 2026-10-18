@@ -130,8 +130,9 @@ def run_book(cur, signals: list[str], frozen: dict[str, list[dict]], market: dic
 
 def run_benchmark(first_signal: str, bench: str, market: dict, days: list[str], rules: paper.Rules,
                   flows: list[tuple[str, float]]) -> dict:
-    """The same pesos, on the same days, in VOO (whole shares, same costs)."""
-    one = paper.Rules(**{**rules.__dict__, "n": 1, "min_position_mxn": 0.0})
+    """The same pesos, on the same days, in VOO with the same costs. Fractional:
+    it is the yardstick, and one VOO share costs more than a small budget."""
+    one = paper.Rules(**{**rules.__dict__, "n": 1, "min_position_mxn": 0.0, "whole_shares": False})
     return paper.simulate(days, [first_signal], lambda sd, held, slots, can_buy: [{"ticker": bench, "action": "buy"}],
                           _px(market), market["fx"], market["divs"], one, flows=flows, basis=_basis(market))
 
