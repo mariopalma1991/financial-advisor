@@ -10,9 +10,6 @@ on:
         description: "Space-separated tickers"
         required: false
         default: "AAPL NVDA AON APA JPM"
-  push:  # TEMP: test run from the PR branch; removed before merge
-    branches: [claude/project-thread-05xrjc]
-    paths: [src/mcp_server/**, scripts/mcp_smoke.py, .github/workflows/mcp_smoke.yml]
 
 jobs:
   run:
