@@ -1,0 +1,21 @@
+# Paper portfolio from the factor scores (src/jobs/paper_portfolio.py), against VOO.
+# Everything the investor sees is in Mexican pesos (MXN), converted with FRED DEXMXUS.
+
+portfolio:
+  n: 20                    # stocks held, equal weight when bought
+  keep_rank: 40            # a stock held stays while ranked within this (less churn)
+  max_per_industry: 5      # 25% of the portfolio
+  initial_mxn: 1000000
+  benchmark: VOO           # SPY's prices stand in until VOO has history (same index)
+
+  # Forward test: decisions from this day on are stored once and never recomputed,
+  # so later code or data changes can't rewrite them. The backtest is recomputed.
+  forward_start: "2026-10-19"
+  backtest_start: "2025-10-31"
+
+taxes:
+  isr_on_gains: 0.10          # SIC: 10% on the year's net gain, withheld by the broker
+  dividend_withholding: 0.10  # assumption; check on a GBM statement
+
+# Trading costs per side come from config/cost_model.yaml (GBM, SIC: commission with
+# IVA + FX spread + slippage).

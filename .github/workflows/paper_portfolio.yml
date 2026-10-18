@@ -1,0 +1,41 @@
+name: paper_portfolio
+
+# Paper portfolio from the factor scores against VOO, in MXN
+# (src/jobs/paper_portfolio.py). Runs after every successful compute_factors run.
+
+on:
+  workflow_run:
+    workflows: [compute_factors]
+    types: [completed]
+  workflow_dispatch:
+  push:
+    branches: [claude/project-thread-05xrjc]
+    paths: [.github/workflows/paper_portfolio.yml, src/jobs/paper_portfolio.py, src/transforms/paper.py]
+
+concurrency:
+  group: paper-portfolio
+  cancel-in-progress: false
+
+jobs:
+  run:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Update paper portfolio
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: python -m src.jobs.paper_portfolio
