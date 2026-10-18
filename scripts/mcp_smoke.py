@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import sys
 import time
 
@@ -29,7 +30,8 @@ def _summary(out: dict) -> str:
 
 
 async def _role_check(role: str) -> list[str]:
-    params = StdioServerParameters(command=sys.executable, args=["-m", "src.mcp_server.server", "--role", role])
+    params = StdioServerParameters(command=sys.executable, args=["-m", "src.mcp_server.server", "--role", role],
+                                    env=dict(os.environ))  # the SDK passes only a minimal env by default
     async with stdio_client(params) as (r, w), ClientSession(r, w) as s:
         await s.initialize()
         listed = sorted(t.name for t in (await s.list_tools()).tools)
