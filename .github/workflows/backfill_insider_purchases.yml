@@ -11,10 +11,6 @@ on:
         description: "Quarters, space separated"
         required: false
         default: "2024q3 2024q4 2025q1 2025q2 2025q3 2025q4 2026q1 2026q2 2026q3"
-  push:  # TEMP: first load from the PR branch; removed before merge
-    branches: [claude/project-thread-05xrjc]
-    paths: [.github/workflows/backfill_insider_purchases.yml, src/jobs/backfill_insider_purchases.py,
-            src/adapters/sec_insider_datasets.py]
 
 concurrency:
   group: sec-edgar

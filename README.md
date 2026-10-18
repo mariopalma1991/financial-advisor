@@ -85,9 +85,12 @@ every number in the answers resolves back through `resolve_refs`.
 ## Factor scores
 
 `compute_factors` (after every `ingest_prices` run) scores each tracked stock as of the
-day's close on five factors, each a z-score within its industry: 12-1 momentum, EPS
-estimate revisions, post-earnings drift, insider buying (fixed scale; routine board
-buys excluded) and quality. `score` is their mean (a missing factor counts as 0) and
+day's close on five factors, each a z-score within its industry: 12-1 momentum,
+revisions (EPS estimate moves, plus analysts' 90-day price-target changes and
+up/downgrades from `analyst_rating_changes`, kept 2 years), post-earnings drift,
+insider buying (fixed scale; routine board buys excluded) and quality. Insider buys
+before our own Form 4 loads come from SEC's quarterly Insider Transactions Data Sets
+(`backfill_insider_purchases`, manual workflow, table `insider_purchases`). `score` is their mean (a missing factor counts as 0) and
 `rank` orders stocks that trade at least 1M USD a day. Inputs are read point in time,
 so past month-ends can be rebuilt (`--backfill-months`). Table `factor_scores` keeps
 40 daily days plus every month-end; view `factor_latest`.

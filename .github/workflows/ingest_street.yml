@@ -14,9 +14,6 @@ on:
         description: "Tickers to fetch (empty = whole universe)"
         required: false
         default: ""
-  push:  # TEMP: refill 2 years of rating changes from the PR branch; removed before merge
-    branches: [claude/project-thread-05xrjc]
-    paths: [src/adapters/yahoo_street.py]
 
 # Yahoo throttles bursts; never run two Yahoo-heavy jobs at once.
 concurrency:
