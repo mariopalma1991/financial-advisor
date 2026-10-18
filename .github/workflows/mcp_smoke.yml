@@ -5,9 +5,6 @@ name: mcp_smoke
 # checks each committee role sees only its tools. Manual; run after changing the MCP.
 
 on:
-  push:  # TEMP: run from the branch, removed before merge
-    branches: [claude/project-thread-05xrjc]
-    paths: [.github/workflows/mcp_smoke.yml, scripts/mcp_smoke.py, src/mcp_server/**]
   workflow_dispatch:
     inputs:
       tickers:
