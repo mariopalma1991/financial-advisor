@@ -617,7 +617,6 @@ def get_filing_text(ticker: str, filing_id: int | None = None, as_of: str | None
     parsed = parse_index_url(ev["url"])
     found = texts.rows("filings_text", str(ev["filed_at"])[:10], "accession", {parsed[1]}) if parsed else None
     row = (found or {}).get(parsed[1]) if parsed else None
-    ev["text_doc_chars"] = len(row["text"]) if row and row.get("text") else 0
     env.put("filing", with_ref(ev, "filing_events", "id"))
     env.put("text", row.get("text") if row else None)
     if found is None:
