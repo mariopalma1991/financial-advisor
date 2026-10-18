@@ -12,7 +12,7 @@ on:
         type: choice
         required: true
         default: news
-        options: [news, filings, financials, earnings, earncal, visa, price, all]
+        options: [news, filings, earnings, earncal, price, all]
 
 # Finnhub's rate limit is per API key: share the ingest_* group so a backfill
 # never runs alongside another Finnhub job.

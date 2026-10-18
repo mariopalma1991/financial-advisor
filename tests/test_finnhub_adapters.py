@@ -1,8 +1,8 @@
 """Adapters must call methods the installed finnhub client actually has.
 
-ingest_visa called `client.visa_application` (the method is
-`stock_visa_application`), retried the AttributeError on every symbol and failed
-after 50 minutes without fetching anything.
+An adapter once called a method the client does not have
+(`visa_application` instead of `stock_visa_application`), retried the
+AttributeError on every symbol and failed after 50 minutes without fetching anything.
 """
 import re
 from pathlib import Path

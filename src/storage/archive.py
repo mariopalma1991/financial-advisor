@@ -29,12 +29,11 @@ from src.storage.supabase_client import pg_connection
 DEFAULT_BUCKET = "market-archive"
 
 # table -> SQL expression used as the partition key. Tables exported from Postgres.
-# raw_visa_applications is not here: its ingest writes to the archive directly
-# (see upsert_partition), so the archive, not Postgres, is its source of truth.
+# raw_financial_reports and raw_visa_applications were dropped; their Parquet
+# history stays in the bucket under their old table names.
 ARCHIVE_TABLES: dict[str, str] = {
     "raw_price_bars": "ticker",
     "price_bars_daily": "ticker",
-    "raw_financial_reports": "ticker",
     "raw_filings": "ticker",
     "raw_news_articles": "to_char(published_at at time zone 'UTC', 'YYYY-MM')",
 }

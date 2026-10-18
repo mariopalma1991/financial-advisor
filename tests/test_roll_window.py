@@ -7,7 +7,7 @@ import pyarrow.parquet as pq
 
 from src.jobs import archive_cold
 from src.storage import archive
-from tests.test_visa_archive import FakeS3
+from tests.fakes import FakeS3
 
 
 def _news(i, month):

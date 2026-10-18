@@ -4,7 +4,7 @@ Rate limit: Finnhub plan allows 30 calls/min → 2.1s between calls.
 Estimated runtime: ~2.5 hours for 1,141 tickers × 7 adapters.
 
 Usage:
-    python scripts/backfill_all.py [--adapter price|news|filings|financials|earnings|earncal|visa|all] [--clean]
+    python scripts/backfill_all.py [--adapter price|news|filings|earnings|earncal|all] [--clean]
 
     --clean   Truncate target tables and reset progress before backfilling.
               Without it, backfill resumes from where it left off (idempotent).
@@ -24,9 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.adapters.finnhub_earnings import FinnhubEarningsAdapter
 from src.adapters.finnhub_earnings_calendar import FinnhubEarningsCalendarAdapter
 from src.adapters.finnhub_filings import FinnhubFilingsAdapter
-from src.adapters.finnhub_financials import FinnhubFinancialsAdapter
 from src.adapters.finnhub_news import FinnhubNewsAdapter
-from src.adapters.finnhub_visa import FinnhubVisaAdapter
 from src.adapters.yfinance_prices import YFinanceAdapter
 from src.config import load_curated_universe
 from src.storage import raw
@@ -200,39 +198,6 @@ def backfill_filings() -> None:
     print(f"  filings done: {len(done)} tickers")
 
 
-def backfill_financials() -> None:
-    """Finnhub financials as reported — 5 years."""
-    print("\n=== FINANCIALS (finnhub) ===")
-    if CLEAN:
-        truncate_table("raw_financial_reports")
-        progress = load_progress()
-        progress.pop("financials", None)
-        save_progress(progress)
-
-    adapter = FinnhubFinancialsAdapter()
-    progress = load_progress()
-    done = set(progress.get("financials", []))
-    pending = [s for s in SYMBOLS if s not in done]
-
-    for i, symbol in enumerate(pending):
-        try:
-            reports = adapter.fetch([symbol], freq="quarterly")
-            if reports:
-                _insert_financial_reports(reports)
-            done.add(symbol)
-            if i % 50 == 0:
-                progress["financials"] = list(done)
-                save_progress(progress)
-                print(f"  financials: {len(done)}/{len(SYMBOLS)} — {symbol}: {len(reports)} reports")
-        except Exception as e:
-            print(f"  financials {symbol} error: {e}")
-        time.sleep(CALL_DELAY)
-
-    progress["financials"] = list(done)
-    save_progress(progress)
-    print(f"  financials done: {len(done)} tickers")
-
-
 def backfill_earnings() -> None:
     """Finnhub earnings surprises — free tier: last 4 quarters."""
     print("\n=== EARNINGS (finnhub) ===")
@@ -308,72 +273,6 @@ def backfill_earnings_calendar() -> None:
     print(f"  earncal done: {len(done_months)} months")
 
 
-def backfill_visa() -> None:
-    """Finnhub visa applications — 5 years."""
-    print("\n=== VISA (finnhub) ===")
-    if CLEAN:
-        truncate_table("raw_visa_applications")
-        progress = load_progress()
-        progress.pop("visa", None)
-        save_progress(progress)
-
-    adapter = FinnhubVisaAdapter()
-    progress = load_progress()
-    done = set(progress.get("visa", []))
-    pending = [s for s in SYMBOLS if s not in done]
-
-    _from = FIVE_YEARS_AGO.isoformat()
-    to = TODAY.isoformat()
-
-    for i, symbol in enumerate(pending):
-        try:
-            apps = adapter.fetch([symbol], _from=_from, to=to)
-            if apps:
-                _insert_visa_applications(apps)
-            done.add(symbol)
-            if i % 50 == 0:
-                progress["visa"] = list(done)
-                save_progress(progress)
-                print(f"  visa: {len(done)}/{len(SYMBOLS)} — {symbol}: {len(apps)} applications")
-        except Exception as e:
-            print(f"  visa {symbol} error: {e}")
-        time.sleep(CALL_DELAY)
-
-    progress["visa"] = list(done)
-    save_progress(progress)
-    print(f"  visa done: {len(done)} tickers")
-
-
-# ---- Raw insert helpers ----
-
-def _insert_financial_reports(reports) -> int:
-    if not reports:
-        return 0
-    client = get_client()
-    rows = [
-        {
-            "source": r.source,
-            "ticker": r.ticker,
-            "cik": r.cik,
-            "access_number": r.access_number,
-            "form": r.form,
-            "year": r.year,
-            "quarter": r.quarter,
-            "start_date": r.start_date.isoformat() if r.start_date else None,
-            "end_date": r.end_date.isoformat() if r.end_date else None,
-            "filed_date": r.filed_date.isoformat() if r.filed_date else None,
-            "report_json": r.report,
-            "payload_json": r.payload,
-            "valid_from": (r.filed_date or date.today()).isoformat(),
-        }
-        for r in reports
-    ]
-    client.table("raw_financial_reports").upsert(
-        rows, on_conflict="source,ticker,access_number", ignore_duplicates=True
-    ).execute()
-    return len(rows)
-
-
 def _insert_earnings_surprises(surprises) -> int:
     if not surprises:
         return 0
@@ -427,52 +326,12 @@ def _insert_earnings_calendar(events) -> int:
     return len(rows)
 
 
-def _insert_visa_applications(apps) -> int:
-    if not apps:
-        return 0
-    client = get_client()
-    rows = [
-        {
-            "source": a.source,
-            "ticker": a.ticker,
-            "case_number": a.case_number,
-            "job_title": a.job_title,
-            "visa_class": a.visa_class,
-            "case_status": a.case_status,
-            "employer_name": a.employer_name,
-            "begin_date": a.begin_date.isoformat() if a.begin_date else None,
-            "end_date": a.end_date.isoformat() if a.end_date else None,
-            "received_date": a.received_date.isoformat() if a.received_date else None,
-            "quarter": a.quarter,
-            "year": a.year,
-            "wage_range_from": a.wage_range_from,
-            "wage_range_to": a.wage_range_to,
-            "wage_unit": a.wage_unit,
-            "worksite_city": a.worksite_city,
-            "worksite_state": a.worksite_state,
-            "full_time": a.full_time,
-            "h1b_dependent": a.h1b_dependent,
-            "payload_json": a.payload,
-            "valid_from": (a.received_date or date.today()).isoformat(),
-        }
-        for a in apps
-    ]
-    client.table("raw_visa_applications").upsert(
-        rows, on_conflict="source,ticker,case_number", ignore_duplicates=True
-    ).execute()
-    return len(rows)
-
-
-# ---- Main ----
-
 ADAPTERS = {
     "price": backfill_prices,
     "news": backfill_news,
     "filings": backfill_filings,
-    "financials": backfill_financials,
     "earnings": backfill_earnings,
     "earncal": backfill_earnings_calendar,
-    "visa": backfill_visa,
 }
 
 

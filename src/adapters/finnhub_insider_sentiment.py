@@ -20,7 +20,7 @@ from typing import Any
 import finnhub
 
 from src.adapters.base import RawInsiderSentiment, source_retry
-from src.adapters.finnhub_visa import _finnhub_client
+from src.adapters.finnhub_client import _finnhub_client
 
 
 def _num(x: Any) -> float | None:

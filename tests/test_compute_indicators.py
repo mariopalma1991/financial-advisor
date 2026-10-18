@@ -42,19 +42,3 @@ def test_corporate_actions_read_from_raw_table(monkeypatch):
     monkeypatch.setattr(job.curated, "_pit_rows", lambda table, *a: seen.append(table) or [])
     job.curated.get_corporate_actions("AAA")
     assert seen == ["raw_corporate_actions"]
-
-
-def test_financial_reports_are_written_in_small_chunks(monkeypatch):
-    """One request with ~3,000 reports (100 symbols) hit the statement timeout."""
-    from unittest.mock import MagicMock
-
-    from src.adapters.base import RawFinancialReport
-    from src.storage import raw
-
-    client = MagicMock()
-    monkeypatch.setattr(raw, "get_client", lambda: client)
-    reports = [RawFinancialReport("finnhub", "AAA", "1", f"acc{i}", "10-Q", 2026, 1,
-                                  None, None, None, {"bs": {}}) for i in range(250)]
-    assert raw.insert_financial_reports(reports) == 250
-    sizes = [len(c.args[0]) for c in client.table.return_value.upsert.call_args_list]
-    assert sizes == [100, 100, 50]
