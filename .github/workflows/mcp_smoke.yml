@@ -36,5 +36,10 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
+          SUPABASE_S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
+          SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
+          SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
           MCP_SMOKE_AS_OF: ${{ inputs.as_of }}
         run: python -m scripts.mcp_smoke ${{ inputs.tickers || 'AAPL NVDA AON APA JPM' }}

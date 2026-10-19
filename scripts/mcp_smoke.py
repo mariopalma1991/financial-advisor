@@ -24,11 +24,12 @@ from mcp.client.stdio import stdio_client
 from src.mcp_server import server, tools
 
 _GLOBAL_TOOLS = ("get_macro", "get_cost_model", "get_data_status", "screen_universe", "get_portfolio")
+_TEXT_TOOLS = ("get_news", "get_filing_text", "get_risk_factors", "get_short_interest", "get_price_series")
 _TICKER_TOOLS = [n for n in tools.ALL_TOOLS if n not in _GLOBAL_TOOLS + ("resolve_refs",)]
 # date-like fields that must not be later than a past read's as_of
 _DATE_FIELDS = ("bar_date", "last_bar_date", "filed_at", "date", "grade_date", "snapshot_date", "as_of",
                 "period", "obs_date", "last_8k_at", "last_dividend_ex_date", "started_at", "trade_date",
-                "alert_day", "exit_day")
+                "alert_day", "exit_day", "published_at", "filing_date")
 
 
 def _summary(out: dict) -> str:
@@ -86,6 +87,8 @@ def _validate(answers: list[dict], as_of: str | None, label: str) -> int:
     print(f"resolve_refs {label}: {summ} in {time.monotonic() - started:.1f}s")
     for r in bad[:15]:
         print("   ", r)
+    for r in bad[:3]:
+        print(f"::warning title=resolve_refs {label}::{json.dumps(r, default=str)[:400]}")
     return len(bad)
 
 
@@ -113,7 +116,16 @@ def _run(tickers: list[str], as_of: str | None) -> tuple[int, list[dict]]:
                 answers.append(out)
             except Exception as exc:  # noqa: BLE001 — reported and counted
                 line, failures = f"RAISED {type(exc).__name__}: {exc}", failures + 1
+                print(f"::warning title={name} {t}::{line[:300]}")
             print(f"{t:6} {name:22} {time.monotonic() - started:5.2f}s {line}"[:600])
+            if t == tickers[0] and name in _TEXT_TOOLS and as_of is None:
+                extra = ""
+                if name == "get_news":
+                    arts = out.get("data", {}).get("articles") or []
+                    extra = f" with_summary={sum(bool(a.get('summary')) for a in arts)}/{len(arts)}"
+                if name == "get_risk_factors":
+                    extra = f" change={out.get('data', {}).get('change')}"[:300]
+                print(f"::notice title={name} {t}::{extra} {line[:300]}")
     for name in _GLOBAL_TOOLS:
         out = tools.ALL_TOOLS[name](as_of=as_of)
         failures += "error" in out
@@ -149,8 +161,15 @@ def main(tickers: list[str]) -> int:
         failures += not ok
         print(f"role {role}: {'OK' if ok else 'MISMATCH'} {listed}")
     print(f"\nfailures: {failures}")
+    # annotations are readable through the API even where the log download is not
+    print(f"::notice title=mcp_smoke::failures={failures}")
     return 1 if failures else 0
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:] or ["AAPL", "NVDA", "AON", "APA", "JPM"]))
+    try:
+        sys.exit(main(sys.argv[1:] or ["AAPL", "NVDA", "AON", "APA", "JPM"]))
+    except Exception:
+        import traceback
+        print("::error title=mcp_smoke crashed::" + traceback.format_exc()[-900:].replace("\n", " | "))
+        raise

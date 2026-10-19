@@ -15,6 +15,7 @@ jobs:
   ingest_analysts: { max_hours: 192 }    # weekly, Wed 16:00 UTC
   ingest_profiles: { max_hours: 192 }    # weekly, Thu 16:00 UTC (a third of the universe)
   ingest_street: { max_hours: 192 }      # weekly, Sat 17:00 UTC (Yahoo)
+  ingest_finra_short: { max_hours: 192 } # weekly, Wed 16:00 UTC
   ingest_macro: { max_hours: 78 }        # Tue-Sat 03:00 UTC
   enrich_filings: { max_hours: 54 }      # Mon-Sat 15:00 UTC (EDGAR)
   compute_indicators: { max_hours: 78 }  # after each ingest_prices (weekend gap)

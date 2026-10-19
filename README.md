@@ -69,8 +69,13 @@ python -m src.mcp_server.server --role optimista   # stdio transport; needs SUPA
 Read-only tools over the curated views: `get_ticker_overview`, `get_price_technicals`,
 `get_fundamentals`, `get_peer_valuation`, `get_analyst_view`, `get_short_interest`,
 `get_earnings`, `get_news_sentiment`, `get_filing_events`, `get_insider_activity`,
-`get_catalysts`, `get_macro`, `get_data_status`, `get_cost_model`, `get_research_digest`,
-`screen_universe`, `get_factor_scores`.
+`get_catalysts`, `get_price_series`, `get_news`, `get_filing_text`, `get_risk_factors`,
+`get_macro`, `get_data_status`, `get_cost_model`, `get_research_digest`, `screen_universe`,
+`get_factor_scores`, `get_portfolio`, `get_alert_history`.
+Long texts (news summaries, 8-K press releases, 10-K risk factors) come from the
+Parquet archive, so the server also needs the `SUPABASE_S3_*` settings; risk factors
+are read from EDGAR the first time a 10-K is asked for and cached there.
+`get_short_interest` adds FINRA's twice-monthly history (`ingest_finra_short`, weekly).
 Every answer carries a `snapshot_id` and a `_ref` per row that agents cite as
 `<_ref>#<field>`. `config/mcp_roles.yaml` sets which tools each committee role sees.
 
