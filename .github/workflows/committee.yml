@@ -23,6 +23,10 @@ on:
         description: "Replay date (YYYY-MM-DD); empty = latest data"
         required: false
         default: ""
+      model:
+        description: "Model for this run only (e.g. claude-opus-5-5); empty = config/committee.yaml"
+        required: false
+        default: ""
 
 concurrency:
   group: committee
@@ -85,6 +89,7 @@ jobs:
           COMMITTEE_AS_OF: ${{ inputs.as_of }}
           TICKERS: ${{ inputs.tickers }}
           TOP: ${{ inputs.top || '1' }}
+          COMMITTEE_MODEL: ${{ inputs.model }}
           SCHEDULED: ${{ github.event_name == 'schedule' }}
         run: |
           if [ "$SCHEDULED" = "true" ]; then

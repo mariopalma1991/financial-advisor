@@ -6,6 +6,7 @@ store each run, every agent's opinion and the chair's approve-or-veto alert
   python -m src.jobs.run_committee --top 20           # the day's top 20 by factor rank
   python -m src.jobs.run_committee AAPL --as-of 2026-10-16
   python -m src.jobs.run_committee --new-buys          # the portfolio's latest buys not yet reviewed
+  python -m src.jobs.run_committee AAPL --model claude-opus-5-5   # another model, this run only
 """
 from __future__ import annotations
 
@@ -63,9 +64,15 @@ def main() -> None:
     p.add_argument("--new-buys", action="store_true",
                    help="review the model portfolio's latest buys the committee has not seen")
     p.add_argument("--as-of", default=os.getenv("COMMITTEE_AS_OF") or None)
+    p.add_argument("--model", default=os.getenv("COMMITTEE_MODEL") or None,
+                   help="model for this run only (default: config/committee.yaml)")
     p.add_argument("--out", default="committee_out", help="local folder for the traces")
     args = p.parse_args()
     cfg = committee.load_config()
+    if args.model:
+        if args.model not in cfg["pricing"]:
+            raise SystemExit(f"no pricing for {args.model} in config/committee.yaml")
+        cfg["committee"]["model"] = args.model
     as_of = args.as_of or None
     tickers = [t.upper() for t in args.tickers]
     if args.new_buys:
