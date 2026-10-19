@@ -7,8 +7,6 @@ on:
   schedule:
     - cron: "0 15 2 * *"
   workflow_dispatch:
-  push:
-    branches: [claude/project-thread-05xrjc]  # TEMP: first load, removed before merge
 
 concurrency:
   group: sec-edgar
