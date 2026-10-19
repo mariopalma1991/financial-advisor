@@ -139,9 +139,13 @@ prompts in `src/committee/prompts.py`.
   (`config/mcp_roles.yaml`), all at the same `as_of` (forced by the runner, so a run
   replays). Each ends with `entregar_opinion`: stance, 1-10 score, confidence, thesis,
   key points and risks, and the list of references it used (`<_ref>#<field>`).
-- Agents never type a number from the data: their text carries markers (`{1}`, `{2:pct}`,
-  `{3:mill}`, `{4:fecha}`) and the runner looks each reference up with `resolve_refs` and
-  writes the stored value in. The agent's own version is kept as `draft` in the trace.
+- Agents never type a number from the data: where a number goes their text carries the
+  reference itself, `{<_ref>#<field>}` (or `!pct`, `!mill`, `!fecha` after it), and the runner
+  looks each one up with `resolve_refs` and writes the stored value in. A reference that does
+  not resolve to a single value shows as "[sin dato]". A reference copied slightly wrong (a
+  missing `calc:` prefix, a renamed table) is matched to the one row the agent was actually
+  shown for that ticker with that field; anything ambiguous stays unresolved. The agent's own
+  version is kept as `draft` in the trace.
 - Every model answers in the same format: the runner checks each final answer against the
   tool's schema and the markers, and asks the agent to fix it up to twice.
 - The chair (presidente) reads the members' filled-in text, without the points and risks

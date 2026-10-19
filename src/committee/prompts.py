@@ -14,16 +14,17 @@ comité decide si se aprueba la compra o se veta. Horizonte: {horizon} meses.
 Reglas:
 - Usa solo las herramientas que tienes. No uses lo que sabes de memoria sobre la empresa, sus precios o \
 sus resultados: si un dato no viene en una herramienta, di "sin datos".
-- No escribas cifras de los datos tú mismo. Pon cada referencia que uses en cites: el valor del campo _ref \
-de la fila, un "#" y el nombre del campo, por ejemplo "estimate_revisions:OSCR|0y|2026-10-18#eps_current" \
-(sin "<_ref>" ni otros signos alrededor). En el texto escribe un marcador donde va la cifra: {{1}} es la \
-primera de cites, {{2}} la segunda. El sistema busca el valor en la base y lo escribe por ti; una \
-referencia que no existe sale como "[sin dato]" y el punto que la usa no llega al presidente.
-- Formato del marcador: {{n:pct}} para una fracción que se lee como porcentaje (0.4282 sale 42.8%), \
-{{n:mill}} para montos grandes (22822500 sale 22.8 millones), {{n:fecha}} para fechas y {{n}} para todo lo \
-demás. Ejemplo de punto: "Ingresos +{{1:pct}} anual contra {{2:pct}} de los pares."
+- No escribas cifras de los datos tú mismo. Donde va una cifra, escribe entre llaves la referencia: el \
+valor del campo _ref de la fila, un "#" y el nombre del campo, por ejemplo \
+{{estimate_revisions:OSCR|0y|2026-10-18#eps_current}}. Si el campo trae varios valores, elige uno con \
+punto, por ejemplo #returns.6m en lugar de #returns. El sistema busca el valor en la base y lo escribe \
+en su lugar; una referencia que no existe sale como "[sin dato]" y el punto que la usa no llega al presidente.
+- Formato, después de "!": !pct para una fracción que se lee como porcentaje (0.4282 sale 42.8%), !mill \
+para montos grandes (22822500 sale 22.8 millones), !fecha para fechas, y nada para lo demás. Ejemplo: \
+"Ingresos +{{current_fundamentals_snapshot:OSCR|2026-10-17#revenue_growth_ttm_yoy!pct}} anual contra \
+{{peer_comparison:OSCR#peer_revenue_growth_ttm_yoy!pct}} de los pares."
 - Solo un resultado que calculas tú (una suma, 3 veces un costo, una conversión a MXN) se escribe a mano, \
-diciendo de qué marcadores sale: "3 veces el costo de {{4:pct}}, o sea 5.0%".
+junto a las referencias de donde sale.
 - El inversionista piensa en pesos: los precios, niveles de entrada, soportes y stops que menciones en el \
 texto van en MXN (si tienes get_cost_model, convierte con su tipo de cambio) o como porcentaje sobre el precio \
 actual, nunca solo en USD.
@@ -68,8 +69,8 @@ Eres el Presidente del comité. Cinco miembros analizaron {ticker} por separado 
 abajo tienes sus opiniones. Las cifras de sus textos las puso el sistema desde la base: los puntos y riesgos que \
 usaban una referencia que no existe ya se quitaron, y "evidencia" dice cuántas citas y puntos se descartaron de cada miembro. \
 Da más peso a los miembros con calidad de evidencia alta; "cifras_sin_cita" cuenta los números que un \
-miembro escribió a mano, que nadie verificó. Para tus propias cifras usa marcadores con tus cites; puedes \
-citar las referencias de los miembros (campo "referencias").
+miembro escribió a mano, que nadie verificó. Tus propias cifras van con el mismo marcador de referencia; \
+puedes usar las referencias de los miembros (campo "referencias").
 
 Tu decisión es binaria: aprobar la compra (approve) o vetarla (veto). La acción viene de la lista de \
 factores, así que se aprueba salvo que haya una razón concreta y verificable para vetarla: un riesgo \

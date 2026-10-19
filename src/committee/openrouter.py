@@ -36,7 +36,8 @@ def _post(http: httpx.Client, body: dict) -> dict:
         if r.status_code in (429, 500, 502, 503, 504) and attempt < 3:
             time.sleep(5 * 2 ** attempt)
             continue
-        r.raise_for_status()
+        if r.status_code >= 400:  # OpenRouter says why (no credit, model blocked for the key...) in the body
+            raise RuntimeError(f"openrouter {r.status_code}: {r.text[:300]}")
         data = r.json()
         if data.get("error"):
             raise RuntimeError(f"openrouter: {data['error']}")
@@ -128,6 +129,7 @@ def run_agent(http: httpx.Client | None, *, role: str, system: str, prompt: str,
                         out = call_tool(name, {**args, "as_of": as_of})
                     except Exception as exc:  # a tool bug must not end the committee
                         out = {"error": {"code": "tool_failed", "message": f"{type(exc).__name__}: {exc}"}}
+                    tools._index_refs(out.get("data"), res.seen)
                     res.tool_calls.append({"tool": name, "args": args, "ms": round((time.monotonic() - t0) * 1000),
                                            "error": (out.get("error") or {}).get("code")})
                 messages.append({"role": "tool", "tool_call_id": c["id"], "content": json.dumps(out, default=str)})

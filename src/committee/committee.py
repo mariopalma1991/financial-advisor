@@ -38,25 +38,43 @@ def load_config() -> dict:
     return cfg
 
 
+def _clean(ref: str) -> str:
+    return ref.strip().removeprefix("<_ref>")  # some models copy the placeholder too
+
+
+def repair(cite: str, seen: dict[str, dict]) -> str:
+    """The reference an agent meant, when it copied one slightly wrong: the same
+    reference with its calc: prefix, or else the only row it was shown for that
+    ticker that carries the field. Anything less certain stays as written (and
+    fails)."""
+    ref, _, path = cite.partition("#")
+    if ref in seen or not path:
+        return cite
+    if "calc:" + ref in seen:
+        return f"calc:{ref}#{path}"
+    ticker = ref.partition(":")[2].split("|")[0]
+    hits = [r for r, row in seen.items()
+            if ticker and ticker in r.partition(":")[2].split("|") and tools._field(row, path)[0]]
+    return f"{hits[0]}#{path}" if len(hits) == 1 else cite
+
+
 def cites_of(output: dict | None) -> list[str]:
-    """The references an agent's final output cites, in order ({1} is the first)."""
-    found = []
-    for c in (output or {}).get("cites") or []:
-        c = c.get("cite") if isinstance(c, dict) else c
-        if isinstance(c, str):  # some models copy the placeholder too: "<_ref>table:KEY#field"
-            found.append(c.strip().removeprefix("<_ref>"))
-    return found
+    """The references an agent's text cites through its markers, first use first."""
+    found = [_clean(m.group(1)) for t in texts_of(output or {}) for m in MARKER.finditer(t)]
+    return list(dict.fromkeys(found))
 
 
-def fmt(value: Any, kind: str | None) -> str:
-    """A looked-up value as a person reads it: {n:pct} a fraction as %, {n:mill} in
-    millions, {n:fecha} or text as stored, {n} a number rounded to what matters."""
+def fmt(value: Any, kind: str | None, field: str = "") -> str:
+    """A looked-up value as a person reads it: !pct a fraction as % (a *pct* field
+    already in percent, like avg_surprise_pct 443.5, is not multiplied), !mill in millions, !fecha
+    or text as stored, and a bare number rounded to what matters."""
     if value is None:
         return "[sin dato]"
     if isinstance(value, bool) or not isinstance(value, (int, float)) or kind == "fecha":
         return str(value)
     if kind == "pct":
-        return f"{value * 100:.1f}%"
+        in_pct = "pct" in field.rsplit(".", 1)[-1] and abs(value) >= 1  # pct_from_high stays a fraction
+        return f"{value:.1f}%" if in_pct else f"{value * 100:.1f}%"
     if kind == "mill":
         return f"{value / 1e6:,.1f} millones"
     if float(value).is_integer():
@@ -65,22 +83,21 @@ def fmt(value: Any, kind: str | None) -> str:
     return f"{value:,.1f}" if a >= 100 else f"{value:.2f}" if a >= 1 else f"{value:.4f}".rstrip("0")
 
 
-def _value(values: list, m: re.Match) -> Any:
-    i = int(m.group(1))
-    return values[i - 1] if 1 <= i <= len(values) else None
-
-
-def render(text: str, values: list) -> str:
+def render(text: str, values: dict[str, Any]) -> str:
     """The text with each marker replaced by the value the database holds."""
-    return MARKER.sub(lambda m: fmt(_value(values, m), m.group(2)), text)
+    def one(m: re.Match) -> str:
+        ref = _clean(m.group(1))
+        return fmt(values.get(ref), m.group(2), ref.partition("#")[2])
+    return MARKER.sub(one, text)
 
 
-def misses(text: str, values: list) -> bool:
-    """Whether the text uses a reference that did not verify."""
-    return any(_value(values, m) is None for m in MARKER.finditer(text))
+def misses(text: str, values: dict[str, Any]) -> bool:
+    """Whether the text uses a reference that did not resolve to a value."""
+    return any(values.get(_clean(m.group(1))) is None for m in MARKER.finditer(text))
 
 
 _LOOSE = re.compile(r"(?<![\w.,])\d+(?:[.,]\d+)?(?![\w])")
+_PROSE = ("thesis", "key_points", "risks", "rationale", "veto_reason")
 
 
 def loose_numbers(text: str) -> int:
@@ -89,43 +106,50 @@ def loose_numbers(text: str) -> int:
 
 
 def validate(results: list[AgentResult], as_of: str | None) -> dict[str, dict]:
-    """resolve_refs over each agent's references: per role, how many resolved, the
-    ones that did not (with why) and the value behind each cite, in order."""
+    """resolve_refs over each agent's references: per role, how many resolved to a
+    single value, the ones that did not (with why) and the value behind each."""
     out = {}
     for r in results:
-        cites = cites_of(r.draft if r.draft is not None else r.output)
+        o = r.draft if r.draft is not None else r.output
+        cites = cites_of(o)
+        fixed = {c: repair(c, r.seen) for c in cites}
         found: dict[str, Any] = {}
         failed: list[dict] = []
         if cites:
-            ans = tools.resolve_refs(list(dict.fromkeys(cites)), as_of=as_of)
-            for x in (ans.get("data") or {}).get("results") or []:
-                if x.get("status") == "found" and x.get("value") is not None:
-                    found[x["cite"]] = x["value"]
-                else:
-                    failed.append(x)
-        texts = texts_of(r.draft or r.output or {})
-        out[r.role] = {"n": len(set(cites)), "checked": len(found), "mismatches": 0, "unresolved": len(failed),
-                       "loose_numbers": sum(loose_numbers(t) for t in texts), "failed": failed,
-                       "values": [found.get(c) for c in cites]}
+            ans = tools.resolve_refs(list(dict.fromkeys(fixed.values())), as_of=as_of)
+            by_ref = {x.get("cite"): x for x in (ans.get("data") or {}).get("results") or []}
+            for c in cites:
+                x = by_ref.get(fixed[c]) or {"cite": c, "status": "ref_not_found"}
+                v = x.get("value")
+                if x.get("status") == "found" and v is not None and not isinstance(v, (dict, list)):
+                    found[c] = v
+                else:  # a whole object (e.g. #returns instead of #returns.6m) is not one number
+                    failed.append({k: x.get(k) for k in ("cite", "status", "detail") if x.get(k) is not None}
+                                  | ({"status": "not_a_value"} if x.get("status") == "found" else {}))
+        prose = [t for k in _PROSE for t in texts_of({k: (o or {}).get(k)})]
+        out[r.role] = {"n": len(cites), "checked": len(found), "mismatches": 0, "unresolved": len(failed),
+                       "repaired": {c: f for c, f in fixed.items() if f != c},
+                       "loose_numbers": sum(loose_numbers(t) for t in prose), "failed": failed, "values": found}
     return out
 
 
 def fill(r: AgentResult, v: dict) -> None:
     """Write the looked-up values into the agent's output: every marker becomes the
-    stored number and cites carry their values. The agent's own version stays in draft."""
+    stored number, and cites lists each reference with its value. The agent's own
+    version stays in draft."""
     if r.output is None:
         return
     r.draft = r.output
-    values = v.get("values") or []
+    values = v.get("values") or {}
     out: dict[str, Any] = {}
     for k, x in r.draft.items():
         if isinstance(x, str):
             out[k] = render(x, values)
-        elif isinstance(x, list) and k != "cites":
+        elif isinstance(x, list):
             out[k] = [render(t, values) if isinstance(t, str) else t for t in x]
         else:
             out[k] = x
-    out["cites"] = [{"cite": c, "value": val} for c, val in zip(cites_of(r.draft), values)]
+    out["cites"] = [{"cite": c, "value": values.get(c)} for c in cites_of(r.draft)]
     r.output = out
 
 
@@ -160,7 +184,7 @@ def _brief(r: AgentResult, v: dict) -> dict:
     A key point or risk that needs a reference that did not verify is dropped; the
     counts stay, so the chair can weigh members by how much of their evidence held up."""
     d = r.draft or {}
-    values = v.get("values") or []
+    values = v.get("values") or {}
     kept: dict[str, list[str]] = {}
     dropped = 0
     for k in ("key_points", "risks"):
@@ -168,7 +192,7 @@ def _brief(r: AgentResult, v: dict) -> dict:
         dropped += len(d.get(k) or []) - len(kept[k])
     n = v.get("n", 0)
     ok = v.get("checked", 0)
-    refs = {c: val for c, val in zip(cites_of(d), values) if val is not None}
+    refs = {c: values[c] for c in cites_of(d) if c in values}
     return {"rol": r.role, "postura": d.get("stance"), "score": d.get("score"), "confianza": d.get("confidence"),
             "movimiento_esperado_pct": d.get("expected_move_pct"), "stop_pct": d.get("stop_pct"),
             "tesis": render(d.get("thesis") or "", values), "puntos": kept["key_points"], "riesgos": kept["risks"],
