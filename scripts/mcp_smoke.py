@@ -167,4 +167,9 @@ def main(tickers: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:] or ["AAPL", "NVDA", "AON", "APA", "JPM"]))
+    try:
+        sys.exit(main(sys.argv[1:] or ["AAPL", "NVDA", "AON", "APA", "JPM"]))
+    except Exception:
+        import traceback
+        print("::error title=mcp_smoke crashed::" + traceback.format_exc()[-900:].replace("\n", " | "))
+        raise
