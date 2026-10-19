@@ -137,17 +137,21 @@ prompts in `src/committee/prompts.py`.
 - Five members (optimista, pesimista, contrario, especialista, riesgo_timing) analyze
   the ticker in separate conversations, each with only its MCP tools and call budget
   (`config/mcp_roles.yaml`), all at the same `as_of` (forced by the runner, so a run
-  replays). Each ends with `entregar_opinion`: stance, 1-10 score, confidence, thesis
-  and every number cited as `<_ref>#<field>`.
-- `resolve_refs` checks the members' citations; the chair (presidente) sees their
-  opinions with the cites that did not verify, and ends with `entregar_decision`
-  (approve or veto, target and stop as % of the MXN price, invalidation criteria).
+  replays). Each ends with `entregar_opinion`: stance, 1-10 score, confidence, thesis,
+  key points and risks, and the list of references it used (`<_ref>#<field>`).
+- Agents never type a number from the data: their text carries markers (`{1}`, `{2:pct}`,
+  `{3:mill}`, `{4:fecha}`) and the runner looks each reference up with `resolve_refs` and
+  writes the stored value in. The agent's own version is kept as `draft` in the trace.
+- Every model answers in the same format: the runner checks each final answer against the
+  tool's schema and the markers, and asks the agent to fix it up to twice.
+- The chair (presidente) reads the members' filled-in text, without the points and risks
+  whose reference did not resolve, plus how much of each member's evidence held up, and ends
+  with `entregar_decision` (approve or veto, target and stop as % of the MXN price,
+  invalidation criteria).
 - Models: Claude Sonnet 5.5 by default (the only Anthropic model the project uses). Any model on
   OpenRouter runs the same committee as `openrouter:<vendor/model>` (needs `OPEN_ROUTER_API_KEY`); the
   workflow's `model` input takes several, comma-separated, and runs them side by side on the same
   tickers and `as_of`. `list_models` prints OpenRouter's catalog rows that match.
-- The chair reads only the citations the validator confirmed (a point with none is dropped) and how
-  much of each member's evidence held up.
 - Each run writes `committee_runs`, one `committee_opinions` row per agent, and one
   `committee_alerts` buy (vetoed or not), so `score_alerts` grades the chair and every
   member against VOO. The full trace goes to Storage under `committee_traces/` and to the
@@ -163,6 +167,8 @@ python -m src.jobs.run_committee --new-buys      # the model portfolio's latest 
 On schedule (22:15 and 06:15 CST) the workflow runs `--new-buys`: only the stocks
 `forward_top20` decided to buy on its latest decision day, before they fill at the next
 close, at most `max_new_buys` per run; a ticker that failed twice is left for a person.
+It does so once per model in `scheduled_models` (Sonnet 5.5 and Gemini 3.8 Flash), side by
+side, so both committees are scored on the same buys.
 
 ## Cloud operation
 

@@ -13,7 +13,7 @@ from collections.abc import Callable
 
 import httpx
 
-from src.committee.agent import AgentResult
+from src.committee.agent import MAX_FIXES, AgentResult, check_final, fix_message, tidy
 from src.mcp_server import tools
 
 PREFIX = "openrouter:"
@@ -60,6 +60,7 @@ def run_agent(http: httpx.Client | None, *, role: str, system: str, prompt: str,
     messages: list[dict] = [{"role": "system", "content": system}, {"role": "user", "content": prompt}]
     fns = [_fn(t) for t in [*tool_defs, final_tool]]
     nudged = False
+    fixes = 0
     try:
         for _ in range(max_calls + 4):
             data = _post(http, {
@@ -85,9 +86,20 @@ def run_agent(http: httpx.Client | None, *, role: str, system: str, prompt: str,
             final = next((c for c in calls if c["function"]["name"] == final_tool["name"]), None)
             if final is not None:
                 try:
-                    res.output = json.loads(final["function"].get("arguments") or "{}")
+                    out = json.loads(final["function"].get("arguments") or "{}")
+                    errs = check_final(final_tool, out)
                 except json.JSONDecodeError as exc:
-                    res.error = f"bad_final_json: {exc}"
+                    out, errs = None, [f"JSON inválido: {exc}"]
+                if errs and fixes < MAX_FIXES:
+                    fixes += 1
+                    for c in calls:
+                        messages.append({"role": "tool", "tool_call_id": c["id"],
+                                         "content": fix_message(final_tool, errs) if c is final else "no se ejecutó"})
+                    continue
+                if errs:
+                    res.error = "bad_format: " + "; ".join(errs[:3])
+                else:
+                    res.output = tidy(out)
                 return res
             if not calls:
                 if nudged or finish == "length":
