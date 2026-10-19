@@ -37,8 +37,8 @@ class FakeClient:
 
 
 OPINION = {"stance": "buy", "score": 7, "confidence": 0.6, "expected_move_pct": 12, "stop_pct": 8,
-           "thesis": "Crece.", "key_points": ["ROE de {1:pct}"], "risks": [], "change_my_mind": [],
-           "missing_data": [], "cites": ["x:AAPL#roe"]}
+           "thesis": "Crece.", "key_points": ["ROE de {x:AAPL#roe!pct}"], "risks": [], "change_my_mind": [],
+           "missing_data": []}
 TOOLS = [{"name": "get_fundamentals", "description": "", "input_schema": {"type": "object"}}]
 
 
@@ -114,27 +114,30 @@ def test_role_tool_defs_hide_as_of():
     assert all("as_of" not in d["input_schema"].get("required", []) for d in defs)
 
 
-def test_cites_of_reads_references_in_order():
+def test_cites_of_reads_markers_in_order():
     assert committee.cites_of(OPINION) == ["x:AAPL#roe"]
-    assert committee.cites_of({"cites": ["<_ref>a:B|1#roe", {"cite": "c:D#x", "value": 2}]}) == ["a:B|1#roe", "c:D#x"]
+    out = {"thesis": "{<_ref>a:B|1#roe} y {c:D#x!pct}", "risks": ["{a:B|1#roe}"]}
+    assert committee.cites_of(out) == ["a:B|1#roe", "c:D#x"]
     assert committee.cites_of(None) == []
 
 
 def test_render_writes_stored_values_into_markers():
-    vals = [0.4282, 22822500.0, "2026-11-04", 2.5, None]
-    text = "Ingresos +{1:pct}, ventas {2:mill} USD, reporte {3:fecha}, beta {4}, otro {5}"
+    vals = {"t:A#g": 0.4282, "t:A#sales": 22822500.0, "t:A#date": "2026-11-04", "t:A#beta": 2.5,
+            "t:A#avg_surprise_pct": 443.52, "t:A#range.pct_from_high": -0.05}
+    text = ("Ingresos +{t:A#g!pct}, ventas {t:A#sales!mill} USD, reporte {t:A#date!fecha}, beta {t:A#beta}, "
+            "sorpresa {t:A#avg_surprise_pct!pct}, {t:A#range.pct_from_high!pct} del máximo, otro {t:A#x}")
     assert committee.render(text, vals) == ("Ingresos +42.8%, ventas 22.8 millones USD, reporte 2026-11-04, "
-                                            "beta 2.50, otro [sin dato]")
-    assert committee.misses(text, vals) and not committee.misses("beta {4}", vals)
-    assert committee.loose_numbers("beta {4} y margen 41.6% en 2026") == 2
+                                            "beta 2.50, sorpresa 443.5%, -5.0% del máximo, otro [sin dato]")
+    assert committee.misses(text, vals) and not committee.misses("beta {t:A#beta}", vals)
+    assert committee.loose_numbers("beta {t:A#beta} y margen 41.6% en 2026") == 2
 
 
 def test_check_final_catches_bad_markers_and_shape():
     assert agent.check_final(OPINION_TOOL, OPINION) == []
-    bad = {**OPINION, "key_points": ["ROE {2:pct}", "x {1:usd}"]}
+    bad = {**OPINION, "key_points": ["ROE {2:pct}", "x {x:A#y!usd}"]}
     errs = agent.check_final(OPINION_TOOL, bad)
-    assert any("{2:pct}" in e for e in errs) and any("{1:usd}" in e for e in errs)
-    assert agent.check_final(OPINION_TOOL, {**OPINION, "cites": [{"cite": "x"}]})
+    assert any("{2:pct}" in e for e in errs) and any("!usd" in e for e in errs)
+    assert agent.check_final(OPINION_TOOL, {**OPINION, "cites": ["x"]})  # no extra fields
     assert agent.check_final(OPINION_TOOL, {**OPINION, "score": 11}) == ["score va de 1 a 10"]
 
 
@@ -151,7 +154,7 @@ def _result(decision="veto", target=20, stop=10):
     chair = agent.AgentResult(role="presidente", output={
         "decision": decision, "score": 4, "confidence": 0.7, "expected_move_pct": 5, "target_pct": target,
         "stop_pct": stop, "veto_reason": "deuda" if decision == "veto" else None, "rationale": "r",
-        "agreements": [], "disagreements": [], "invalidation": [], "cites": []}, cost_usd=0.5)
+        "agreements": [], "disagreements": [], "invalidation": []}, cost_usd=0.5)
     m = agent.AgentResult(role="optimista", output=OPINION, cost_usd=0.25)
     return committee.CommitteeResult(ticker="AAPL", as_of=None, members=[m], chair=chair,
                                      price={"price_usd": 100.0, "usd_mxn": 18.0, "price_mxn": 1800.0,
@@ -272,10 +275,10 @@ def test_openrouter_agent_refuses_tools_outside_role():
 
 
 def test_brief_and_fill_use_only_stored_values():
-    out = {**OPINION, "key_points": ["ROE {1:pct}", "inventado {2}", "sin cifras"], "risks": ["beta {3}"],
-           "thesis": "ROE {1:pct} y 41.6% a mano", "cites": ["a#roe", "b#x", "c#beta"]}
+    out = {**OPINION, "key_points": ["ROE {a#roe!pct}", "inventado {b#x}", "sin cifras"], "risks": ["beta {c#beta}"],
+           "thesis": "ROE {a#roe!pct} y 41.6% a mano"}
     r = agent.AgentResult(role="optimista", output=out)
-    v = {"n": 3, "checked": 2, "unresolved": 1, "loose_numbers": 1, "values": [0.3297, None, 2.5]}
+    v = {"n": 3, "checked": 2, "unresolved": 1, "loose_numbers": 1, "values": {"a#roe": 0.3297, "c#beta": 2.5}}
     committee.fill(r, v)
     b = committee._brief(r, v)
     assert b["puntos"] == ["ROE 33.0%", "sin cifras"] and b["riesgos"] == ["beta 2.50"]
@@ -285,3 +288,12 @@ def test_brief_and_fill_use_only_stored_values():
                               "cifras_sin_cita": 1, "calidad": 0.67}
     assert r.draft == out and r.output["key_points"][1] == "inventado [sin dato]"
     assert r.output["cites"][0] == {"cite": "a#roe", "value": 0.3297}
+
+
+def test_validate_rejects_whole_objects(monkeypatch):
+    monkeypatch.setattr(committee.tools, "resolve_refs", lambda cites, as_of=None: {"data": {"results": [
+        {"cite": "t:A#returns", "status": "found", "value": {"6m": 1.02}},
+        {"cite": "t:A#returns.6m", "status": "found", "value": 1.0196}]}})
+    r = agent.AgentResult(role="riesgo_timing", output={**OPINION, "key_points": ["{t:A#returns}", "{t:A#returns.6m!pct}"]})
+    v = committee.validate([r], None)["riesgo_timing"]
+    assert v["values"] == {"t:A#returns.6m": 1.0196} and v["failed"][0]["status"] == "not_a_value"

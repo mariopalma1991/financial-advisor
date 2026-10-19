@@ -21,11 +21,9 @@ from src.mcp_server import server, tools
 
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
-# Agents cite references only; the runner looks each value up and writes it into
-# the text where the agent put a marker ({1}, {2:pct}, ...), so no number the reader
-# sees is copied by a model (prompt v0.6).
-_CITES = {"type": "array", "description": "referencias que usas, en orden: {1} es la primera", "items": {
-    "type": "string", "description": "valor de _ref + '#' + campo, p. ej. estimate_revisions:OSCR|0y|2026-10-18#eps_current"}}
+# Agents never type a number from the data: they write the reference itself as a
+# marker, {<_ref>#<field>} or {<_ref>#<field>!pct}, and the runner writes the stored
+# value in its place, so no number the reader sees is copied by a model (prompt v0.7).
 _TEXTS = {"type": "array", "items": {"type": "string"}}
 _NUM = {"type": ["number", "null"]}
 MAX_ITEMS = 5
@@ -37,7 +35,7 @@ OPINION_TOOL = {
     "input_schema": {
         "type": "object", "additionalProperties": False,
         "required": ["stance", "score", "confidence", "expected_move_pct", "stop_pct", "thesis",
-                     "key_points", "risks", "change_my_mind", "missing_data", "cites"],
+                     "key_points", "risks", "change_my_mind", "missing_data"],
         "properties": {
             "stance": {"type": "string", "enum": ["buy", "hold", "sell", "no_view"],
                        "description": "buy = comprar ahora; hold = esperar; sell = evitar; no_view = sin opinión"},
@@ -45,12 +43,11 @@ OPINION_TOOL = {
             "confidence": {"type": "number", "description": "0 a 1"},
             "expected_move_pct": {**_NUM, "description": "movimiento esperado en el horizonte, en %, o null"},
             "stop_pct": {**_NUM, "description": "caída en % bajo el precio que invalidaría la tesis, o null"},
-            "thesis": {"type": "string", "description": "tu razonamiento en un párrafo, máximo 150 palabras, cifras solo con marcadores"},
-            "key_points": {**_TEXTS, "description": f"máximo {MAX_ITEMS}, una oración cada uno, cifras con marcadores {{n}}"},
-            "risks": {**_TEXTS, "description": f"máximo {MAX_ITEMS}, cifras con marcadores {{n}}"},
+            "thesis": {"type": "string", "description": "tu razonamiento en un párrafo, máximo 150 palabras, cifras solo con marcadores {ref#campo}"},
+            "key_points": {**_TEXTS, "description": f"máximo {MAX_ITEMS}, una oración cada uno, cifras con marcadores {{ref#campo}}"},
+            "risks": {**_TEXTS, "description": f"máximo {MAX_ITEMS}, cifras con marcadores {{ref#campo}}"},
             "change_my_mind": {**_TEXTS, "description": "2 o 3 cosas que te harían cambiar de opinión"},
             "missing_data": {**_TEXTS, "description": "datos que te faltaron"},
-            "cites": _CITES,
         },
     },
 }
@@ -62,7 +59,7 @@ DECISION_TOOL = {
     "input_schema": {
         "type": "object", "additionalProperties": False,
         "required": ["decision", "score", "confidence", "expected_move_pct", "target_pct", "stop_pct",
-                     "veto_reason", "rationale", "agreements", "disagreements", "invalidation", "cites"],
+                     "veto_reason", "rationale", "agreements", "disagreements", "invalidation"],
         "properties": {
             "decision": {"type": "string", "enum": ["approve", "veto"]},
             "score": {"type": "integer", "description": "1 = muy bajista ... 10 = muy alcista"},
@@ -71,17 +68,17 @@ DECISION_TOOL = {
             "target_pct": {**_NUM, "description": "objetivo en % sobre el precio actual"},
             "stop_pct": {**_NUM, "description": "stop en % bajo el precio actual (número positivo)"},
             "veto_reason": {"type": ["string", "null"], "description": "por qué se veta; null si se aprueba"},
-            "rationale": {"type": "string", "description": "razonamiento para el inversionista, en español, máximo 200 palabras, cifras con marcadores {n}"},
+            "rationale": {"type": "string", "description": "razonamiento para el inversionista, en español, máximo 200 palabras, cifras con marcadores {ref#campo}"},
             "agreements": _TEXTS,
             "disagreements": _TEXTS,
             "invalidation": {**_TEXTS, "description": "precio, fecha o dato concreto que invalida la decisión"},
-            "cites": _CITES,
         },
     },
 }
 
-MARKER = re.compile(r"\{(\d+)(?::(\w+))?\}")
+MARKER = re.compile(r"\{([^{}\s!]+#[^{}\s!]+)(?:!(\w+))?\}")
 FORMATS = {None, "pct", "mill", "fecha"}
+_NUMBERED = re.compile(r"\{\d+(?::\w+)?\}")  # the v0.6 style, {1} or {2:pct}
 
 
 def texts_of(out: dict) -> list[str]:
@@ -105,13 +102,12 @@ def check_final(tool: dict, out: Any) -> list[str]:
             for e in jsonschema.Draft202012Validator(tool["input_schema"]).iter_errors(out)][:8]
     if errs:
         return errs
-    n = len(out["cites"])
     for t in texts_of(out):
         for m in MARKER.finditer(t):
-            if not 1 <= int(m.group(1)) <= n:
-                errs.append(f"el marcador {m.group(0)} no tiene referencia (hay {n} en cites)")
-            elif m.group(2) not in FORMATS:
-                errs.append(f"formato desconocido en {m.group(0)}: usa {{n}}, {{n:pct}}, {{n:mill}} o {{n:fecha}}")
+            if m.group(2) not in FORMATS:
+                errs.append(f"formato desconocido en {m.group(0)}: usa !pct, !mill o !fecha, o nada")
+        for bad in _NUMBERED.findall(t):
+            errs.append(f"{bad} no es un marcador: escribe la referencia completa, {{tabla:CLAVE#campo}}")
     if not 1 <= out["score"] <= 10:
         errs.append("score va de 1 a 10")
     if not 0 <= out["confidence"] <= 1:
