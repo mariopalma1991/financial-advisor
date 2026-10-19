@@ -125,7 +125,7 @@ Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
   runner: each run's as_of (replayable), each agent's stance, reasoning, cited refs and
   tool calls, and the alerts that reach the investor (vetoed buys kept, to score the veto).
 - `score_alerts` (after `compute_factors`) fills `alert_outcomes`: each alert against
-  VOO in MXN after 21, 63 and 126 trading days, from the next day's close. Views
+  VOO in MXN after 5, 20, 40 and 60 trading days (1, 4, 8 and 12 weeks), from the next day's close. Views
   `alert_scorecard` and `agent_scorecard`; MCP `get_alert_history` shows past calls.
 
 ## Agent committee (Capa 3)

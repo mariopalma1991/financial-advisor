@@ -927,7 +927,7 @@ def get_portfolio(portfolio: str = "forward_top20", as_of: str | None = None) ->
 def get_alert_history(ticker: str, as_of: str | None = None) -> dict[str, Any]:
     """What the committee said about this stock before (buy, sell or hold, vetoed or
     not, price in MXN, the chair's reasoning) and how each alert did against VOO in
-    pesos after 1, 3 and 6 months, as known on as_of. Use it to stay consistent
+    pesos after 1, 4, 8 and 12 weeks, as known on as_of. Use it to stay consistent
     with, or say why you depart from, earlier calls."""
     env, err = _open("get_alert_history", ticker, as_of)
     if err:
