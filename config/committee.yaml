@@ -14,6 +14,10 @@ committee:
   chair: presidente
   # Candidates when no ticker is given: the best-ranked of the day's factor list.
   default_top_n: 20
+  # Scheduled runs (workflow committee, --new-buys): only the stocks the model portfolio is
+  # about to buy, at most this many per run (Mario, 2026-10-19).
+  new_buys_portfolio: forward_top20
+  max_new_buys: 10
 
 # USD per million tokens (cache writes 1.25x input, cache reads 0.1x input).
 pricing:

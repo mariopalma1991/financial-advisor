@@ -5,6 +5,7 @@ store each run, every agent's opinion and the chair's approve-or-veto alert
   python -m src.jobs.run_committee AAPL NVDA          # these tickers
   python -m src.jobs.run_committee --top 20           # the day's top 20 by factor rank
   python -m src.jobs.run_committee AAPL --as-of 2026-10-16
+  python -m src.jobs.run_committee --new-buys          # the portfolio's latest buys not yet reviewed
 """
 from __future__ import annotations
 
@@ -28,6 +29,25 @@ def candidates(top_n: int, as_of: str | None) -> list[dict]:
             for r in (out.get("data") or {}).get("candidates") or []]
 
 
+# The model portfolio's buys from its latest decision day that the committee has not
+# reviewed since (a ticker that failed twice since that day is left for a person).
+_NEW_BUYS = """
+select d.ticker, d.rank, d.signal_day from paper_decisions d
+where d.portfolio = %(p)s and d.action = 'buy'
+  and d.signal_day = (select max(signal_day) from paper_decisions where portfolio = %(p)s)
+  and not exists (select 1 from committee_runs r where r.ticker = d.ticker and r.status = 'done'
+                  and r.as_of::date >= d.signal_day)
+  and (select count(*) from committee_runs r where r.ticker = d.ticker and r.status <> 'done'
+       and r.as_of::date >= d.signal_day) < 2
+order by d.rank limit %(n)s
+"""
+
+
+def new_buys(cur, portfolio: str, limit: int) -> list[str]:
+    cur.execute(_NEW_BUYS, {"p": portfolio, "n": limit})
+    return [r[0] for r in cur.fetchall()]
+
+
 def factor_context(ticker: str, as_of: str | None) -> str:
     s = (tools.get_factor_scores(ticker, as_of=as_of).get("data") or {}).get("scores") or {}
     if not s:
@@ -40,13 +60,21 @@ def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("tickers", nargs="*")
     p.add_argument("--top", type=int, default=0, help="take the day's top N by factor rank")
+    p.add_argument("--new-buys", action="store_true",
+                   help="review the model portfolio's latest buys the committee has not seen")
     p.add_argument("--as-of", default=os.getenv("COMMITTEE_AS_OF") or None)
     p.add_argument("--out", default="committee_out", help="local folder for the traces")
     args = p.parse_args()
     cfg = committee.load_config()
     as_of = args.as_of or None
     tickers = [t.upper() for t in args.tickers]
-    if not tickers:
+    if args.new_buys:
+        with pg_connection() as conn, conn.cursor() as cur:
+            tickers = new_buys(cur, cfg["committee"]["new_buys_portfolio"], cfg["committee"]["max_new_buys"])
+        if not tickers:
+            print("no new buys to review")
+            return
+    elif not tickers:
         tickers = [c["ticker"] for c in candidates(args.top or cfg["committee"]["default_top_n"], as_of)]
     at = envelope.parse_as_of(as_of)
     as_of_ts = at.ts if at.past else envelope.parse_as_of(envelope._SNAPSHOT).ts
