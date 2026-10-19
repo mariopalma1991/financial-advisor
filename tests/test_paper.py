@@ -192,3 +192,13 @@ def test_recurring_flows_on_the_15th_and_last_day_after_start():
     assert flows == [("2026-02-15", 500.0), ("2026-02-28", 500.0), ("2026-03-15", 500.0)]
     assert paper.recurring_flows("2026-10-19", "2026-10-30", 500, [15, "last"]) == []
     assert paper.recurring_flows("2026-01-01", "2026-12-31", 0, [15]) == []
+
+
+def test_month_end_signal_comes_out_on_the_months_last_trading_day():
+    days = ["2026-10-19", "2026-10-29", "2026-10-30"]
+    assert signal_days(days[:2], "2026-10-19", "2026-10-29") == ["2026-10-19"]
+    assert signal_days(days, "2026-10-19", "2026-10-30") == ["2026-10-19", "2026-10-30"]
+    # Memorial Day 2027 is Monday May 31, Good Friday 2029 is March 30
+    assert signal_days(["2027-05-03", "2027-05-28"], "2027-05-03", "2027-05-28") == ["2027-05-03", "2027-05-28"]
+    assert signal_days(["2029-03-01", "2029-03-29"], "2029-03-01", "2029-03-29") == ["2029-03-01", "2029-03-29"]
+    assert signal_days(["2029-03-01", "2029-03-28"], "2029-03-01", "2029-03-28") == ["2029-03-01"]
