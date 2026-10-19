@@ -37,8 +37,8 @@ class FakeClient:
 
 
 OPINION = {"stance": "buy", "score": 7, "confidence": 0.6, "expected_move_pct": 12, "stop_pct": 8,
-           "thesis": "Crece.", "key_points": [{"point": "ROE alto", "cites": [{"cite": "x:AAPL#roe", "value": 0.3}]}],
-           "risks": [], "change_my_mind": [], "missing_data": []}
+           "thesis": "Crece.", "key_points": ["ROE de {1:pct}"], "risks": [], "change_my_mind": [],
+           "missing_data": [], "cites": ["x:AAPL#roe"]}
 TOOLS = [{"name": "get_fundamentals", "description": "", "input_schema": {"type": "object"}}]
 
 
@@ -114,10 +114,37 @@ def test_role_tool_defs_hide_as_of():
     assert all("as_of" not in d["input_schema"].get("required", []) for d in defs)
 
 
-def test_cites_of_collects_points_and_chair_cites():
-    assert committee.cites_of(OPINION) == [{"cite": "x:AAPL#roe", "value": 0.3}]
-    assert committee.cites_of({"cites": [{"cite": "y#z", "value": 1}]}) == [{"cite": "y#z", "value": 1}]
+def test_cites_of_reads_references_in_order():
+    assert committee.cites_of(OPINION) == ["x:AAPL#roe"]
+    assert committee.cites_of({"cites": ["<_ref>a:B|1#roe", {"cite": "c:D#x", "value": 2}]}) == ["a:B|1#roe", "c:D#x"]
     assert committee.cites_of(None) == []
+
+
+def test_render_writes_stored_values_into_markers():
+    vals = [0.4282, 22822500.0, "2026-11-04", 2.5, None]
+    text = "Ingresos +{1:pct}, ventas {2:mill} USD, reporte {3:fecha}, beta {4}, otro {5}"
+    assert committee.render(text, vals) == ("Ingresos +42.8%, ventas 22.8 millones USD, reporte 2026-11-04, "
+                                            "beta 2.50, otro [sin dato]")
+    assert committee.misses(text, vals) and not committee.misses("beta {4}", vals)
+    assert committee.loose_numbers("beta {4} y margen 41.6% en 2026") == 2
+
+
+def test_check_final_catches_bad_markers_and_shape():
+    assert agent.check_final(OPINION_TOOL, OPINION) == []
+    bad = {**OPINION, "key_points": ["ROE {2:pct}", "x {1:usd}"]}
+    errs = agent.check_final(OPINION_TOOL, bad)
+    assert any("{2:pct}" in e for e in errs) and any("{1:usd}" in e for e in errs)
+    assert agent.check_final(OPINION_TOOL, {**OPINION, "cites": [{"cite": "x"}]})
+    assert agent.check_final(OPINION_TOOL, {**OPINION, "score": 11}) == ["score va de 1 a 10"]
+
+
+def test_agent_asks_once_to_fix_the_format():
+    client = FakeClient([([_use("entregar_opinion", {**OPINION, "key_points": ["{3}"]}, "a")], "tool_use"),
+                         ([_use("entregar_opinion", OPINION, "b")], "tool_use")])
+    res = _run(client, lambda n, a: {})
+    assert res.output == OPINION and res.error is None
+    fix = client.requests[1]["messages"][-1]["content"][0]
+    assert fix["is_error"] and "{3}" in fix["content"]
 
 
 def _result(decision="veto", target=20, stop=10):
@@ -160,8 +187,7 @@ def test_committee_run_members_then_chair(monkeypatch):
     monkeypatch.setattr(committee.tools, "get_cost_model", lambda as_of=None: {"data": {
         "usd_mxn": {"_ref": "macro_latest:DEXMXUS|2026-10-16", "value": 18.0, "obs_date": "2026-10-16"}}})
     monkeypatch.setattr(committee.tools, "resolve_refs", lambda cites, as_of=None: {"data": {
-        "results": [{"cite": c["cite"], "status": "found", "match": False} for c in cites],
-        "summary": {"checked": len(cites), "mismatches": len(cites), "unresolved": 0}}})
+        "results": [{"cite": c, "status": "ref_not_found"} for c in cites]}})
     monkeypatch.setattr(committee, "role_tool_defs", lambda role: TOOLS)
     decision = _result("approve").chair.output
     client = FakeClient([([_use("entregar_opinion", OPINION)], "tool_use")] * 5
@@ -172,9 +198,11 @@ def test_committee_run_members_then_chair(monkeypatch):
     assert res.price["price_mxn"] == 1800.0
     assert res.chair.output["decision"] == "approve"
     chair_prompt = client.requests[-1]["messages"][0]["content"]
-    # the cite that failed validation never reaches the chair; the count does
-    assert "x:AAPL#roe" not in chair_prompt and "\"citas_descartadas\": 1" in chair_prompt and "lugar 3" in chair_prompt
-    assert res.validation["optimista"]["mismatches"] == 1
+    # the reference that did not resolve never reaches the chair, nor the point using it; the count does
+    assert "x:AAPL#roe" not in chair_prompt and "ROE de" not in chair_prompt
+    assert "\"citas_descartadas\": 1" in chair_prompt and "lugar 3" in chair_prompt
+    assert res.validation["optimista"]["unresolved"] == 1
+    assert res.members[0].output["key_points"] == ["ROE de [sin dato]"]
 
 
 def test_committee_budget_cap_marks_error(monkeypatch):
@@ -243,20 +271,17 @@ def test_openrouter_agent_refuses_tools_outside_role():
     assert res.tool_calls == [] and "not_allowed" in http.bodies[1]["messages"][-1]["content"]
 
 
-def test_brief_passes_only_verified_cites_to_chair():
-    out = {**OPINION, "key_points": [
-        {"point": "ROE alto", "cites": [{"cite": "a#roe", "value": 0.3}, {"cite": "b#x", "value": 1}]},
-        {"point": "inventado", "cites": [{"cite": "c#y", "value": 2}]},
-        {"point": "sin cifras", "cites": []}]}
+def test_brief_and_fill_use_only_stored_values():
+    out = {**OPINION, "key_points": ["ROE {1:pct}", "inventado {2}", "sin cifras"], "risks": ["beta {3}"],
+           "thesis": "ROE {1:pct} y 41.6% a mano", "cites": ["a#roe", "b#x", "c#beta"]}
     r = agent.AgentResult(role="optimista", output=out)
-    b = committee._brief(r, {"n": 3, "failed": [{"cite": "b#x"}, {"cite": "c#y"}]})
-    assert [p["point"] for p in b["puntos"]] == ["ROE alto", "sin cifras"]
-    assert b["puntos"][0]["cites"] == [{"cite": "a#roe", "value": 0.3}]
-    assert b["evidencia"] == {"citas_verificadas": 1, "citas_descartadas": 2, "puntos_descartados": 1,
-                              "calidad": 0.33}
-
-
-def test_cites_of_strips_copied_placeholder():
-    out = {"key_points": [{"point": "x", "cites": [{"cite": "<_ref>a:B|1#roe", "value": 1}]}],
-           "cites": [{"cite": "c:D#x", "value": 2}]}
-    assert [c["cite"] for c in committee.cites_of(out)] == ["a:B|1#roe", "c:D#x"]
+    v = {"n": 3, "checked": 2, "unresolved": 1, "loose_numbers": 1, "values": [0.3297, None, 2.5]}
+    committee.fill(r, v)
+    b = committee._brief(r, v)
+    assert b["puntos"] == ["ROE 33.0%", "sin cifras"] and b["riesgos"] == ["beta 2.50"]
+    assert b["tesis"] == "ROE 33.0% y 41.6% a mano"
+    assert b["referencias"] == [{"cite": "a#roe", "value": 0.3297}, {"cite": "c#beta", "value": 2.5}]
+    assert b["evidencia"] == {"citas_verificadas": 2, "citas_descartadas": 1, "puntos_descartados": 1,
+                              "cifras_sin_cita": 1, "calidad": 0.67}
+    assert r.draft == out and r.output["key_points"][1] == "inventado [sin dato]"
+    assert r.output["cites"][0] == {"cite": "a#roe", "value": 0.3297}

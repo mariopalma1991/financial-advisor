@@ -30,22 +30,22 @@ def candidates(top_n: int, as_of: str | None) -> list[dict]:
             for r in (out.get("data") or {}).get("candidates") or []]
 
 
-# The model portfolio's buys from its latest decision day that the committee has not
-# reviewed since (a ticker that failed twice since that day is left for a person).
+# The model portfolio's buys from its latest decision day that this model's committee has
+# not reviewed since (a ticker that failed twice since that day is left for a person).
 _NEW_BUYS = """
 select d.ticker, d.rank, d.signal_day from paper_decisions d
 where d.portfolio = %(p)s and d.action = 'buy'
   and d.signal_day = (select max(signal_day) from paper_decisions where portfolio = %(p)s)
-  and not exists (select 1 from committee_runs r where r.ticker = d.ticker and r.status = 'done'
-                  and r.as_of::date >= d.signal_day)
-  and (select count(*) from committee_runs r where r.ticker = d.ticker and r.status <> 'done'
-       and r.as_of::date >= d.signal_day) < 2
+  and not exists (select 1 from committee_runs r where r.ticker = d.ticker and r.model = %(m)s
+                  and r.status = 'done' and r.as_of::date >= d.signal_day)
+  and (select count(*) from committee_runs r where r.ticker = d.ticker and r.model = %(m)s
+       and r.status <> 'done' and r.as_of::date >= d.signal_day) < 2
 order by d.rank limit %(n)s
 """
 
 
-def new_buys(cur, portfolio: str, limit: int) -> list[str]:
-    cur.execute(_NEW_BUYS, {"p": portfolio, "n": limit})
+def new_buys(cur, portfolio: str, limit: int, model: str) -> list[str]:
+    cur.execute(_NEW_BUYS, {"p": portfolio, "n": limit, "m": model})
     return [r[0] for r in cur.fetchall()]
 
 
@@ -78,7 +78,8 @@ def main() -> None:
     tickers = [t.upper() for t in args.tickers]
     if args.new_buys:
         with pg_connection() as conn, conn.cursor() as cur:
-            tickers = new_buys(cur, cfg["committee"]["new_buys_portfolio"], cfg["committee"]["max_new_buys"])
+            c = cfg["committee"]
+            tickers = new_buys(cur, c["new_buys_portfolio"], c["max_new_buys"], c["model"])
         if not tickers:
             print("no new buys to review")
             return

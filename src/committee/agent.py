@@ -10,20 +10,25 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable
+
+import jsonschema
 
 from src.mcp_server import server, tools
 
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
-_CITES = {"type": "array", "items": {
-    "type": "object", "additionalProperties": False, "required": ["cite", "value"],
-    "properties": {"cite": {"type": "string", "description": "valor de _ref + '#' + campo, p. ej. estimate_revisions:OSCR|0y|2026-10-18#eps_current"},
-                   "value": {"type": ["number", "string"], "description": "el valor tal como lo devolvió"}}}}
+# Agents cite references only; the runner looks each value up and writes it into
+# the text where the agent put a marker ({1}, {2:pct}, ...), so no number the reader
+# sees is copied by a model (prompt v0.6).
+_CITES = {"type": "array", "description": "referencias que usas, en orden: {1} es la primera", "items": {
+    "type": "string", "description": "valor de _ref + '#' + campo, p. ej. estimate_revisions:OSCR|0y|2026-10-18#eps_current"}}
 _TEXTS = {"type": "array", "items": {"type": "string"}}
 _NUM = {"type": ["number", "null"]}
+MAX_ITEMS = 5
 
 OPINION_TOOL = {
     "name": "entregar_opinion",
@@ -32,7 +37,7 @@ OPINION_TOOL = {
     "input_schema": {
         "type": "object", "additionalProperties": False,
         "required": ["stance", "score", "confidence", "expected_move_pct", "stop_pct", "thesis",
-                     "key_points", "risks", "change_my_mind", "missing_data"],
+                     "key_points", "risks", "change_my_mind", "missing_data", "cites"],
         "properties": {
             "stance": {"type": "string", "enum": ["buy", "hold", "sell", "no_view"],
                        "description": "buy = comprar ahora; hold = esperar; sell = evitar; no_view = sin opinión"},
@@ -40,13 +45,12 @@ OPINION_TOOL = {
             "confidence": {"type": "number", "description": "0 a 1"},
             "expected_move_pct": {**_NUM, "description": "movimiento esperado en el horizonte, en %, o null"},
             "stop_pct": {**_NUM, "description": "caída en % bajo el precio que invalidaría la tesis, o null"},
-            "thesis": {"type": "string", "description": "tu razonamiento en un párrafo, máximo 150 palabras"},
-            "key_points": {"type": "array", "description": "máximo 5", "items": {
-                "type": "object", "additionalProperties": False, "required": ["point", "cites"],
-                "properties": {"point": {"type": "string"}, "cites": _CITES}}},
-            "risks": _TEXTS,
+            "thesis": {"type": "string", "description": "tu razonamiento en un párrafo, máximo 150 palabras, cifras solo con marcadores"},
+            "key_points": {**_TEXTS, "description": f"máximo {MAX_ITEMS}, una oración cada uno, cifras con marcadores {{n}}"},
+            "risks": {**_TEXTS, "description": f"máximo {MAX_ITEMS}, cifras con marcadores {{n}}"},
             "change_my_mind": {**_TEXTS, "description": "2 o 3 cosas que te harían cambiar de opinión"},
             "missing_data": {**_TEXTS, "description": "datos que te faltaron"},
+            "cites": _CITES,
         },
     },
 }
@@ -67,7 +71,7 @@ DECISION_TOOL = {
             "target_pct": {**_NUM, "description": "objetivo en % sobre el precio actual"},
             "stop_pct": {**_NUM, "description": "stop en % bajo el precio actual (número positivo)"},
             "veto_reason": {"type": ["string", "null"], "description": "por qué se veta; null si se aprueba"},
-            "rationale": {"type": "string", "description": "razonamiento para el inversionista, en español, máximo 200 palabras"},
+            "rationale": {"type": "string", "description": "razonamiento para el inversionista, en español, máximo 200 palabras, cifras con marcadores {n}"},
             "agreements": _TEXTS,
             "disagreements": _TEXTS,
             "invalidation": {**_TEXTS, "description": "precio, fecha o dato concreto que invalida la decisión"},
@@ -75,6 +79,56 @@ DECISION_TOOL = {
         },
     },
 }
+
+MARKER = re.compile(r"\{(\d+)(?::(\w+))?\}")
+FORMATS = {None, "pct", "mill", "fecha"}
+
+
+def texts_of(out: dict) -> list[str]:
+    """Every free-text field of a final output, where markers may appear."""
+    found = []
+    for v in out.values():
+        if isinstance(v, str):
+            found.append(v)
+        elif isinstance(v, list):
+            found += [x for x in v if isinstance(x, str)]
+    return found
+
+
+def check_final(tool: dict, out: Any) -> list[str]:
+    """Why a final output does not follow the standard format, so the agent can
+    fix it once. Same check for every model: some OpenRouter providers do not
+    enforce the schema."""
+    if not isinstance(out, dict):
+        return ["la respuesta debe ser un objeto JSON"]
+    errs = [f"{'/'.join(map(str, e.absolute_path)) or 'raíz'}: {e.message}"
+            for e in jsonschema.Draft202012Validator(tool["input_schema"]).iter_errors(out)][:8]
+    if errs:
+        return errs
+    n = len(out["cites"])
+    for t in texts_of(out):
+        for m in MARKER.finditer(t):
+            if not 1 <= int(m.group(1)) <= n:
+                errs.append(f"el marcador {m.group(0)} no tiene referencia (hay {n} en cites)")
+            elif m.group(2) not in FORMATS:
+                errs.append(f"formato desconocido en {m.group(0)}: usa {{n}}, {{n:pct}}, {{n:mill}} o {{n:fecha}}")
+    if not 1 <= out["score"] <= 10:
+        errs.append("score va de 1 a 10")
+    if not 0 <= out["confidence"] <= 1:
+        errs.append("confidence va de 0 a 1")
+    return errs
+
+
+MAX_FIXES = 2
+
+
+def fix_message(tool: dict, errs: list[str]) -> str:
+    return f"Formato incorrecto, corrige y vuelve a llamar {tool['name']}: " + "; ".join(errs)
+
+
+def tidy(out: dict) -> dict:
+    """Keep the length limits the prompt asks for."""
+    return {**out, **{k: out[k][:MAX_ITEMS] for k in ("key_points", "risks") if isinstance(out.get(k), list)}}
 
 
 class BudgetExceeded(RuntimeError):
@@ -113,6 +167,7 @@ class AgentResult:
     cost_usd: float = 0.0
     turns: list[dict] = field(default_factory=list)  # the trace: every request's new messages and response
     error: str | None = None
+    draft: dict | None = None  # the final output as the agent wrote it, markers unfilled
 
 
 def _block(b: Any) -> dict:
@@ -129,6 +184,7 @@ def run_agent(client: Any, *, role: str, system: str, prompt: str, tool_defs: li
     res = AgentResult(role=role, output=None)
     messages: list[dict] = [{"role": "user", "content": prompt}]
     nudged = False
+    fixes = 0
     for _ in range(max_calls + 4):
         resp = client.beta.messages.create(
             model=cfg["model"], max_tokens=cfg["max_tokens"],
@@ -152,7 +208,18 @@ def run_agent(client: Any, *, role: str, system: str, prompt: str, tool_defs: li
         uses = [b for b in resp.content if b.type == "tool_use"]
         final = next((b for b in uses if b.name == final_tool["name"]), None)
         if final is not None:
-            res.output = dict(final.input)
+            out = dict(final.input)
+            errs = check_final(final_tool, out)
+            if errs and fixes < MAX_FIXES:
+                fixes += 1
+                messages.append({"role": "user", "content": [
+                    {"type": "tool_result", "tool_use_id": b.id, "is_error": True,
+                     "content": fix_message(final_tool, errs) if b is final else "no se ejecutó"} for b in uses]})
+                continue
+            if errs:
+                res.error = "bad_format: " + "; ".join(errs[:3])
+                return res
+            res.output = tidy(out)
             return res
         if not uses:
             if nudged or resp.stop_reason == "max_tokens":

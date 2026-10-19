@@ -8,6 +8,7 @@ conversations, not from timing.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -17,11 +18,13 @@ import yaml
 from src.committee import openrouter, prompts
 from src.committee.agent import (
     DECISION_TOOL,
+    MARKER,
     OPINION_TOOL,
     AgentResult,
     BudgetExceeded,
     role_tool_defs,
     run_agent,
+    texts_of,
 )
 from src.mcp_server import tools
 
@@ -35,34 +38,95 @@ def load_config() -> dict:
     return cfg
 
 
-def cites_of(output: dict | None) -> list[dict]:
-    """Every {"cite", "value"} an agent's final output carries."""
-    if not output:
-        return []
-    found = [c for kp in output.get("key_points") or [] for c in kp.get("cites") or []]
-    found += list(output.get("cites") or [])
-    for c in found:  # some models copy the placeholder too: "<_ref>table:KEY#field"
-        if isinstance(c.get("cite"), str) and c["cite"].startswith("<_ref>"):
-            c["cite"] = c["cite"][len("<_ref>"):]
+def cites_of(output: dict | None) -> list[str]:
+    """The references an agent's final output cites, in order ({1} is the first)."""
+    found = []
+    for c in (output or {}).get("cites") or []:
+        c = c.get("cite") if isinstance(c, dict) else c
+        if isinstance(c, str):  # some models copy the placeholder too: "<_ref>table:KEY#field"
+            found.append(c.strip().removeprefix("<_ref>"))
     return found
 
 
+def fmt(value: Any, kind: str | None) -> str:
+    """A looked-up value as a person reads it: {n:pct} a fraction as %, {n:mill} in
+    millions, {n:fecha} or text as stored, {n} a number rounded to what matters."""
+    if value is None:
+        return "[sin dato]"
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or kind == "fecha":
+        return str(value)
+    if kind == "pct":
+        return f"{value * 100:.1f}%"
+    if kind == "mill":
+        return f"{value / 1e6:,.1f} millones"
+    if float(value).is_integer():
+        return f"{int(value):,}"
+    a = abs(value)
+    return f"{value:,.1f}" if a >= 100 else f"{value:.2f}" if a >= 1 else f"{value:.4f}".rstrip("0")
+
+
+def _value(values: list, m: re.Match) -> Any:
+    i = int(m.group(1))
+    return values[i - 1] if 1 <= i <= len(values) else None
+
+
+def render(text: str, values: list) -> str:
+    """The text with each marker replaced by the value the database holds."""
+    return MARKER.sub(lambda m: fmt(_value(values, m), m.group(2)), text)
+
+
+def misses(text: str, values: list) -> bool:
+    """Whether the text uses a reference that did not verify."""
+    return any(_value(values, m) is None for m in MARKER.finditer(text))
+
+
+_LOOSE = re.compile(r"(?<![\w.,])\d+(?:[.,]\d+)?(?![\w])")
+
+
+def loose_numbers(text: str) -> int:
+    """Numbers an agent typed itself instead of citing (dates and years count too)."""
+    return len(_LOOSE.findall(MARKER.sub("", text)))
+
+
 def validate(results: list[AgentResult], as_of: str | None) -> dict[str, dict]:
-    """resolve_refs over each agent's citations: per role, the checked count,
-    mismatches, unresolved cites and the detail of each one that failed."""
+    """resolve_refs over each agent's references: per role, how many resolved, the
+    ones that did not (with why) and the value behind each cite, in order."""
     out = {}
     for r in results:
-        cites = [c for c in cites_of(r.output) if c.get("cite")]
-        if not cites:
-            out[r.role] = {"n": 0, "checked": 0, "mismatches": 0, "unresolved": 0, "failed": []}
-            continue
-        ans = tools.resolve_refs(cites, as_of=as_of)
-        rows = (ans.get("data") or {}).get("results") or []
-        s = (ans.get("data") or {}).get("summary") or {}
-        failed = [x for x in rows if x.get("match") is False or x.get("status") not in ("found", "row_found")]
-        out[r.role] = {"n": len(cites), "checked": s.get("checked", 0), "mismatches": s.get("mismatches", 0),
-                       "unresolved": s.get("unresolved", 0), "failed": failed}
+        cites = cites_of(r.draft if r.draft is not None else r.output)
+        found: dict[str, Any] = {}
+        failed: list[dict] = []
+        if cites:
+            ans = tools.resolve_refs(list(dict.fromkeys(cites)), as_of=as_of)
+            for x in (ans.get("data") or {}).get("results") or []:
+                if x.get("status") == "found" and x.get("value") is not None:
+                    found[x["cite"]] = x["value"]
+                else:
+                    failed.append(x)
+        texts = texts_of(r.draft or r.output or {})
+        out[r.role] = {"n": len(set(cites)), "checked": len(found), "mismatches": 0, "unresolved": len(failed),
+                       "loose_numbers": sum(loose_numbers(t) for t in texts), "failed": failed,
+                       "values": [found.get(c) for c in cites]}
     return out
+
+
+def fill(r: AgentResult, v: dict) -> None:
+    """Write the looked-up values into the agent's output: every marker becomes the
+    stored number and cites carry their values. The agent's own version stays in draft."""
+    if r.output is None:
+        return
+    r.draft = r.output
+    values = v.get("values") or []
+    out: dict[str, Any] = {}
+    for k, x in r.draft.items():
+        if isinstance(x, str):
+            out[k] = render(x, values)
+        elif isinstance(x, list) and k != "cites":
+            out[k] = [render(t, values) if isinstance(t, str) else t for t in x]
+        else:
+            out[k] = x
+    out["cites"] = [{"cite": c, "value": val} for c, val in zip(cites_of(r.draft), values)]
+    r.output = out
 
 
 def price_now(ticker: str, as_of: str | None) -> dict[str, Any]:
@@ -92,28 +156,27 @@ class CommitteeResult:
 
 
 def _brief(r: AgentResult, v: dict) -> dict:
-    """What the chair reads of one member: only citations the validator confirmed.
-    A key point whose every citation failed is dropped; the counts stay, so the
-    chair can weigh members by how much of their evidence held up."""
-    o = r.output or {}
-    failed = {f.get("cite") for f in v.get("failed", [])}
-    points, dropped = [], 0
-    for kp in o.get("key_points") or []:
-        cites = kp.get("cites") or []
-        ok = [c for c in cites if c.get("cite") not in failed]
-        if cites and not ok:
-            dropped += 1
-            continue
-        points.append({**kp, "cites": ok})
+    """What the chair reads of one member: its text with the database's numbers in it.
+    A key point or risk that needs a reference that did not verify is dropped; the
+    counts stay, so the chair can weigh members by how much of their evidence held up."""
+    d = r.draft or {}
+    values = v.get("values") or []
+    kept: dict[str, list[str]] = {}
+    dropped = 0
+    for k in ("key_points", "risks"):
+        kept[k] = [render(t, values) for t in d.get(k) or [] if not misses(t, values)]
+        dropped += len(d.get(k) or []) - len(kept[k])
     n = v.get("n", 0)
-    verified = n - len(failed)
-    return {"rol": r.role, "postura": o.get("stance"), "score": o.get("score"), "confianza": o.get("confidence"),
-            "movimiento_esperado_pct": o.get("expected_move_pct"), "stop_pct": o.get("stop_pct"),
-            "tesis": o.get("thesis"), "puntos": points, "riesgos": o.get("risks"),
-            "cambiaria_de_opinion_si": o.get("change_my_mind"), "datos_faltantes": o.get("missing_data"),
-            "evidencia": {"citas_verificadas": verified, "citas_descartadas": len(failed),
-                          "puntos_descartados": dropped,
-                          "calidad": round(verified / n, 2) if n else None},
+    ok = v.get("checked", 0)
+    refs = {c: val for c, val in zip(cites_of(d), values) if val is not None}
+    return {"rol": r.role, "postura": d.get("stance"), "score": d.get("score"), "confianza": d.get("confidence"),
+            "movimiento_esperado_pct": d.get("expected_move_pct"), "stop_pct": d.get("stop_pct"),
+            "tesis": render(d.get("thesis") or "", values), "puntos": kept["key_points"], "riesgos": kept["risks"],
+            "cambiaria_de_opinion_si": d.get("change_my_mind"), "datos_faltantes": d.get("missing_data"),
+            "referencias": [{"cite": c, "value": val} for c, val in refs.items()],
+            "evidencia": {"citas_verificadas": ok, "citas_descartadas": v.get("unresolved", 0),
+                          "puntos_descartados": dropped, "cifras_sin_cita": v.get("loose_numbers", 0),
+                          "calidad": round(ok / n, 2) if n else None},
             **({"error": r.error} if r.error else {})}
 
 
@@ -148,6 +211,8 @@ def run(client: Any, ticker: str, as_of: str | None, cfg: dict, context: str = "
                 tool_defs=role_tool_defs(role), final_tool=OPINION_TOOL, as_of=as_of,
                 max_calls=cfg["max_calls"][role]))
         res.validation = validate(res.members, as_of)
+        for r in res.members:
+            fill(r, res.validation.get(r.role, {}))
         briefs = [_brief(r, res.validation.get(r.role, {})) for r in res.members]
         chair_prompt = (f"{prompt}\n\nOpiniones de los miembros (JSON):\n"
                         f"{json.dumps(briefs, ensure_ascii=False, default=str)}")
@@ -156,6 +221,7 @@ def run(client: Any, ticker: str, as_of: str | None, cfg: dict, context: str = "
             tool_defs=role_tool_defs(c["chair"]), final_tool=DECISION_TOOL, as_of=as_of,
             max_calls=cfg["max_calls"][c["chair"]])
         res.validation |= validate([res.chair], as_of)
+        fill(res.chair, res.validation[res.chair.role])
         if res.chair.output is None:
             res.error = f"chair: {res.chair.error}"
     except BudgetExceeded as exc:

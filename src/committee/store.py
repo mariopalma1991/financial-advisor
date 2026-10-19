@@ -32,7 +32,7 @@ def _stance(role: str, chair: str, out: dict | None) -> str | None:
 def opinion_row(run_id: int, r: AgentResult, chair: str, validation: dict) -> tuple:
     o = r.output or {}
     evidence = {k: o.get(k) for k in o if k not in ("thesis", "rationale")}
-    evidence["validation"] = validation
+    evidence["validation"] = {k: x for k, x in validation.items() if k != "values"}
     if r.error:
         evidence["error"] = r.error
     score = o.get("score")
@@ -58,7 +58,7 @@ def trace_doc(res: CommitteeResult, run_id: int, cfg: dict) -> dict:
     agents = [*res.members, *([res.chair] if res.chair else [])]
     return {"committee_run_id": run_id, "ticker": res.ticker, "as_of": res.as_of, "price": res.price,
             "config": cfg, "validation": res.validation, "error": res.error,
-            "agents": [{"role": a.role, "output": a.output, "error": a.error, "tool_calls": a.tool_calls,
+            "agents": [{"role": a.role, "output": a.output, "draft": a.draft, "error": a.error, "tool_calls": a.tool_calls,
                         "tokens_in": a.tokens_in, "tokens_out": a.tokens_out, "cost_usd": a.cost_usd,
                         "turns": a.turns} for a in agents]}
 
