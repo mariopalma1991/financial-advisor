@@ -24,6 +24,7 @@ from pathlib import Path
 
 import psycopg2.extras
 import yaml
+from dateutil.easter import easter
 
 from src.mcp_server.tools import round_trip_cost
 from src.quality.run_metadata import current_run_id, job_run
@@ -58,16 +59,32 @@ def _rows(cur, sql: str, params=None) -> list[dict]:
     return [dict(r) for r in cur.fetchall()]
 
 
+def _next_trading_day(d: date) -> date:
+    """The next weekday, skipping the NYSE holidays that can fall on a month's last
+    weekday (Good Friday, Memorial Day); others can't move a month-end."""
+    good_friday = easter(d.year) - timedelta(days=2)
+    while True:
+        d += timedelta(days=1)
+        memorial = d.month == 5 and d.weekday() == 0 and d.day > 24
+        if d.weekday() < 5 and d != good_friday and not memorial:
+            return d
+
+
 def signal_days(factor_days: list[str], start: str, latest_bar: str) -> list[str]:
     """The first factor day on or after start, then each later month's last factor
-    day, for months that have ended (the month of latest_bar is still open)."""
+    day: for months that have ended, and for the current month on its last trading
+    day itself (latest_bar), so the month-end decision comes out that night and the
+    committee has until the next close to review it."""
     days = sorted(d for d in factor_days if d >= start)
     if not days:
         return []
     month_end: dict[str, str] = {}
     for d in days:
         month_end[d[:7]] = max(month_end.get(d[:7], d), d)
-    ends = [d for m, d in month_end.items() if m < latest_bar[:7] and d > days[0]]
+    closing = month_end.get(latest_bar[:7]) == latest_bar and \
+        _next_trading_day(date.fromisoformat(latest_bar)).month != int(latest_bar[5:7])
+    ends = [d for m, d in month_end.items()
+            if (m < latest_bar[:7] or (closing and m == latest_bar[:7])) and d > days[0]]
     return [days[0]] + sorted(ends)
 
 
