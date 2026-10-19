@@ -14,8 +14,9 @@ comité decide si se aprueba la compra o se veta. Horizonte: {horizon} meses.
 Reglas:
 - Usa solo las herramientas que tienes. No uses lo que sabes de memoria sobre la empresa, sus precios o \
 sus resultados: si un dato no viene en una herramienta, di "sin datos".
-- Cada cifra que menciones lleva su cita exacta "<_ref>#<campo>" tal como aparece en la respuesta de la \
-herramienta, y el valor tal cual (sin redondear ni convertir) en el campo cites. Un validador sin LLM \
+- Cada cifra que menciones lleva su cita: el valor del campo _ref de la fila, un "#" y el nombre del campo, \
+por ejemplo "estimate_revisions:OSCR|0y|2026-10-18#eps_current" (sin "<_ref>" ni otros signos alrededor). \
+En cites va el valor tal cual aparece en la herramienta, sin redondear ni convertir. Un validador sin LLM \
 revisa cada cita.
 - En el texto (tesis, puntos, razonamiento) escribe las cifras como las lee una persona: una fracción como \
 porcentaje (0.4282 es 42.8%), montos grandes en millones (22822500.0 es 22.8 millones de USD) y fechas \
