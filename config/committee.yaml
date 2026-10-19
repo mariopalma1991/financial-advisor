@@ -7,9 +7,9 @@ committee:
   model: claude-sonnet-5-5     # Mario, 2026-10-19 (was claude-opus-5-5)
   effort: medium               # output_config.effort for every agent
   max_tokens: 16000            # per API call
-  horizon_months: 6            # the horizon every agent judges (scored at 1, 4, 8 and 12 weeks)
+  horizon_months: 3            # the horizon every agent judges, scored at 1, 4, 8 and 12 weeks (Mario, 2026-10-19: was 6)
   max_usd_per_run: 6.0         # a run stops (failed) once one ticker's committee spends this much
-  prompt_version: "v0.7"
+  prompt_version: "v0.8"
   members: [optimista, pesimista, contrario, especialista, riesgo_timing]
   chair: presidente
   # Candidates when no ticker is given: the best-ranked of the day's factor list.
