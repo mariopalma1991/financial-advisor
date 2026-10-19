@@ -30,7 +30,16 @@ jobs:
           pip install -q psycopg2-binary
           python - <<'PY'
           import os, psycopg2
-          with psycopg2.connect(os.environ["SUPABASE_DB_URL"]) as conn, conn.cursor() as cur:
+          from urllib.parse import quote, unquote
+          # Same as src/storage/supabase_client._quote_password (the repo isn't checked out yet):
+          # the password may hold '@', so encode it and split the host at the last '@'.
+          url = os.environ["SUPABASE_DB_URL"]
+          scheme, _, rest = url.partition("://")
+          if rest.count("@") >= 2:
+              creds, host = rest.rsplit("@", 1)
+              user, _, password = creds.partition(":")
+              url = f"{scheme}://{user}:{quote(unquote(password), safe='')}@{host}"
+          with psycopg2.connect(url) as conn, conn.cursor() as cur:
               cur.execute("""select greatest((select max(computed_at) from paper_nav where portfolio = 'forward_top20'),
                                              (select max(finished_at) from committee_runs))
                              > coalesce((select max(computed_at) from paper_nav where portfolio like 'capa4_%'), '-infinity')""")
