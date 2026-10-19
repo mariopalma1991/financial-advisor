@@ -126,6 +126,32 @@ Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
   VOO in MXN after 21, 63 and 126 trading days, from the next day's close. Views
   `alert_scorecard` and `agent_scorecard`; MCP `get_alert_history` shows past calls.
 
+## Agent committee (Capa 3)
+
+`src/jobs/run_committee.py` (workflow `committee`, manual; needs `ANTHROPIC_API_KEY`)
+reviews candidates from the factor list and approves or vetoes each buy: the committee
+is a veto over the list, it does not pick stocks. Settings in `config/committee.yaml`,
+prompts in `src/committee/prompts.py`.
+
+- Five members (optimista, pesimista, contrario, especialista, riesgo_timing) analyze
+  the ticker in separate conversations, each with only its MCP tools and call budget
+  (`config/mcp_roles.yaml`), all at the same `as_of` (forced by the runner, so a run
+  replays). Each ends with `entregar_opinion`: stance, 1-10 score, confidence, thesis
+  and every number cited as `<_ref>#<field>`.
+- `resolve_refs` checks the members' citations; the chair (presidente) sees their
+  opinions with the cites that did not verify, and ends with `entregar_decision`
+  (approve or veto, target and stop as % of the MXN price, invalidation criteria).
+- Each run writes `committee_runs`, one `committee_opinions` row per agent, and one
+  `committee_alerts` buy (vetoed or not), so `score_alerts` grades the chair and every
+  member against VOO. The full trace goes to Storage under `committee_traces/` and to the
+  workflow's artifacts. A run stops once it spends `max_usd_per_run`.
+
+```bash
+python -m src.jobs.run_committee AAPL            # one ticker, latest data
+python -m src.jobs.run_committee --top 20        # the day's top 20 by factor rank
+python -m src.jobs.run_committee AAPL --as-of 2026-10-16
+```
+
 ## Cloud operation
 
 GitHub Actions runs the pipeline on schedule (see `.github/workflows/`):

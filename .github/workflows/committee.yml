@@ -1,0 +1,65 @@
+name: committee
+
+# Capa 3: the agent committee reviews candidates from the Capa 2 factor list and
+# approves or vetoes each buy (src/jobs/run_committee.py). Manual for now; the
+# monthly run on the top 20 comes once the cost per ticker is known.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tickers:
+        description: "Space-separated tickers; empty = the day's top N by factor rank"
+        required: false
+        default: ""
+      top:
+        description: "How many of the factor list when no tickers are given"
+        required: false
+        default: "1"
+      as_of:
+        description: "Replay date (YYYY-MM-DD); empty = latest data"
+        required: false
+        default: ""
+
+concurrency:
+  group: committee
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Run committee
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
+          SUPABASE_S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
+          SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
+          SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          COMMITTEE_AS_OF: ${{ inputs.as_of }}
+          TICKERS: ${{ inputs.tickers }}
+          TOP: ${{ inputs.top || '1' }}
+        run: python -m src.jobs.run_committee $TICKERS --top "$TOP"
+
+      - name: Keep traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: committee-traces
+          path: committee_out/
+          if-no-files-found: ignore
