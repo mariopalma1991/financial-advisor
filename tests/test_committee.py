@@ -199,6 +199,7 @@ def test_committee_run_members_then_chair(monkeypatch):
                         + [([_use("entregar_decision", decision)], "tool_use")])
     cfg = committee.load_config()
     cfg["committee"]["shared_data"] = ["get_fundamentals"]
+    cfg["committee"]["rebuttal"] = True
     res = committee.run(client, "aapl", None, cfg, context="lugar 3")
     assert [m.role for m in res.members] == cfg["committee"]["members"] and res.error is None
     # the shared data is in each member's first message (its role may call it) and marked in its calls
