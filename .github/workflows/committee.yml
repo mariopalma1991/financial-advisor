@@ -3,7 +3,8 @@ name: committee
 # Capa 3: the agent committee reviews candidates from the Capa 2 factor list and
 # approves or vetoes each buy (src/jobs/run_committee.py). On schedule it reviews only
 # the model portfolio's new buys (decided after the 20:00 CST ingest, bought at the next
-# close): at 22:15 and 06:15 CST, so a failed night run gets one more try before the fill.
+# close): at 22:15 and 06:15 CST, so a failed night run gets one more try before the fill,
+# once per model in scheduled_models (config/committee.yaml), side by side.
 # Manual runs take tickers or the day's top N, and optionally one or more models
 # (comma-separated) that run side by side on the same tickers and as_of.
 
@@ -43,16 +44,23 @@ jobs:
     outputs:
       models: ${{ steps.m.outputs.models }}
     steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: config
       - id: m
         env:
           MODELS: ${{ inputs.model }}
           LIST: ${{ inputs.list_models }}
+          SCHEDULED: ${{ github.event_name == 'schedule' }}
         # Checks every OpenRouter model id against the public catalog before spending
         # anything; with list_models it only prints the matching catalog rows.
         run: |
           python3 - <<'PY'
           import json, os, urllib.request
           models = [x.strip() for x in os.environ.get("MODELS", "").split(",") if x.strip()]
+          if os.environ.get("SCHEDULED") == "true":  # scheduled_models: [a, "b"] on one line
+              line = next(l for l in open("config/committee.yaml") if l.strip().startswith("scheduled_models:"))
+              models = [x.strip().strip('"\'') for x in line.split("[", 1)[1].split("]", 1)[0].split(",") if x.strip()]
           words = [w.strip().lower() for w in os.environ.get("LIST", "").split(",") if w.strip()]
           cat = {}
           if words or any(m.startswith("openrouter:") for m in models):
@@ -99,6 +107,7 @@ jobs:
         if: github.event_name == 'schedule'
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          MODEL: ${{ matrix.model }}
         run: |
           pip install -q psycopg2-binary
           python - <<'PY'
@@ -107,12 +116,13 @@ jobs:
               cur.execute("""select count(*) from paper_decisions d
                   where d.portfolio = 'forward_top20' and d.action = 'buy'
                     and d.signal_day = (select max(signal_day) from paper_decisions where portfolio = 'forward_top20')
-                    and not exists (select 1 from committee_runs r where r.ticker = d.ticker
+                    and not exists (select 1 from committee_runs r where r.ticker = d.ticker and r.model = %(m)s
                                     and r.status = 'done' and r.as_of::date >= d.signal_day)
-                    and (select count(*) from committee_runs r where r.ticker = d.ticker
-                         and r.status <> 'done' and r.as_of::date >= d.signal_day) < 2""")
+                    and (select count(*) from committee_runs r where r.ticker = d.ticker and r.model = %(m)s
+                         and r.status <> 'done' and r.as_of::date >= d.signal_day) < 2""",
+                  {"m": os.environ["MODEL"]})
               n = cur.fetchone()[0]
-          print(f"new buys not yet reviewed: {n}")
+          print(f"new buys not yet reviewed by {os.environ['MODEL']}: {n}")
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"run={'true' if n else 'false'}\n")
           PY
