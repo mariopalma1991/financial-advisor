@@ -172,7 +172,7 @@ python -m src.jobs.run_committee --new-buys      # the model portfolio's latest 
 On schedule (22:15 and 06:15 CST) the workflow runs `--new-buys`: only the stocks
 `forward_top20` decided to buy on its latest decision day, before they fill at the next
 close, at most `max_new_buys` per run; a ticker that failed twice is left for a person.
-It does so once per model in `scheduled_models` (Sonnet 5.5 and Gemini 3.8 Flash), side by
+It does so once per model in `scheduled_models` (Sonnet 5.5, Gemini 3.8 Flash and DeepSeek V4 Pro), side by
 side, so both committees are scored on the same buys.
 
 ## Cloud operation

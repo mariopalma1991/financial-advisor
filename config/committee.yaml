@@ -28,8 +28,8 @@ committee:
   new_buys_portfolio: forward_top20
   max_new_buys: 10
   # Each scheduled run reviews those buys once per model, side by side (Mario, 2026-10-19:
-  # only Sonnet and Gemini 3.8 Flash for now). Manual runs use model above unless told otherwise.
-  scheduled_models: [claude-sonnet-5-5, "openrouter:google/gemini-3.8-flash"]
+  # Sonnet, Gemini 3.8 Flash and DeepSeek V4 Pro). Manual runs use model above unless told otherwise.
+  scheduled_models: [claude-sonnet-5-5, "openrouter:google/gemini-3.8-flash", "openrouter:deepseek/deepseek-v4-pro-0813"]
   # Weekly model test (Mario, 2026-10-19: to drop weak models fast): every Monday night each
   # model reviews the factor list's best weekly_top names it has not reviewed in
   # weekly_fresh_days, so every week adds new, comparable verdicts.
