@@ -40,8 +40,8 @@ OPINION_TOOL = {
             "confidence": {"type": "number", "description": "0 a 1"},
             "expected_move_pct": {**_NUM, "description": "movimiento esperado en el horizonte, en %, o null"},
             "stop_pct": {**_NUM, "description": "caída en % bajo el precio que invalidaría la tesis, o null"},
-            "thesis": {"type": "string", "description": "tu razonamiento en un párrafo"},
-            "key_points": {"type": "array", "items": {
+            "thesis": {"type": "string", "description": "tu razonamiento en un párrafo, máximo 150 palabras"},
+            "key_points": {"type": "array", "description": "máximo 5", "items": {
                 "type": "object", "additionalProperties": False, "required": ["point", "cites"],
                 "properties": {"point": {"type": "string"}, "cites": _CITES}}},
             "risks": _TEXTS,
@@ -67,7 +67,7 @@ DECISION_TOOL = {
             "target_pct": {**_NUM, "description": "objetivo en % sobre el precio actual"},
             "stop_pct": {**_NUM, "description": "stop en % bajo el precio actual (número positivo)"},
             "veto_reason": {"type": ["string", "null"], "description": "por qué se veta; null si se aprueba"},
-            "rationale": {"type": "string", "description": "razonamiento para el inversionista, en español"},
+            "rationale": {"type": "string", "description": "razonamiento para el inversionista, en español, máximo 200 palabras"},
             "agreements": _TEXTS,
             "disagreements": _TEXTS,
             "invalidation": {**_TEXTS, "description": "precio, fecha o dato concreto que invalida la decisión"},

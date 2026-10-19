@@ -29,7 +29,7 @@ on:
         required: false
         default: ""
       model:
-        description: "Models for this run only, comma-separated (claude-opus-5-5, openrouter:openai/gpt-6-astra); empty = config"
+        description: "Models for this run only, comma-separated (openrouter:google/gemini-3.8-flash, ...); empty = config (Sonnet)"
         required: false
         default: ""
 
