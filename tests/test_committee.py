@@ -254,3 +254,9 @@ def test_brief_passes_only_verified_cites_to_chair():
     assert b["puntos"][0]["cites"] == [{"cite": "a#roe", "value": 0.3}]
     assert b["evidencia"] == {"citas_verificadas": 1, "citas_descartadas": 2, "puntos_descartados": 1,
                               "calidad": 0.33}
+
+
+def test_cites_of_strips_copied_placeholder():
+    out = {"key_points": [{"point": "x", "cites": [{"cite": "<_ref>a:B|1#roe", "value": 1}]}],
+           "cites": [{"cite": "c:D#x", "value": 2}]}
+    assert [c["cite"] for c in committee.cites_of(out)] == ["a:B|1#roe", "c:D#x"]
