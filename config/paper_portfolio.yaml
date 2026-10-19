@@ -9,6 +9,10 @@ portfolio:
   min_position_mxn: 2000   # fewer positions while the budget is small: 10,000 MXN -> 5
   owner: mario
   initial_mxn: 10000       # used only until the investor records deposits (investor_contributions)
+  # Recurring deposit simulated in every book (forward and backtests), on top of the
+  # recorded ones; "last" is the month's last day; a non-trading day moves to the next.
+  recurring_mxn: 500
+  recurring_days: [15, last]
   benchmark: VOO           # SPY's prices stand in until VOO has history (same index)
 
   # Forward test: decisions from this day on are stored once and never recomputed,
