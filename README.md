@@ -113,7 +113,8 @@ Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
   positions fit (`min_position_mxn`), and a stock whose one share costs more than a
   position is skipped until the budget grows. VOO gets the same pesos on the same days.
   `forward_top20` stores each decision once (from `forward_start`); `backtest_top20`
-  replays the past year, and `backtest_top20_<amount>` replays it for each of
+  replays from `backtest_start` (2024-10-31; the 12 months of prices before it come from
+  the archived `price_history`, fetched with compute_factors' `history_start` input), and `backtest_top20_<amount>` replays it for each of
   `backtest_amounts` (the dashboard's "other amount" view). The investor sets the
   initial amount and adds deposits on the "Mi inversión" page; a check every 10 minutes
   reruns the job when `investor_contributions` changed. Every book also simulates a

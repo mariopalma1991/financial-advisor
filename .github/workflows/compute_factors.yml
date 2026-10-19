@@ -2,7 +2,8 @@ name: compute_factors
 
 # Daily factor scores (src/jobs/compute_factors.py) into factor_scores. Runs after
 # every successful ingest_prices run. Dispatch with as_of to rebuild one past day,
-# or backfill_months to rebuild past month-ends (for forward and back tests).
+# or backfill_months to rebuild past month-ends (for forward and back tests);
+# history_start first fetches the older prices those month-ends need (price_history).
 
 on:
   workflow_run:
@@ -17,6 +18,13 @@ on:
         description: "Also rebuild the last N month-ends"
         required: false
         default: "0"
+      history_start:
+        description: "First fetch Yahoo prices older than the database from this day (YYYY-MM-DD) into the archive"
+        required: false
+      history_end:
+        description: "Last day of that fetch (overlaps the database on purpose)"
+        required: false
+        default: "2025-12-31"
 
 concurrency:
   group: compute-factors
@@ -39,11 +47,27 @@ jobs:
       - name: Install dependencies
         run: pip install -e .
 
+      - name: Fetch older price history into the archive
+        if: inputs.history_start != ''
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
+          SUPABASE_S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
+          SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
+          SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
+        run: python -m src.jobs.backfill_price_history --start "${{ inputs.history_start }}" --end "${{ inputs.history_end }}"
+
       - name: Compute factor scores
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
+          SUPABASE_S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
+          SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
+          SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
           AS_OF: ${{ inputs.as_of && format('--as-of {0}', inputs.as_of) || '' }}
           BACKFILL: ${{ inputs.backfill_months || '0' }}
         run: python -m src.jobs.compute_factors $AS_OF --backfill-months $BACKFILL
