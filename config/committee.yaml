@@ -9,8 +9,16 @@ committee:
   max_tokens: 16000            # per API call
   horizon_months: 3            # the horizon every agent judges, scored at 1, 4, 8 and 12 weeks (Mario, 2026-10-19: was 6)
   max_usd_per_run: 6.0         # a run stops (failed) once one ticker's committee spends this much
-  prompt_version: "v0.8"
+  prompt_version: "v0.9"
   members: [optimista, pesimista, contrario, especialista, riesgo_timing]
+  # Fetched once per candidate with default arguments and handed to every member whose
+  # role may call the tool, so members need fewer turns (Mario, 2026-10-19).
+  shared_data: [get_ticker_overview, get_data_status, get_catalysts, get_price_technicals, get_analyst_view,
+                get_fundamentals, get_peer_valuation, get_earnings, get_short_interest, get_insider_activity,
+                get_risk_factors, get_news_sentiment, get_macro]
+  # After their first opinions each member reads the others' and gives a final view
+  # (no tools), stored as <role>_replica; the chair reads the final views (Mario, 2026-10-19).
+  rebuttal: true
   chair: presidente
   # Candidates when no ticker is given: the best-ranked of the day's factor list.
   default_top_n: 20

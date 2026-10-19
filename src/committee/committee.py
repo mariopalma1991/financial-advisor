@@ -1,5 +1,8 @@
-"""One committee on one candidate: five members in turn (none sees another), the
-validator over their citations, then the chair's approve-or-veto.
+"""One committee on one candidate: five members in turn (none sees another), a
+rebuttal round where each reads the others and gives its final view, the validator
+over their citations, then the chair's approve-or-veto. The data most members ask
+for first is fetched once per candidate and handed to each member whose role may
+call that tool (shared_data in config/committee.yaml), so they need fewer turns.
 
 Members run one after another, not concurrently: the MCP tools share one
 read-only connection per process. Independence comes from separate
@@ -7,6 +10,7 @@ conversations, not from timing.
 """
 from __future__ import annotations
 
+import inspect
 import json
 import re
 from dataclasses import dataclass, field
@@ -164,19 +168,73 @@ def price_now(ticker: str, as_of: str | None) -> dict[str, Any]:
             "refs": [f"{bar.get('_ref')}#close", f"{fx.get('_ref')}#value"]}
 
 
+def shared_data(ticker: str, as_of: str | None, names: list[str]) -> dict[str, dict]:
+    """The answers most members ask for first, fetched once per candidate with each
+    tool's default arguments (tool -> answer)."""
+    out = {}
+    for name in names:
+        fn = tools.ALL_TOOLS[name]
+        kw = {"ticker": ticker} if "ticker" in inspect.signature(fn).parameters else {}
+        try:
+            out[name] = fn(**kw, as_of=as_of)
+        except Exception as exc:  # noqa: BLE001 -- a member can still ask for it itself
+            out[name] = {"error": {"code": "tool_failed", "message": f"{type(exc).__name__}: {exc}"}}
+    return out
+
+
+def with_data(prompt: str, data: dict[str, dict]) -> str:
+    if not data:
+        return prompt
+    return (f"{prompt}\n\nYa consulté para ti estas herramientas con sus parámetros por defecto; no las vuelvas "
+            f"a pedir así (sí con otros parámetros, o las demás). Usa sus _ref en tus marcadores igual que si "
+            f"las hubieras pedido tú. Respuestas (JSON):\n{json.dumps(data, ensure_ascii=False, default=str)}")
+
+
+def handed(r: AgentResult, data: dict[str, dict], ticker: str) -> None:
+    """Count the data handed to a member as seen and in its tool calls, marked."""
+    for ans in data.values():
+        tools._index_refs(ans.get("data"), r.seen)
+    r.tool_calls[:0] = [{"tool": n, "args": {"ticker": ticker}, "prefetched": True,
+                         "error": (a.get("error") or {}).get("code")} for n, a in data.items()]
+
+
+def rebuttal_prompt(prompt: str, own: dict, others: list[dict]) -> str:
+    return (f"{prompt}\n\nTu análisis (con tus marcadores):\n{json.dumps(own, ensure_ascii=False, default=str)}"
+            f"\n\nOpiniones de los otros miembros (las cifras ya las puso el sistema):\n"
+            f"{json.dumps(others, ensure_ascii=False, default=str)}")
+
+
 @dataclass
 class CommitteeResult:
     ticker: str
     as_of: str | None
     price: dict
     members: list[AgentResult] = field(default_factory=list)
+    rebuttals: list[AgentResult] = field(default_factory=list)  # each member's final view, role <role>_replica
     chair: AgentResult | None = None
     validation: dict[str, dict] = field(default_factory=dict)
     error: str | None = None
+    shared: list[str] = field(default_factory=list)
+
+    @property
+    def agents(self) -> list[AgentResult]:
+        return [*self.members, *self.rebuttals, *([self.chair] if self.chair else [])]
 
     @property
     def cost_usd(self) -> float:
-        return sum(r.cost_usd for r in [*self.members, *([self.chair] if self.chair else [])])
+        return sum(r.cost_usd for r in self.agents)
+
+
+REPLICA = "_replica"
+
+
+def final_brief(first: AgentResult, second: AgentResult | None, validation: dict[str, dict]) -> dict:
+    """The chair's view of a member: its view after the rebuttal round when there is
+    one, with the stance it held before."""
+    if second is None or second.output is None:
+        return _brief(first, validation.get(first.role, {}))
+    b = _brief(second, validation.get(second.role, {}))
+    return {**b, "rol": first.role, "postura_inicial": (first.draft or first.output or {}).get("stance")}
 
 
 def _brief(r: AgentResult, v: dict) -> dict:
@@ -228,16 +286,36 @@ def run(client: Any, ticker: str, as_of: str | None, cfg: dict, context: str = "
     px = (f"Precio: {price['price_usd']} USD (cierre {price['bar_date']}), {price['price_mxn']} MXN "
           f"con USD/MXN {price['usd_mxn']}.") if price["price_mxn"] else "Precio: sin datos."
     prompt = f"Analiza {ticker} con datos al {day}. {px}\n{context}".strip()
+    data = shared_data(ticker, as_of, c.get("shared_data") or [])
+    res.shared = list(data)
     try:
         for role in c["members"]:
-            res.members.append(agent(
-                role=role, system=prompts.member_system(role, ticker, horizon), prompt=prompt,
-                tool_defs=role_tool_defs(role), final_tool=OPINION_TOOL, as_of=as_of,
-                max_calls=cfg["max_calls"][role]))
+            defs = role_tool_defs(role)
+            mine = {n: a for n, a in data.items() if n in {t["name"] for t in defs}}
+            r = agent(role=role, system=prompts.member_system(role, ticker, horizon), prompt=with_data(prompt, mine),
+                      tool_defs=defs, final_tool=OPINION_TOOL, as_of=as_of, max_calls=cfg["max_calls"][role])
+            handed(r, mine, ticker)
+            res.members.append(r)
         res.validation = validate(res.members, as_of)
         for r in res.members:
             fill(r, res.validation.get(r.role, {}))
-        briefs = [_brief(r, res.validation.get(r.role, {})) for r in res.members]
+        replies: dict[str, AgentResult] = {}
+        if c.get("rebuttal"):
+            briefs = {r.role: _brief(r, res.validation.get(r.role, {})) for r in res.members if r.output}
+            for r in res.members:
+                if r.output is None:
+                    continue
+                others = [b for k, b in briefs.items() if k != r.role]
+                rr = agent(role=r.role + REPLICA, system=prompts.rebuttal_system(r.role, ticker, horizon),
+                           prompt=rebuttal_prompt(prompt, r.draft or {}, others), tool_defs=[],
+                           final_tool=OPINION_TOOL, as_of=as_of, max_calls=0)
+                rr.seen = dict(r.seen)
+                res.rebuttals.append(rr)
+                replies[r.role] = rr
+            res.validation |= validate(res.rebuttals, as_of)
+            for rr in res.rebuttals:
+                fill(rr, res.validation.get(rr.role, {}))
+        briefs = [final_brief(r, replies.get(r.role), res.validation) for r in res.members]
         chair_prompt = (f"{prompt}\n\nOpiniones de los miembros (JSON):\n"
                         f"{json.dumps(briefs, ensure_ascii=False, default=str)}")
         res.chair = agent(

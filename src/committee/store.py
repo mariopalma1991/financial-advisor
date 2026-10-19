@@ -55,9 +55,9 @@ def alert_row(run_id: int, res: CommitteeResult, horizon: int) -> tuple | None:
 
 
 def trace_doc(res: CommitteeResult, run_id: int, cfg: dict) -> dict:
-    agents = [*res.members, *([res.chair] if res.chair else [])]
+    agents = res.agents
     return {"committee_run_id": run_id, "ticker": res.ticker, "as_of": res.as_of, "price": res.price,
-            "config": cfg, "validation": res.validation, "error": res.error,
+            "config": cfg, "validation": res.validation, "error": res.error, "shared_data": res.shared,
             "agents": [{"role": a.role, "output": a.output, "draft": a.draft, "error": a.error, "tool_calls": a.tool_calls,
                         "tokens_in": a.tokens_in, "tokens_out": a.tokens_out, "cost_usd": a.cost_usd,
                         "turns": a.turns} for a in agents]}
@@ -74,7 +74,7 @@ def start_run(cur, ticker: str, as_of_ts: datetime, cfg: dict, gh_run: str, kind
 def finish_run(cur, run_id: int, res: CommitteeResult, cfg: dict, trace_path: str | None) -> int | None:
     """Opinions, the alert and the run's totals. Returns the alert id, if any."""
     c = cfg["committee"]
-    agents = [*res.members, *([res.chair] if res.chair else [])]
+    agents = res.agents
     rows = [opinion_row(run_id, a, c["chair"], res.validation.get(a.role, {})) for a in agents]
     if rows:
         psycopg2.extras.execute_values(
