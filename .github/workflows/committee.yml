@@ -5,12 +5,15 @@ name: committee
 # the model portfolio's new buys (decided after the 20:00 CST ingest, bought at the next
 # close): at 22:15 and 06:15 CST, so a failed night run gets one more try before the fill,
 # once per model in scheduled_models (config/committee.yaml), side by side.
+# Every Monday at 22:30 CST the weekly model test runs too: each model in weekly_models
+# reviews the factor list's best names it has not reviewed lately (--weekly).
 # Manual runs take tickers or the day's top N, and optionally one or more models
 # (comma-separated) that run side by side on the same tickers and as_of.
 
 on:
   schedule:
     - cron: "15 4,12 * * *"
+    - cron: "30 4 * * 2"   # weekly model test, Monday 22:30 CST
   workflow_dispatch:
     inputs:
       tickers:
@@ -33,6 +36,11 @@ on:
         description: "Models for this run only, comma-separated (openrouter:google/gemini-3.8-flash, ...); empty = config (Sonnet)"
         required: false
         default: ""
+      weekly:
+        description: "Run the weekly model test now (tickers/top ignored; empty model = weekly_models)"
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: committee
@@ -52,14 +60,16 @@ jobs:
           MODELS: ${{ inputs.model }}
           LIST: ${{ inputs.list_models }}
           SCHEDULED: ${{ github.event_name == 'schedule' }}
+          WEEKLY: ${{ github.event.schedule == '30 4 * * 2' || inputs.weekly == true }}
         # Checks every OpenRouter model id against the public catalog before spending
         # anything; with list_models it only prints the matching catalog rows.
         run: |
           python3 - <<'PY'
           import json, os, urllib.request
           models = [x.strip() for x in os.environ.get("MODELS", "").split(",") if x.strip()]
-          if os.environ.get("SCHEDULED") == "true":  # scheduled_models: [a, "b"] on one line
-              line = next(l for l in open("config/committee.yaml") if l.strip().startswith("scheduled_models:"))
+          key = "weekly_models:" if os.environ.get("WEEKLY") == "true" else "scheduled_models:"
+          if os.environ.get("SCHEDULED") == "true" or (key == "weekly_models:" and not models):  # [a, "b"] on one line
+              line = next(l for l in open("config/committee.yaml") if l.strip().startswith(key))
               models = [x.strip().strip('"\'') for x in line.split("[", 1)[1].split("]", 1)[0].split(",") if x.strip()]
           words = [w.strip().lower() for w in os.environ.get("LIST", "").split(",") if w.strip()]
           cat = {}
@@ -104,7 +114,7 @@ jobs:
     steps:
       - name: Check for new buys to review
         id: pending
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' && github.event.schedule != '30 4 * * 2'
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           MODEL: ${{ matrix.model }}
@@ -128,21 +138,21 @@ jobs:
           PY
 
       - uses: actions/checkout@v5
-        if: github.event_name != 'schedule' || steps.pending.outputs.run == 'true'
+        if: steps.pending.conclusion != 'success' || steps.pending.outputs.run == 'true'
 
       - uses: actions/setup-python@v6
-        if: github.event_name != 'schedule' || steps.pending.outputs.run == 'true'
+        if: steps.pending.conclusion != 'success' || steps.pending.outputs.run == 'true'
         with:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
-        if: github.event_name != 'schedule' || steps.pending.outputs.run == 'true'
+        if: steps.pending.conclusion != 'success' || steps.pending.outputs.run == 'true'
         run: pip install -e .
 
       - name: Run committee
-        if: github.event_name != 'schedule' || steps.pending.outputs.run == 'true'
+        if: steps.pending.conclusion != 'success' || steps.pending.outputs.run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
@@ -159,8 +169,11 @@ jobs:
           COMMITTEE_MODEL: ${{ matrix.model }}
           OPEN_ROUTER_API_KEY: ${{ secrets.OPEN_ROUTER_API_KEY }}
           SCHEDULED: ${{ github.event_name == 'schedule' }}
+          WEEKLY: ${{ github.event.schedule == '30 4 * * 2' || inputs.weekly == true }}
         run: |
-          if [ "$SCHEDULED" = "true" ]; then
+          if [ "$WEEKLY" = "true" ]; then
+            python -m src.jobs.run_committee --weekly
+          elif [ "$SCHEDULED" = "true" ]; then
             python -m src.jobs.run_committee --new-buys
           else
             python -m src.jobs.run_committee $TICKERS --top "$TOP"

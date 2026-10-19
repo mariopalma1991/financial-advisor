@@ -21,6 +21,12 @@ committee:
   # Each scheduled run reviews those buys once per model, side by side (Mario, 2026-10-19:
   # only Sonnet and Gemini 3.8 Flash for now). Manual runs use model above unless told otherwise.
   scheduled_models: [claude-sonnet-5-5, "openrouter:google/gemini-3.8-flash"]
+  # Weekly model test (Mario, 2026-10-19: to drop weak models fast): every Monday night each
+  # model reviews the factor list's best weekly_top names it has not reviewed in
+  # weekly_fresh_days, so every week adds new, comparable verdicts (scored from 1 week on).
+  weekly_models: [claude-sonnet-5-5, "openrouter:google/gemini-3.8-flash", "openrouter:deepseek/deepseek-v4-pro-0813"]
+  weekly_top: 3
+  weekly_fresh_days: 28
 
 # USD per million tokens (cache writes 1.25x input, cache reads 0.1x input). Only Sonnet runs on the
 # Anthropic key (Mario, 2026-10-19): --model rejects any Anthropic model not listed here.

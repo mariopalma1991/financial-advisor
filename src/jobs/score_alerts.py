@@ -1,5 +1,5 @@
-"""Score every committee alert (committee_alerts) against VOO in MXN after 1, 3
-and 6 months into alert_outcomes (src/transforms/outcomes.py). Only horizons that
+"""Score every committee alert (committee_alerts) against VOO in MXN after 1 week,
+1, 3 and 6 months into alert_outcomes (src/transforms/outcomes.py). Only horizons that
 have passed are written, and a written outcome is final. Runs after compute_factors.
   python -m src.jobs.score_alerts
 """
