@@ -88,13 +88,28 @@ class CommitteeResult:
 
 
 def _brief(r: AgentResult, v: dict) -> dict:
+    """What the chair reads of one member: only citations the validator confirmed.
+    A key point whose every citation failed is dropped; the counts stay, so the
+    chair can weigh members by how much of their evidence held up."""
     o = r.output or {}
+    failed = {f.get("cite") for f in v.get("failed", [])}
+    points, dropped = [], 0
+    for kp in o.get("key_points") or []:
+        cites = kp.get("cites") or []
+        ok = [c for c in cites if c.get("cite") not in failed]
+        if cites and not ok:
+            dropped += 1
+            continue
+        points.append({**kp, "cites": ok})
+    n = v.get("n", 0)
+    verified = n - len(failed)
     return {"rol": r.role, "postura": o.get("stance"), "score": o.get("score"), "confianza": o.get("confidence"),
             "movimiento_esperado_pct": o.get("expected_move_pct"), "stop_pct": o.get("stop_pct"),
-            "tesis": o.get("thesis"), "puntos": o.get("key_points"), "riesgos": o.get("risks"),
+            "tesis": o.get("thesis"), "puntos": points, "riesgos": o.get("risks"),
             "cambiaria_de_opinion_si": o.get("change_my_mind"), "datos_faltantes": o.get("missing_data"),
-            "validador": {k: v.get(k) for k in ("n", "mismatches", "unresolved")}
-            | {"citas_no_verificadas": [f.get("cite") for f in v.get("failed", [])]},
+            "evidencia": {"citas_verificadas": verified, "citas_descartadas": len(failed),
+                          "puntos_descartados": dropped,
+                          "calidad": round(verified / n, 2) if n else None},
             **({"error": r.error} if r.error else {})}
 
 

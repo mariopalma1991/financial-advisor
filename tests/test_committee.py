@@ -5,7 +5,7 @@ import pytest
 from src.committee import agent, committee, store
 from src.committee.agent import DECISION_TOOL, OPINION_TOOL, BudgetExceeded, run_agent
 
-CFG = {"model": "claude-opus-5-5", "max_tokens": 1000, "effort": "medium"}
+CFG = {"model": "claude-sonnet-5-5", "max_tokens": 1000, "effort": "medium"}
 PRICES = {"input": 4.0, "output": 20.0, "cache_write": 5.0, "cache_read": 0.2}
 
 
@@ -172,7 +172,8 @@ def test_committee_run_members_then_chair(monkeypatch):
     assert res.price["price_mxn"] == 1800.0
     assert res.chair.output["decision"] == "approve"
     chair_prompt = client.requests[-1]["messages"][0]["content"]
-    assert "x:AAPL#roe" in chair_prompt and "citas_no_verificadas" in chair_prompt and "lugar 3" in chair_prompt
+    # the cite that failed validation never reaches the chair; the count does
+    assert "x:AAPL#roe" not in chair_prompt and "\"citas_descartadas\": 1" in chair_prompt and "lugar 3" in chair_prompt
     assert res.validation["optimista"]["mismatches"] == 1
 
 
@@ -240,3 +241,16 @@ def test_openrouter_agent_refuses_tools_outside_role():
                                cfg={**CFG, "model": "openrouter:x/y"}, spend=lambda c: None,
                                call_tool=lambda n, a: pytest.fail("must not run"))
     assert res.tool_calls == [] and "not_allowed" in http.bodies[1]["messages"][-1]["content"]
+
+
+def test_brief_passes_only_verified_cites_to_chair():
+    out = {**OPINION, "key_points": [
+        {"point": "ROE alto", "cites": [{"cite": "a#roe", "value": 0.3}, {"cite": "b#x", "value": 1}]},
+        {"point": "inventado", "cites": [{"cite": "c#y", "value": 2}]},
+        {"point": "sin cifras", "cites": []}]}
+    r = agent.AgentResult(role="optimista", output=out)
+    b = committee._brief(r, {"n": 3, "failed": [{"cite": "b#x"}, {"cite": "c#y"}]})
+    assert [p["point"] for p in b["puntos"]] == ["ROE alto", "sin cifras"]
+    assert b["puntos"][0]["cites"] == [{"cite": "a#roe", "value": 0.3}]
+    assert b["evidencia"] == {"citas_verificadas": 1, "citas_descartadas": 2, "puntos_descartados": 1,
+                              "calidad": 0.33}

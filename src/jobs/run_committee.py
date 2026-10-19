@@ -6,8 +6,7 @@ store each run, every agent's opinion and the chair's approve-or-veto alert
   python -m src.jobs.run_committee --top 20           # the day's top 20 by factor rank
   python -m src.jobs.run_committee AAPL --as-of 2026-10-16
   python -m src.jobs.run_committee --new-buys          # the portfolio's latest buys not yet reviewed
-  python -m src.jobs.run_committee AAPL --model claude-opus-5-5   # another model, this run only
-  python -m src.jobs.run_committee AAPL --model openrouter:openai/gpt-6-astra   # any OpenRouter model
+  python -m src.jobs.run_committee AAPL --model openrouter:google/gemini-3.8-flash   # another model, this run only
 """
 from __future__ import annotations
 

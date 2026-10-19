@@ -142,6 +142,12 @@ prompts in `src/committee/prompts.py`.
 - `resolve_refs` checks the members' citations; the chair (presidente) sees their
   opinions with the cites that did not verify, and ends with `entregar_decision`
   (approve or veto, target and stop as % of the MXN price, invalidation criteria).
+- Models: Claude Sonnet 5.5 by default (the only Anthropic model the project uses). Any model on
+  OpenRouter runs the same committee as `openrouter:<vendor/model>` (needs `OPEN_ROUTER_API_KEY`); the
+  workflow's `model` input takes several, comma-separated, and runs them side by side on the same
+  tickers and `as_of`. `list_models` prints OpenRouter's catalog rows that match.
+- The chair reads only the citations the validator confirmed (a point with none is dropped) and how
+  much of each member's evidence held up.
 - Each run writes `committee_runs`, one `committee_opinions` row per agent, and one
   `committee_alerts` buy (vetoed or not), so `score_alerts` grades the chair and every
   member against VOO. The full trace goes to Storage under `committee_traces/` and to the
