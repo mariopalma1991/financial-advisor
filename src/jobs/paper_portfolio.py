@@ -2,7 +2,8 @@
 src/transforms/paper.py, settings in config/paper_portfolio.yaml).
 
 The investor's budget is an initial amount plus deposits (investor_contributions,
-recorded from chat); VOO gets the same pesos on the same days.
+entered on the Mi inversión page) plus the recurring plan (recurring_mxn on
+recurring_days, simulated in every book); VOO gets the same pesos on the same days.
 
 Two books, written to paper_decisions, paper_fills and paper_nav:
   forward_top20   starts on forward_start; each signal's decisions are stored the
@@ -185,10 +186,12 @@ def main() -> None:
             # with their first one, so it faces the same whole-share limits; the
             # backtest_amounts books replay it for other starting amounts (the dashboard's
             # "other amount" view picks the nearest)
-            bt = cfg["backtest_start"]
-            books = [(BACKTEST, bt, False, [(bt, deposits[0][1])]), (FORWARD, cfg["forward_start"], True, deposits)]
+            bt, fwd = cfg["backtest_start"], cfg["forward_start"]
+            books = [(BACKTEST, bt, False, [(bt, deposits[0][1])]), (FORWARD, fwd, True, deposits)]
             books += [(f"{BACKTEST}_{int(a)}", bt, False, [(bt, float(a))]) for a in cfg.get("backtest_amounts", [])]
+            plan = (float(cfg.get("recurring_mxn") or 0), cfg.get("recurring_days") or [])
             for name, start, keep, flows in books:
+                flows = sorted(flows + paper.recurring_flows(start, latest_bar, *plan))
                 signals = signal_days(factor_days, start, latest_bar)
                 if not signals:
                     em.emit("INFO", "paper_waiting", f"{name}: no factor day on or after {start} yet")
