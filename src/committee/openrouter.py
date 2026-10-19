@@ -36,7 +36,8 @@ def _post(http: httpx.Client, body: dict) -> dict:
         if r.status_code in (429, 500, 502, 503, 504) and attempt < 3:
             time.sleep(5 * 2 ** attempt)
             continue
-        r.raise_for_status()
+        if r.status_code >= 400:  # OpenRouter says why (no credit, model blocked for the key...) in the body
+            raise RuntimeError(f"openrouter {r.status_code}: {r.text[:300]}")
         data = r.json()
         if data.get("error"):
             raise RuntimeError(f"openrouter: {data['error']}")
