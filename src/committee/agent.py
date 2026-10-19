@@ -20,7 +20,7 @@ FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 _CITES = {"type": "array", "items": {
     "type": "object", "additionalProperties": False, "required": ["cite", "value"],
-    "properties": {"cite": {"type": "string", "description": "<_ref>#<campo>, copiado de la herramienta"},
+    "properties": {"cite": {"type": "string", "description": "valor de _ref + '#' + campo, p. ej. estimate_revisions:OSCR|0y|2026-10-18#eps_current"},
                    "value": {"type": ["number", "string"], "description": "el valor tal como lo devolvió"}}}}
 _TEXTS = {"type": "array", "items": {"type": "string"}}
 _NUM = {"type": ["number", "null"]}

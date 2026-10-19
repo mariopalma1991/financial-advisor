@@ -40,7 +40,11 @@ def cites_of(output: dict | None) -> list[dict]:
     if not output:
         return []
     found = [c for kp in output.get("key_points") or [] for c in kp.get("cites") or []]
-    return found + list(output.get("cites") or [])
+    found += list(output.get("cites") or [])
+    for c in found:  # some models copy the placeholder too: "<_ref>table:KEY#field"
+        if isinstance(c.get("cite"), str) and c["cite"].startswith("<_ref>"):
+            c["cite"] = c["cite"][len("<_ref>"):]
+    return found
 
 
 def validate(results: list[AgentResult], as_of: str | None) -> dict[str, dict]:
