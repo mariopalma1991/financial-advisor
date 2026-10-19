@@ -18,7 +18,7 @@ portfolio:
   # Forward test: decisions from this day on are stored once and never recomputed,
   # so later code or data changes can't rewrite them. The backtest is recomputed.
   forward_start: "2026-10-19"
-  backtest_start: "2025-10-31"
+  backtest_start: "2024-10-31"   # first month-end with 12 months of prices before it (price_history)
   # The backtest again with these starting amounts (MXN), stored as backtest_top20_<amount>;
   # the dashboard shows the one nearest to the amount the reader types.
   backtest_amounts: [5000, 10000, 20000, 50000, 100000, 250000, 500000, 1000000]
