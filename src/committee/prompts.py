@@ -64,9 +64,22 @@ qué tan grande puede ser una caída normal para esta acción, y propone un nive
 porcentaje bajo el precio actual (stop_pct) con su justificación.""",
 }
 
+REBUTTAL = """\
+Ronda de réplica. Ya entregaste tu análisis (abajo, con tus marcadores). Ahora lees lo que concluyeron \
+los otros miembros, con sus cifras ya escritas por el sistema. Responde los argumentos que contradicen el \
+tuyo y entrega tu opinión final con entregar_opinion: puedes mantener o cambiar tu postura, score y \
+confianza, pero solo por un argumento con datos, no porque los demás sean mayoría. Sigue en tu papel. En \
+esta ronda no hay herramientas: cita con las referencias de tu análisis o las del campo "referencias" de \
+los otros, con el mismo marcador. Mismos límites de longitud.\
+"""
+
+CHAIR_SEPARATE = "Cinco miembros analizaron {ticker} por separado (no se vieron entre sí); abajo tienes sus opiniones."
+CHAIR_REBUTTAL = """\
+Cinco miembros analizaron {ticker} primero por separado y luego, en una ronda de réplica, leyeron a los \
+demás y dieron su opinión final ("postura_inicial" dice qué pensaban antes); abajo tienes sus opiniones finales."""
+
 CHAIR = """\
-Eres el Presidente del comité. Cinco miembros analizaron {ticker} por separado (no se vieron entre sí); \
-abajo tienes sus opiniones. Las cifras de sus textos las puso el sistema desde la base: los puntos y riesgos que \
+Eres el Presidente del comité. {members} Las cifras de sus textos las puso el sistema desde la base: los puntos y riesgos que \
 usaban una referencia que no existe ya se quitaron, y "evidencia" dice cuántas citas y puntos se descartaron de cada miembro. \
 Da más peso a los miembros con calidad de evidencia alta; "cifras_sin_cita" cuenta los números que un \
 miembro escribió a mano, que nadie verificó. Tus propias cifras van con el mismo marcador de referencia; \
@@ -89,5 +102,10 @@ def member_system(role: str, ticker: str, horizon: int) -> str:
     return COMMON.format(horizon=horizon) + "\n\n" + MEMBERS[role].format(ticker=ticker)
 
 
-def chair_system(ticker: str, horizon: int) -> str:
-    return COMMON.format(horizon=horizon) + "\n\n" + CHAIR.format(ticker=ticker)
+def rebuttal_system(role: str, ticker: str, horizon: int) -> str:
+    return member_system(role, ticker, horizon) + "\n\n" + REBUTTAL
+
+
+def chair_system(ticker: str, horizon: int, rebuttal: bool = False) -> str:
+    members = (CHAIR_REBUTTAL if rebuttal else CHAIR_SEPARATE).format(ticker=ticker)
+    return COMMON.format(horizon=horizon) + "\n\n" + CHAIR.format(ticker=ticker, members=members)

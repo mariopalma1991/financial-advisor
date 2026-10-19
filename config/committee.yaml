@@ -9,8 +9,17 @@ committee:
   max_tokens: 16000            # per API call
   horizon_months: 3            # the horizon every agent judges, scored at 1, 4, 8 and 12 weeks (Mario, 2026-10-19: was 6)
   max_usd_per_run: 6.0         # a run stops (failed) once one ticker's committee spends this much
-  prompt_version: "v0.8"
+  prompt_version: "v0.8"     # v0.9 = v0.8 with rebuttal: true
   members: [optimista, pesimista, contrario, especialista, riesgo_timing]
+  # Tools fetched once per candidate with default arguments and handed to every member whose
+  # role may call them. Off: tested 2026-10-19 on OSCR/PBF/CNC it saved nothing (Sonnet's
+  # cache already makes earlier answers cheap) and raised members' cost 10% (Sonnet) to 87%
+  # (DeepSeek). Candidates then: get_ticker_overview, get_catalysts, get_price_technicals...
+  shared_data: []
+  # After their first opinions each member reads the others' and gives a final view
+  # (no tools), stored as <role>_replica; the chair reads the final views. Off (Mario,
+  # 2026-10-19): tested on OSCR/PBF/CNC it added 0.21 USD per stock with Sonnet (+65%).
+  rebuttal: false
   chair: presidente
   # Candidates when no ticker is given: the best-ranked of the day's factor list.
   default_top_n: 20

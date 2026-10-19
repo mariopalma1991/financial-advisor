@@ -30,9 +30,15 @@ def _fn(t: dict) -> dict:
 
 
 def _post(http: httpx.Client, body: dict) -> dict:
-    """One completion, retried on rate limits and server errors."""
+    """One completion, retried on rate limits, server errors and dropped connections."""
     for attempt in range(4):
-        r = http.post(URL, json=body)
+        try:
+            r = http.post(URL, json=body)
+        except httpx.TransportError:  # e.g. the provider closed the stream mid-answer
+            if attempt == 3:
+                raise
+            time.sleep(5 * 2 ** attempt)
+            continue
         if r.status_code in (429, 500, 502, 503, 504) and attempt < 3:
             time.sleep(5 * 2 ** attempt)
             continue
