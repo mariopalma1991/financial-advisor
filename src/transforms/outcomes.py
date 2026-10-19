@@ -5,7 +5,7 @@ from __future__ import annotations
 import bisect
 from collections.abc import Sequence
 
-HORIZONS = (5, 21, 63, 126)   # trading days: 1 week (to drop weak models fast), about 1, 3 and 6 months
+HORIZONS = (5, 20, 40, 60)   # trading days: 1, 4, 8 and 12 weeks (Mario, 2026-10-19: drop weak models fast)
 
 
 class Series:

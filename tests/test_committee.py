@@ -328,4 +328,4 @@ def test_weekly_picks_skip_names_the_model_saw_lately():
 
 def test_alerts_are_scored_after_one_week():
     from src.transforms.outcomes import HORIZONS
-    assert HORIZONS[0] == 5 and 21 in HORIZONS
+    assert HORIZONS == (5, 20, 40, 60)

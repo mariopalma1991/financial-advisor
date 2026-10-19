@@ -1,5 +1,5 @@
--- Capa 3 model test: how each model's committee did, per scoring horizon (1 week, 1, 3 and
--- 6 months). An approval is right when the stock beat VOO in MXN, a veto when it lagged;
+-- Capa 3 model test: how each model's committee did, per scoring horizon (1, 4, 8 and
+-- 12 weeks). An approval is right when the stock beat VOO in MXN, a veto when it lagged;
 -- edge = mean excess of approved names minus mean excess of vetoed ones (a good veto
 -- filter has a positive edge). Every run counts, nightly new buys and the weekly test.
 create or replace view model_scorecard as
