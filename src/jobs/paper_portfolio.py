@@ -26,6 +26,7 @@ import yaml
 
 from src.mcp_server.tools import round_trip_cost
 from src.quality.run_metadata import current_run_id, job_run
+from src.storage import price_history
 from src.storage.supabase_client import pg_connection
 from src.transforms import factors as fx
 from src.transforms import paper
@@ -76,6 +77,13 @@ def load_market(cur, since: str) -> dict:
                         "order by ticker, bar_date, ingested_at desc", {"s": since}):
         bars[r["ticker"]].append({"bar_date": _iso(r["bar_date"]), "close": float(r["close"]),
                                   "ingested_at": _iso(r["ingested_at"])})
+    cur.execute("select min(bar_date) as d from price_bars_daily")
+    db_start = _iso(cur.fetchone()["d"])
+    if db_start and since < db_start:  # the backtest's early months, once roll_window trims them
+        for t, hb in price_history.load(db_start).items():
+            older = [b for b in hb if b["bar_date"] >= since]
+            if older:
+                bars[t] = older + bars.get(t, [])
     actions: dict[str, dict[str, list[dict]]] = defaultdict(lambda: {"split": [], "dividend": []})
     for r in _rows(cur, "select distinct on (ticker, action_type, ex_date) ticker, action_type, ex_date, "
                         "amount, ratio, ingested_at from raw_corporate_actions "
