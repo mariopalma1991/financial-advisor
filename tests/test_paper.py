@@ -185,3 +185,10 @@ def test_a_drop_below_the_deposits_keeps_the_positions():
     r = _run(prices, rules=rules, signals=("2026-01-01", "2026-01-05"), flows=[("2026-01-01", 4000.0)])
     assert r["nav"][-1]["n_positions"] == 2
     assert all(a == "hold" for a, _ in _acts(r["decisions"]["2026-01-05"]).values())
+
+
+def test_recurring_flows_on_the_15th_and_last_day_after_start():
+    flows = paper.recurring_flows("2026-01-31", "2026-03-15", 500, [15, "last"])
+    assert flows == [("2026-02-15", 500.0), ("2026-02-28", 500.0), ("2026-03-15", 500.0)]
+    assert paper.recurring_flows("2026-10-19", "2026-10-30", 500, [15, "last"]) == []
+    assert paper.recurring_flows("2026-01-01", "2026-12-31", 0, [15]) == []

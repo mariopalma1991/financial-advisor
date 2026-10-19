@@ -116,7 +116,9 @@ Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
   replays the past year, and `backtest_top20_<amount>` replays it for each of
   `backtest_amounts` (the dashboard's "other amount" view). The investor sets the
   initial amount and adds deposits on the "Mi inversión" page; a check every 10 minutes
-  reruns the job when `investor_contributions` changed. Tables `paper_decisions`, `paper_fills`, `paper_nav`; view
+  reruns the job when `investor_contributions` changed. Every book also simulates a
+  recurring deposit (`recurring_mxn` on `recurring_days`, e.g. 500 MXN on the 15th and
+  the month's last day). Tables `paper_decisions`, `paper_fills`, `paper_nav`; view
   `paper_performance`; MCP `get_portfolio`.
 - `committee_runs`, `committee_opinions`, `committee_alerts`: written by the committee
   runner: each run's as_of (replayable), each agent's stance, reasoning, cited refs and

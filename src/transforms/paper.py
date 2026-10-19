@@ -13,8 +13,9 @@ Rules (config/paper_portfolio.yaml):
   - Exits are sold; new names share the cash equally, each capped at NAV / n;
     whatever cash is left tops up the positions furthest below NAV / n. Whole
     shares only (a name whose one share costs more than its slot is skipped).
-  - The investor's budget: an initial amount plus deposits over time; each deposit
-    is invested on its day in the positions furthest below target.
+  - The investor's budget: an initial amount plus deposits over time (recorded ones
+    and a recurring plan, recurring_flows); each deposit is invested on its day in
+    the positions furthest below target.
   - Every buy and sell pays the GBM cost per side (commission with IVA, FX spread,
     slippage). Dividends pay withholding. Realized gains pay ISR once a year.
   - The benchmark buys VOO with the same money on the same days, same costs.
@@ -25,6 +26,7 @@ sees (cash, NAV, costs, gains, taxes) is in MXN at the day's USD/MXN rate.
 from __future__ import annotations
 
 import bisect
+import calendar
 import math
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -317,6 +319,24 @@ def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., 
         rate = (fx.at(last_day) if last_day else None) or 0.0
         decided[sd] = decide(sd, list(book.positions), *_sizing(book, last_day, px, rate, rules, basis))
     return {"decisions": decided, "pending": pending, "fills": book.fills, "nav": nav}
+
+
+def recurring_flows(start: str, end: str, amount: float, days: Sequence[int | str]) -> list[tuple[str, float]]:
+    """A recurring deposit of `amount` on each of `days` of every month ("last" is
+    the month's last day), dated after start and up to end (ISO dates). A date that
+    is not a trading day becomes cash on the next one (simulate)."""
+    out: list[tuple[str, float]] = []
+    if amount <= 0 or not days:
+        return out
+    y, m = int(start[:4]), int(start[5:7])
+    while f"{y:04d}-{m:02d}" <= end[:7]:
+        last = calendar.monthrange(y, m)[1]
+        for d in sorted({last if d == "last" else min(int(d), last) for d in days}):
+            iso = f"{y:04d}-{m:02d}-{d:02d}"
+            if start < iso <= end:
+                out.append((iso, float(amount)))
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    return out
 
 
 def split_basis(splits: Sequence[dict], day: str) -> float:
