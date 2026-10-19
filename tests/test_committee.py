@@ -5,7 +5,7 @@ import pytest
 from src.committee import agent, committee, store
 from src.committee.agent import DECISION_TOOL, OPINION_TOOL, BudgetExceeded, run_agent
 
-CFG = {"model": "claude-opus-5-5", "max_tokens": 1000, "effort": "medium"}
+CFG = {"model": "claude-sonnet-5-5", "max_tokens": 1000, "effort": "medium"}
 PRICES = {"input": 4.0, "output": 20.0, "cache_write": 5.0, "cache_read": 0.2}
 
 
@@ -172,7 +172,8 @@ def test_committee_run_members_then_chair(monkeypatch):
     assert res.price["price_mxn"] == 1800.0
     assert res.chair.output["decision"] == "approve"
     chair_prompt = client.requests[-1]["messages"][0]["content"]
-    assert "x:AAPL#roe" in chair_prompt and "citas_no_verificadas" in chair_prompt and "lugar 3" in chair_prompt
+    # the cite that failed validation never reaches the chair; the count does
+    assert "x:AAPL#roe" not in chair_prompt and "\"citas_descartadas\": 1" in chair_prompt and "lugar 3" in chair_prompt
     assert res.validation["optimista"]["mismatches"] == 1
 
 
@@ -184,3 +185,72 @@ def test_committee_budget_cap_marks_error(monkeypatch):
     client = FakeClient([([_use("entregar_opinion", OPINION)], "tool_use")])
     res = committee.run(client, "AAPL", None, cfg)
     assert res.error.startswith("budget") and res.chair is None
+
+
+class FakeOpenRouter:
+    """Stands in for the httpx client: replays chat-completion messages."""
+
+    def __init__(self, messages):
+        self.messages = list(messages)
+        self.bodies = []
+
+    def post(self, url, json):
+        self.bodies.append({**json, "messages": list(json["messages"])})
+        msg, finish = self.messages.pop(0)
+        data = {"model": json["model"], "choices": [{"message": msg, "finish_reason": finish}],
+                "usage": {"prompt_tokens": 1000, "completion_tokens": 100, "cost": 0.01}}
+        return NS(status_code=200, raise_for_status=lambda: None, json=lambda: data)
+
+
+def _call(name, args, i="c1"):
+    import json as _json
+    return {"id": i, "type": "function", "function": {"name": name, "arguments": _json.dumps(args)}}
+
+
+def test_openrouter_agent_forces_as_of_and_parses_final():
+    from src.committee import openrouter
+    calls = []
+    http = FakeOpenRouter([
+        ({"role": "assistant", "content": None, "reasoning_details": [{"type": "x"}],
+          "tool_calls": [_call("get_fundamentals", {"ticker": "AAPL", "as_of": "2030-01-01"})]}, "tool_calls"),
+        ({"role": "assistant", "content": None, "tool_calls": [_call("entregar_opinion", OPINION, "c2")]},
+         "tool_calls")])
+    spent = []
+    res = openrouter.run_agent(http, role="optimista", system="s", prompt="p", tool_defs=TOOLS,
+                               final_tool=OPINION_TOOL, as_of="2026-10-16", max_calls=2,
+                               cfg={**CFG, "model": "openrouter:openai/gpt-x"}, spend=spent.append,
+                               call_tool=lambda n, a: calls.append((n, a)) or {"data": {}})
+    assert calls == [("get_fundamentals", {"ticker": "AAPL", "as_of": "2026-10-16"})]
+    assert res.output == OPINION and res.error is None
+    assert res.cost_usd == pytest.approx(0.02) and spent == [0.01, 0.01]
+    body = http.bodies[1]
+    assert body["model"] == "openai/gpt-x"
+    assert body["tools"][-1]["function"]["name"] == "entregar_opinion"
+    # the assistant turn goes back whole (reasoning kept), then the tool result
+    assert body["messages"][2]["reasoning_details"] == [{"type": "x"}]
+    assert body["messages"][3]["role"] == "tool" and body["messages"][3]["tool_call_id"] == "c1"
+
+
+def test_openrouter_agent_refuses_tools_outside_role():
+    from src.committee import openrouter
+    http = FakeOpenRouter([
+        ({"role": "assistant", "tool_calls": [_call("get_portfolio", {})]}, "tool_calls"),
+        ({"role": "assistant", "tool_calls": [_call("entregar_opinion", OPINION, "c2")]}, "tool_calls")])
+    res = openrouter.run_agent(http, role="optimista", system="s", prompt="p", tool_defs=TOOLS,
+                               final_tool=OPINION_TOOL, as_of=None, max_calls=2,
+                               cfg={**CFG, "model": "openrouter:x/y"}, spend=lambda c: None,
+                               call_tool=lambda n, a: pytest.fail("must not run"))
+    assert res.tool_calls == [] and "not_allowed" in http.bodies[1]["messages"][-1]["content"]
+
+
+def test_brief_passes_only_verified_cites_to_chair():
+    out = {**OPINION, "key_points": [
+        {"point": "ROE alto", "cites": [{"cite": "a#roe", "value": 0.3}, {"cite": "b#x", "value": 1}]},
+        {"point": "inventado", "cites": [{"cite": "c#y", "value": 2}]},
+        {"point": "sin cifras", "cites": []}]}
+    r = agent.AgentResult(role="optimista", output=out)
+    b = committee._brief(r, {"n": 3, "failed": [{"cite": "b#x"}, {"cite": "c#y"}]})
+    assert [p["point"] for p in b["puntos"]] == ["ROE alto", "sin cifras"]
+    assert b["puntos"][0]["cites"] == [{"cite": "a#roe", "value": 0.3}]
+    assert b["evidencia"] == {"citas_verificadas": 1, "citas_descartadas": 2, "puntos_descartados": 1,
+                              "calidad": 0.33}

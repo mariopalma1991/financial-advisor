@@ -14,7 +14,7 @@ from typing import Any
 
 import yaml
 
-from src.committee import prompts
+from src.committee import openrouter, prompts
 from src.committee.agent import (
     DECISION_TOOL,
     OPINION_TOOL,
@@ -88,19 +88,40 @@ class CommitteeResult:
 
 
 def _brief(r: AgentResult, v: dict) -> dict:
+    """What the chair reads of one member: only citations the validator confirmed.
+    A key point whose every citation failed is dropped; the counts stay, so the
+    chair can weigh members by how much of their evidence held up."""
     o = r.output or {}
+    failed = {f.get("cite") for f in v.get("failed", [])}
+    points, dropped = [], 0
+    for kp in o.get("key_points") or []:
+        cites = kp.get("cites") or []
+        ok = [c for c in cites if c.get("cite") not in failed]
+        if cites and not ok:
+            dropped += 1
+            continue
+        points.append({**kp, "cites": ok})
+    n = v.get("n", 0)
+    verified = n - len(failed)
     return {"rol": r.role, "postura": o.get("stance"), "score": o.get("score"), "confianza": o.get("confidence"),
             "movimiento_esperado_pct": o.get("expected_move_pct"), "stop_pct": o.get("stop_pct"),
-            "tesis": o.get("thesis"), "puntos": o.get("key_points"), "riesgos": o.get("risks"),
+            "tesis": o.get("thesis"), "puntos": points, "riesgos": o.get("risks"),
             "cambiaria_de_opinion_si": o.get("change_my_mind"), "datos_faltantes": o.get("missing_data"),
-            "validador": {k: v.get(k) for k in ("n", "mismatches", "unresolved")}
-            | {"citas_no_verificadas": [f.get("cite") for f in v.get("failed", [])]},
+            "evidencia": {"citas_verificadas": verified, "citas_descartadas": len(failed),
+                          "puntos_descartados": dropped,
+                          "calidad": round(verified / n, 2) if n else None},
             **({"error": r.error} if r.error else {})}
 
 
 def run(client: Any, ticker: str, as_of: str | None, cfg: dict, context: str = "") -> CommitteeResult:
     c = cfg["committee"]
-    prices = cfg["pricing"][c["model"]]
+    via_or = openrouter.is_openrouter(c["model"])
+    prices = None if via_or else cfg["pricing"][c["model"]]
+
+    def agent(**kw: Any) -> AgentResult:
+        if via_or:
+            return openrouter.run_agent(None, cfg=c, spend=spend, **kw)
+        return run_agent(client, cfg=c, prices=prices, spend=spend, **kw)
     ticker = ticker.upper()
     horizon = c["horizon_months"]
     price = price_now(ticker, as_of)
@@ -118,18 +139,18 @@ def run(client: Any, ticker: str, as_of: str | None, cfg: dict, context: str = "
     prompt = f"Analiza {ticker} con datos al {day}. {px}\n{context}".strip()
     try:
         for role in c["members"]:
-            res.members.append(run_agent(
-                client, role=role, system=prompts.member_system(role, ticker, horizon), prompt=prompt,
+            res.members.append(agent(
+                role=role, system=prompts.member_system(role, ticker, horizon), prompt=prompt,
                 tool_defs=role_tool_defs(role), final_tool=OPINION_TOOL, as_of=as_of,
-                max_calls=cfg["max_calls"][role], cfg=c, prices=prices, spend=spend))
+                max_calls=cfg["max_calls"][role]))
         res.validation = validate(res.members, as_of)
         briefs = [_brief(r, res.validation.get(r.role, {})) for r in res.members]
         chair_prompt = (f"{prompt}\n\nOpiniones de los miembros (JSON):\n"
                         f"{json.dumps(briefs, ensure_ascii=False, default=str)}")
-        res.chair = run_agent(
-            client, role=c["chair"], system=prompts.chair_system(ticker, horizon), prompt=chair_prompt,
+        res.chair = agent(
+            role=c["chair"], system=prompts.chair_system(ticker, horizon), prompt=chair_prompt,
             tool_defs=role_tool_defs(c["chair"]), final_tool=DECISION_TOOL, as_of=as_of,
-            max_calls=cfg["max_calls"][c["chair"]], cfg=c, prices=prices, spend=spend)
+            max_calls=cfg["max_calls"][c["chair"]])
         res.validation |= validate([res.chair], as_of)
         if res.chair.output is None:
             res.error = f"chair: {res.chair.error}"

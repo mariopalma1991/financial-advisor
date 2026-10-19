@@ -4,7 +4,8 @@ name: committee
 # approves or vetoes each buy (src/jobs/run_committee.py). On schedule it reviews only
 # the model portfolio's new buys (decided after the 20:00 CST ingest, bought at the next
 # close): at 22:15 and 06:15 CST, so a failed night run gets one more try before the fill.
-# Manual runs take tickers or the day's top N.
+# Manual runs take tickers or the day's top N, and optionally one or more models
+# (comma-separated) that run side by side on the same tickers and as_of.
 
 on:
   schedule:
@@ -23,8 +24,12 @@ on:
         description: "Replay date (YYYY-MM-DD); empty = latest data"
         required: false
         default: ""
+      list_models:
+        description: "Only list OpenRouter models with tool calling whose id contains any of these words (comma-separated); shown as notes on the run, nothing else runs"
+        required: false
+        default: ""
       model:
-        description: "Model for this run only (e.g. claude-opus-5-5); empty = config/committee.yaml"
+        description: "Models for this run only, comma-separated (openrouter:google/gemini-3.8-flash, ...); empty = config (Sonnet)"
         required: false
         default: ""
 
@@ -33,9 +38,61 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      models: ${{ steps.m.outputs.models }}
+    steps:
+      - id: m
+        env:
+          MODELS: ${{ inputs.model }}
+          LIST: ${{ inputs.list_models }}
+        # Checks every OpenRouter model id against the public catalog before spending
+        # anything; with list_models it only prints the matching catalog rows.
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request
+          models = [x.strip() for x in os.environ.get("MODELS", "").split(",") if x.strip()]
+          words = [w.strip().lower() for w in os.environ.get("LIST", "").split(",") if w.strip()]
+          cat = {}
+          if words or any(m.startswith("openrouter:") for m in models):
+              with urllib.request.urlopen("https://openrouter.ai/api/v1/models", timeout=60) as r:
+                  cat = {m["id"]: m for m in json.load(r)["data"]}
+          if words:
+              rows = []
+              for i, m in sorted(cat.items(), key=lambda kv: -(kv[1].get("created") or 0)):
+                  sp = m.get("supported_parameters") or []
+                  if "tools" not in sp or not any(w in i.lower() for w in words):
+                      continue
+                  p = m.get("pricing") or {}
+                  usd = lambda k: round(float(p.get(k) or 0) * 1e6, 3)
+                  rows.append(f"{i} | ctx {m.get('context_length')} | in {usd('prompt')} out {usd('completion')} USD/M"
+                              f" | {'structured' if 'structured_outputs' in sp else '-'}"
+                              f" | {'reasoning' if 'reasoning' in sp else '-'} | created {m.get('created')}")
+              print(f"{len(cat)} models in catalog, {len(rows)} match")
+              for k in range(0, len(rows), 25):
+                  print("::notice title=openrouter " + str(k // 25 + 1) + "::" + "%0A".join(rows[k:k + 25]))
+              models = []
+          bad = [m for m in models if m.startswith("openrouter:") and m[len("openrouter:"):] not in cat]
+          for m in bad:
+              print(f"::error title=unknown model::{m} is not in OpenRouter's catalog")
+          if bad:
+              raise SystemExit(1)
+          out = models or ([] if words else [""])
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"models={json.dumps(out)}\n")
+          PY
+
   run:
+    needs: plan
+    if: needs.plan.outputs.models != '[]'
     runs-on: ubuntu-24.04
     timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        model: ${{ fromJSON(needs.plan.outputs.models) }}
     steps:
       - name: Check for new buys to review
         id: pending
@@ -89,7 +146,8 @@ jobs:
           COMMITTEE_AS_OF: ${{ inputs.as_of }}
           TICKERS: ${{ inputs.tickers }}
           TOP: ${{ inputs.top || '1' }}
-          COMMITTEE_MODEL: ${{ inputs.model }}
+          COMMITTEE_MODEL: ${{ matrix.model }}
+          OPEN_ROUTER_API_KEY: ${{ secrets.OPEN_ROUTER_API_KEY }}
           SCHEDULED: ${{ github.event_name == 'schedule' }}
         run: |
           if [ "$SCHEDULED" = "true" ]; then
@@ -102,6 +160,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: committee-traces
+          name: committee-traces-${{ strategy.job-index }}
           path: committee_out/
           if-no-files-found: ignore
