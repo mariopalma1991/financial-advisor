@@ -14,7 +14,7 @@ from typing import Any
 
 import yaml
 
-from src.committee import prompts
+from src.committee import openrouter, prompts
 from src.committee.agent import (
     DECISION_TOOL,
     OPINION_TOOL,
@@ -100,7 +100,13 @@ def _brief(r: AgentResult, v: dict) -> dict:
 
 def run(client: Any, ticker: str, as_of: str | None, cfg: dict, context: str = "") -> CommitteeResult:
     c = cfg["committee"]
-    prices = cfg["pricing"][c["model"]]
+    via_or = openrouter.is_openrouter(c["model"])
+    prices = None if via_or else cfg["pricing"][c["model"]]
+
+    def agent(**kw: Any) -> AgentResult:
+        if via_or:
+            return openrouter.run_agent(None, cfg=c, spend=spend, **kw)
+        return run_agent(client, cfg=c, prices=prices, spend=spend, **kw)
     ticker = ticker.upper()
     horizon = c["horizon_months"]
     price = price_now(ticker, as_of)
@@ -118,18 +124,18 @@ def run(client: Any, ticker: str, as_of: str | None, cfg: dict, context: str = "
     prompt = f"Analiza {ticker} con datos al {day}. {px}\n{context}".strip()
     try:
         for role in c["members"]:
-            res.members.append(run_agent(
-                client, role=role, system=prompts.member_system(role, ticker, horizon), prompt=prompt,
+            res.members.append(agent(
+                role=role, system=prompts.member_system(role, ticker, horizon), prompt=prompt,
                 tool_defs=role_tool_defs(role), final_tool=OPINION_TOOL, as_of=as_of,
-                max_calls=cfg["max_calls"][role], cfg=c, prices=prices, spend=spend))
+                max_calls=cfg["max_calls"][role]))
         res.validation = validate(res.members, as_of)
         briefs = [_brief(r, res.validation.get(r.role, {})) for r in res.members]
         chair_prompt = (f"{prompt}\n\nOpiniones de los miembros (JSON):\n"
                         f"{json.dumps(briefs, ensure_ascii=False, default=str)}")
-        res.chair = run_agent(
-            client, role=c["chair"], system=prompts.chair_system(ticker, horizon), prompt=chair_prompt,
+        res.chair = agent(
+            role=c["chair"], system=prompts.chair_system(ticker, horizon), prompt=chair_prompt,
             tool_defs=role_tool_defs(c["chair"]), final_tool=DECISION_TOOL, as_of=as_of,
-            max_calls=cfg["max_calls"][c["chair"]], cfg=c, prices=prices, spend=spend)
+            max_calls=cfg["max_calls"][c["chair"]])
         res.validation |= validate([res.chair], as_of)
         if res.chair.output is None:
             res.error = f"chair: {res.chair.error}"

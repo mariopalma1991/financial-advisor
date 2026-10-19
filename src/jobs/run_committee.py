@@ -7,6 +7,7 @@ store each run, every agent's opinion and the chair's approve-or-veto alert
   python -m src.jobs.run_committee AAPL --as-of 2026-10-16
   python -m src.jobs.run_committee --new-buys          # the portfolio's latest buys not yet reviewed
   python -m src.jobs.run_committee AAPL --model claude-opus-5-5   # another model, this run only
+  python -m src.jobs.run_committee AAPL --model openrouter:openai/gpt-6-astra   # any OpenRouter model
 """
 from __future__ import annotations
 
@@ -16,7 +17,7 @@ from pathlib import Path
 
 import anthropic
 
-from src.committee import committee, store
+from src.committee import committee, openrouter, store
 from src.mcp_server import envelope, tools
 from src.quality.run_metadata import current_run_id, job_run
 from src.storage import archive
@@ -70,8 +71,9 @@ def main() -> None:
     args = p.parse_args()
     cfg = committee.load_config()
     if args.model:
-        if args.model not in cfg["pricing"]:
-            raise SystemExit(f"no pricing for {args.model} in config/committee.yaml")
+        if args.model not in cfg["pricing"] and not openrouter.is_openrouter(args.model):
+            raise SystemExit(f"no pricing for {args.model} in config/committee.yaml "
+                             f"(OpenRouter models go as {openrouter.PREFIX}<vendor/model>)")
         cfg["committee"]["model"] = args.model
     as_of = args.as_of or None
     tickers = [t.upper() for t in args.tickers]
@@ -85,7 +87,7 @@ def main() -> None:
         tickers = [c["ticker"] for c in candidates(args.top or cfg["committee"]["default_top_n"], as_of)]
     at = envelope.parse_as_of(as_of)
     as_of_ts = at.ts if at.past else envelope.parse_as_of(envelope._SNAPSHOT).ts
-    client = anthropic.Anthropic()
+    client = None if openrouter.is_openrouter(cfg["committee"]["model"]) else anthropic.Anthropic()
     try:
         s3, bucket = archive.s3_client(), archive.bucket()
     except RuntimeError:
