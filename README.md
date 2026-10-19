@@ -112,7 +112,8 @@ Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
   positions fit (`min_position_mxn`), and a stock whose one share costs more than a
   position is skipped until the budget grows. VOO gets the same pesos on the same days.
   `forward_top20` stores each decision once (from `forward_start`); `backtest_top20`
-  replays the past year. Tables `paper_decisions`, `paper_fills`, `paper_nav`; view
+  replays the past year, and `backtest_top20_<amount>` replays it for each of
+  `backtest_amounts` (the dashboard's "other amount" view). Tables `paper_decisions`, `paper_fills`, `paper_nav`; view
   `paper_performance`; MCP `get_portfolio`.
 - `committee_runs`, `committee_opinions`, `committee_alerts`: written by the committee
   runner: each run's as_of (replayable), each agent's stance, reasoning, cited refs and

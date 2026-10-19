@@ -9,6 +9,8 @@ Two books, written to paper_decisions, paper_fills and paper_nav:
                   first time they are made and reused as stored on every later run
   backtest_top20  the same rules from backtest_start, recomputed every run (an
                   in-sample check: the factors were designed looking at this period)
+  backtest_top20_<amount>  the backtest again for each of backtest_amounts (MXN), so
+                  the dashboard can show it for an amount the reader types
 Fills and NAV are recomputed from prices each run (fills are next-day closes, so
 the result is the same whenever it is computed). Runs after compute_factors.
   python -m src.jobs.paper_portfolio
@@ -179,11 +181,15 @@ def main() -> None:
             market = load_market(cur, cfg["backtest_start"])
             bench_ticker = cfg["benchmark"]
             deposits = contributions(cur, cfg["owner"]) or [(cfg["forward_start"], float(cfg["initial_mxn"]))]
-            for name, start, keep in ((BACKTEST, cfg["backtest_start"], False), (FORWARD, cfg["forward_start"], True)):
+            # the forward book uses the investor's real deposits; the backtest starts
+            # with their first one, so it faces the same whole-share limits; the
+            # backtest_amounts books replay it for other starting amounts (the dashboard's
+            # "other amount" view picks the nearest)
+            bt = cfg["backtest_start"]
+            books = [(BACKTEST, bt, False, [(bt, deposits[0][1])]), (FORWARD, cfg["forward_start"], True, deposits)]
+            books += [(f"{BACKTEST}_{int(a)}", bt, False, [(bt, float(a))]) for a in cfg.get("backtest_amounts", [])]
+            for name, start, keep, flows in books:
                 signals = signal_days(factor_days, start, latest_bar)
-                # the forward book uses the investor's real deposits; the backtest starts
-                # with their first one, so it faces the same whole-share limits
-                flows = deposits if keep else [(start, deposits[0][1])]
                 if not signals:
                     em.emit("INFO", "paper_waiting", f"{name}: no factor day on or after {start} yet")
                     continue
