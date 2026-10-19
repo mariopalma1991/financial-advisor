@@ -129,6 +129,7 @@ def run_agent(http: httpx.Client | None, *, role: str, system: str, prompt: str,
                         out = call_tool(name, {**args, "as_of": as_of})
                     except Exception as exc:  # a tool bug must not end the committee
                         out = {"error": {"code": "tool_failed", "message": f"{type(exc).__name__}: {exc}"}}
+                    tools._index_refs(out.get("data"), res.seen)
                     res.tool_calls.append({"tool": name, "args": args, "ms": round((time.monotonic() - t0) * 1000),
                                            "error": (out.get("error") or {}).get("code")})
                 messages.append({"role": "tool", "tool_call_id": c["id"], "content": json.dumps(out, default=str)})

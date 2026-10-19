@@ -164,6 +164,7 @@ class AgentResult:
     turns: list[dict] = field(default_factory=list)  # the trace: every request's new messages and response
     error: str | None = None
     draft: dict | None = None  # the final output as the agent wrote it, markers unfilled
+    seen: dict[str, dict] = field(default_factory=dict)  # every row (by _ref) its tools returned
 
 
 def _block(b: Any) -> dict:
@@ -239,6 +240,7 @@ def run_agent(client: Any, *, role: str, system: str, prompt: str, tool_defs: li
                     out = call_tool(b.name, {**args, "as_of": as_of})
                 except Exception as exc:  # a tool bug must not end the committee
                     out = {"error": {"code": "tool_failed", "message": f"{type(exc).__name__}: {exc}"}}
+                tools._index_refs(out.get("data"), res.seen)
                 res.tool_calls.append({"tool": b.name, "args": args, "ms": round((time.monotonic() - t0) * 1000),
                                        "error": (out.get("error") or {}).get("code")})
             results.append({"type": "tool_result", "tool_use_id": b.id, "content": json.dumps(out, default=str),
