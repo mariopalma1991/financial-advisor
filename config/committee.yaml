@@ -4,7 +4,7 @@
 # list (Mario, 2026-10-19): it reviews candidates, it does not pick stocks.
 
 committee:
-  model: claude-opus-5-5
+  model: claude-sonnet-5-5     # Mario, 2026-10-19 (was claude-opus-5-5)
   effort: medium               # output_config.effort for every agent
   max_tokens: 16000            # per API call
   horizon_months: 6            # the horizon every agent judges (scored at 1, 3 and 6 months)
