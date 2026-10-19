@@ -15,6 +15,9 @@ portfolio:
   # so later code or data changes can't rewrite them. The backtest is recomputed.
   forward_start: "2026-10-19"
   backtest_start: "2025-10-31"
+  # The backtest again with these starting amounts (MXN), stored as backtest_top20_<amount>;
+  # the dashboard shows the one nearest to the amount the reader types.
+  backtest_amounts: [5000, 10000, 20000, 50000, 100000, 250000, 500000, 1000000]
 
 taxes:
   isr_on_gains: 0.10          # SIC: 10% on the year's net gain, withheld by the broker
