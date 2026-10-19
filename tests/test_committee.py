@@ -1,0 +1,186 @@
+from types import SimpleNamespace as NS
+
+import pytest
+
+from src.committee import agent, committee, store
+from src.committee.agent import DECISION_TOOL, OPINION_TOOL, BudgetExceeded, run_agent
+
+CFG = {"model": "claude-opus-5-5", "max_tokens": 1000, "effort": "medium"}
+PRICES = {"input": 4.0, "output": 20.0, "cache_write": 5.0, "cache_read": 0.2}
+
+
+def _usage(i=1000, o=100):
+    return NS(input_tokens=i, output_tokens=o, cache_creation_input_tokens=0, cache_read_input_tokens=0,
+              model_dump=lambda **_: {"input_tokens": i, "output_tokens": o})
+
+
+def _use(name, inp, i="tu1"):
+    return NS(type="tool_use", name=name, input=inp, id=i, model_dump=lambda **_: {"type": "tool_use", "name": name})
+
+
+def _text(t):
+    return NS(type="text", text=t, model_dump=lambda **_: {"type": "text", "text": t})
+
+
+class FakeClient:
+    """Replays scripted responses and records each request."""
+
+    def __init__(self, responses):
+        self.responses = list(responses)
+        self.requests = []
+        self.beta = NS(messages=NS(create=self._create))
+
+    def _create(self, **kw):
+        self.requests.append({**kw, "messages": list(kw["messages"])})
+        content, stop = self.responses.pop(0)
+        return NS(content=content, stop_reason=stop, model=kw["model"], usage=_usage())
+
+
+OPINION = {"stance": "buy", "score": 7, "confidence": 0.6, "expected_move_pct": 12, "stop_pct": 8,
+           "thesis": "Crece.", "key_points": [{"point": "ROE alto", "cites": [{"cite": "x:AAPL#roe", "value": 0.3}]}],
+           "risks": [], "change_my_mind": [], "missing_data": []}
+TOOLS = [{"name": "get_fundamentals", "description": "", "input_schema": {"type": "object"}}]
+
+
+def _run(client, call_tool, max_calls=2, spend=lambda c: None, as_of="2026-10-16"):
+    return run_agent(client, role="optimista", system="s", prompt="p", tool_defs=TOOLS, final_tool=OPINION_TOOL,
+                     as_of=as_of, max_calls=max_calls, cfg=CFG, prices=PRICES, spend=spend, call_tool=call_tool)
+
+
+def test_agent_forces_as_of_and_returns_final_output():
+    calls = []
+    client = FakeClient([([_use("get_fundamentals", {"ticker": "AAPL", "as_of": "2030-01-01"})], "tool_use"),
+                         ([_use("entregar_opinion", OPINION, "tu2")], "tool_use")])
+    res = _run(client, lambda n, a: calls.append((n, a)) or {"data": {}})
+    assert calls == [("get_fundamentals", {"ticker": "AAPL", "as_of": "2026-10-16"})]
+    assert res.output == OPINION and res.error is None
+    assert res.tool_calls[0]["tool"] == "get_fundamentals" and "as_of" not in res.tool_calls[0]["args"]
+    assert res.cost_usd == pytest.approx(2 * (1000 * 4 + 100 * 20) / 1e6)
+    # the tool result goes back in one user message, after the assistant turn
+    last = client.requests[1]["messages"]
+    assert last[-2]["role"] == "assistant" and last[-1]["content"][0]["type"] == "tool_result"
+    assert client.requests[0]["fallbacks"] == "default" and client.requests[0]["output_config"] == {"effort": "medium"}
+
+
+def test_agent_enforces_call_budget_and_role_tools():
+    calls = []
+    client = FakeClient([([_use("get_fundamentals", {"ticker": "A"}, "a"), _use("get_fundamentals", {"ticker": "A"}, "b"),
+                           _use("get_portfolio", {}, "c")], "tool_use"),
+                         ([_use("entregar_opinion", OPINION, "d")], "tool_use")])
+    res = _run(client, lambda n, a: calls.append(n) or {"data": {}}, max_calls=1)
+    assert calls == ["get_fundamentals"]
+    results = client.requests[1]["messages"][-1]["content"]
+    assert [r.get("is_error", False) for r in results] == [False, True, True]
+    assert "budget" in results[1]["content"] and "not_allowed" in results[2]["content"]
+    assert res.output == OPINION
+
+
+def test_agent_nudges_once_then_gives_up():
+    client = FakeClient([([_text("listo")], "end_turn"), ([_text("ya")], "end_turn")])
+    res = _run(client, lambda n, a: {})
+    assert res.output is None and res.error.startswith("no_final_output")
+    assert "entregar_opinion" in client.requests[1]["messages"][-1]["content"]
+
+
+def test_agent_tool_exception_becomes_error_result():
+    def boom(n, a):
+        raise ValueError("db down")
+    client = FakeClient([([_use("get_fundamentals", {"ticker": "A"})], "tool_use"),
+                         ([_use("entregar_opinion", OPINION, "z")], "tool_use")])
+    res = _run(client, boom)
+    assert res.tool_calls[0]["error"] == "tool_failed"
+    assert client.requests[1]["messages"][-1]["content"][0]["is_error"] is True
+
+
+def test_budget_cap_stops_the_agent():
+    def spend(c):
+        raise BudgetExceeded("cap")
+    client = FakeClient([([_use("entregar_opinion", OPINION)], "tool_use")])
+    with pytest.raises(BudgetExceeded):
+        _run(client, lambda n, a: {}, spend=spend)
+
+
+def test_final_tool_schemas_are_strict():
+    for t in (OPINION_TOOL, DECISION_TOOL):
+        s = t["input_schema"]
+        assert t["strict"] and s["additionalProperties"] is False
+        assert set(s["required"]) == set(s["properties"])
+
+
+def test_role_tool_defs_hide_as_of():
+    defs = agent.role_tool_defs("optimista")
+    assert {d["name"] for d in defs} >= {"get_fundamentals", "get_price_technicals"}
+    assert all("as_of" not in d["input_schema"].get("properties", {}) for d in defs)
+    assert all("as_of" not in d["input_schema"].get("required", []) for d in defs)
+
+
+def test_cites_of_collects_points_and_chair_cites():
+    assert committee.cites_of(OPINION) == [{"cite": "x:AAPL#roe", "value": 0.3}]
+    assert committee.cites_of({"cites": [{"cite": "y#z", "value": 1}]}) == [{"cite": "y#z", "value": 1}]
+    assert committee.cites_of(None) == []
+
+
+def _result(decision="veto", target=20, stop=10):
+    chair = agent.AgentResult(role="presidente", output={
+        "decision": decision, "score": 4, "confidence": 0.7, "expected_move_pct": 5, "target_pct": target,
+        "stop_pct": stop, "veto_reason": "deuda" if decision == "veto" else None, "rationale": "r",
+        "agreements": [], "disagreements": [], "invalidation": [], "cites": []}, cost_usd=0.5)
+    m = agent.AgentResult(role="optimista", output=OPINION, cost_usd=0.25)
+    return committee.CommitteeResult(ticker="AAPL", as_of=None, members=[m], chair=chair,
+                                     price={"price_usd": 100.0, "usd_mxn": 18.0, "price_mxn": 1800.0,
+                                            "bar_date": "2026-10-16"})
+
+
+def test_alert_row_vetoed_buy_in_mxn():
+    row = store.alert_row(7, _result("veto"), 6)
+    assert row[:9] == (7, "2026-10-16", "all", "AAPL", "buy", True, "deuda", 0.7, 6)
+    assert row[11:14] == (1800.0, 2160.0, 1620.0)
+    approved = store.alert_row(7, _result("approve", target=None, stop=-5), 6)
+    assert approved[5] is False and approved[6] is None and approved[12] is None and approved[13] == 1710.0
+
+
+def test_opinion_rows_stance_per_role():
+    res = _result("approve")
+    assert store.opinion_row(1, res.chair, "presidente", {})[2] == "buy"
+    assert store.opinion_row(1, _result("veto").chair, "presidente", {})[2] == "veto"
+    row = store.opinion_row(1, res.members[0], "presidente", {"n": 1})
+    assert row[2] == "buy" and row[3] == 7.0 and row[5] == "Crece."
+    assert res.cost_usd == 0.75
+
+
+def test_save_trace_local_without_storage(tmp_path):
+    doc = store.trace_doc(_result(), 9, {"committee": {}})
+    assert store.save_trace(doc, tmp_path, None, None) is None
+    assert (tmp_path / "committee_traces/2026-10-16/AAPL_9.json.gz").exists()
+
+
+def test_committee_run_members_then_chair(monkeypatch):
+    monkeypatch.setattr(committee.tools, "get_ticker_overview", lambda t, as_of=None: {"data": {
+        "last_bar": {"_ref": "current_price_bars:AAPL|2026-10-16", "close": 100.0, "bar_date": "2026-10-16"}}})
+    monkeypatch.setattr(committee.tools, "get_cost_model", lambda as_of=None: {"data": {
+        "usd_mxn": {"_ref": "macro_latest:DEXMXUS|2026-10-16", "value": 18.0, "obs_date": "2026-10-16"}}})
+    monkeypatch.setattr(committee.tools, "resolve_refs", lambda cites, as_of=None: {"data": {
+        "results": [{"cite": c["cite"], "status": "found", "match": False} for c in cites],
+        "summary": {"checked": len(cites), "mismatches": len(cites), "unresolved": 0}}})
+    monkeypatch.setattr(committee, "role_tool_defs", lambda role: TOOLS)
+    decision = _result("approve").chair.output
+    client = FakeClient([([_use("entregar_opinion", OPINION)], "tool_use")] * 5
+                        + [([_use("entregar_decision", decision)], "tool_use")])
+    cfg = committee.load_config()
+    res = committee.run(client, "aapl", None, cfg, context="lugar 3")
+    assert [m.role for m in res.members] == cfg["committee"]["members"] and res.error is None
+    assert res.price["price_mxn"] == 1800.0
+    assert res.chair.output["decision"] == "approve"
+    chair_prompt = client.requests[-1]["messages"][0]["content"]
+    assert "x:AAPL#roe" in chair_prompt and "citas_no_verificadas" in chair_prompt and "lugar 3" in chair_prompt
+    assert res.validation["optimista"]["mismatches"] == 1
+
+
+def test_committee_budget_cap_marks_error(monkeypatch):
+    monkeypatch.setattr(committee, "price_now", lambda t, a: {"price_mxn": None})
+    monkeypatch.setattr(committee, "role_tool_defs", lambda role: TOOLS)
+    cfg = committee.load_config()
+    cfg["committee"]["max_usd_per_run"] = 0.001
+    client = FakeClient([([_use("entregar_opinion", OPINION)], "tool_use")])
+    res = committee.run(client, "AAPL", None, cfg)
+    assert res.error.startswith("budget") and res.chair is None
