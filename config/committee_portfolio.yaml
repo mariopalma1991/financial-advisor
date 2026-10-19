@@ -1,0 +1,18 @@
+# Capa 4: the Capa 2 model portfolio (forward_top20) with the committee's veto
+# (src/jobs/committee_portfolio.py). Each book copies Capa 2's decisions and skips the
+# new buys its committee vetoed; the vetoed money stays in cash until Capa 2's next buy.
+# Same deposits, dates, costs and whole shares as Capa 2, against VOO, in MXN.
+
+source_portfolio: forward_top20
+# A review counts only if it started after Capa 2 decided and finished before the
+# buy's close (14:00 CST of the next trading day), so the veto never sees the fill.
+review_deadline_utc: "20:00"
+# No review in time (failed or not run): the book buys as Capa 2 did (a veto needs a review).
+books:
+  capa4_sonnet:   {models: [claude-sonnet-5-5], veto_votes: 1}
+  capa4_gemini:   {models: ["openrouter:google/gemini-3.8-flash"], veto_votes: 1}
+  capa4_deepseek: {models: ["openrouter:deepseek/deepseek-v4-pro-0813"], veto_votes: 1}
+  # Vetoed when at least 2 of the 3 models veto.
+  capa4_mayoria:
+    models: [claude-sonnet-5-5, "openrouter:google/gemini-3.8-flash", "openrouter:deepseek/deepseek-v4-pro-0813"]
+    veto_votes: 2
