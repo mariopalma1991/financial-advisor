@@ -130,7 +130,7 @@ Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
 
 ## Agent committee (Capa 3)
 
-`src/jobs/run_committee.py` (workflow `committee`, manual; needs `ANTHROPIC_API_KEY`)
+`src/jobs/run_committee.py` (workflow `committee`; needs `ANTHROPIC_API_KEY`)
 reviews candidates from the factor list and approves or vetoes each buy: the committee
 is a veto over the list, it does not pick stocks. Settings in `config/committee.yaml`,
 prompts in `src/committee/prompts.py`.
@@ -152,7 +152,12 @@ prompts in `src/committee/prompts.py`.
 python -m src.jobs.run_committee AAPL            # one ticker, latest data
 python -m src.jobs.run_committee --top 20        # the day's top 20 by factor rank
 python -m src.jobs.run_committee AAPL --as-of 2026-10-16
+python -m src.jobs.run_committee --new-buys      # the model portfolio's latest buys not yet reviewed
 ```
+
+On schedule (22:15 and 06:15 CST) the workflow runs `--new-buys`: only the stocks
+`forward_top20` decided to buy on its latest decision day, before they fill at the next
+close, at most `max_new_buys` per run; a ticker that failed twice is left for a person.
 
 ## Cloud operation
 

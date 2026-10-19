@@ -1,10 +1,14 @@
 name: committee
 
 # Capa 3: the agent committee reviews candidates from the Capa 2 factor list and
-# approves or vetoes each buy (src/jobs/run_committee.py). Manual for now; the
-# monthly run on the top 20 comes once the cost per ticker is known.
+# approves or vetoes each buy (src/jobs/run_committee.py). On schedule it reviews only
+# the model portfolio's new buys (decided after the 20:00 CST ingest, bought at the next
+# close): at 22:15 and 06:15 CST, so a failed night run gets one more try before the fill.
+# Manual runs take tickers or the day's top N.
 
 on:
+  schedule:
+    - cron: "15 4,12 * * *"
   workflow_dispatch:
     inputs:
       tickers:
@@ -29,18 +33,45 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
+      - name: Check for new buys to review
+        id: pending
+        if: github.event_name == 'schedule'
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          pip install -q psycopg2-binary
+          python - <<'PY'
+          import os, psycopg2
+          with psycopg2.connect(os.environ["SUPABASE_DB_URL"]) as conn, conn.cursor() as cur:
+              cur.execute("""select count(*) from paper_decisions d
+                  where d.portfolio = 'forward_top20' and d.action = 'buy'
+                    and d.signal_day = (select max(signal_day) from paper_decisions where portfolio = 'forward_top20')
+                    and not exists (select 1 from committee_runs r where r.ticker = d.ticker
+                                    and r.status = 'done' and r.as_of::date >= d.signal_day)
+                    and (select count(*) from committee_runs r where r.ticker = d.ticker
+                         and r.status <> 'done' and r.as_of::date >= d.signal_day) < 2""")
+              n = cur.fetchone()[0]
+          print(f"new buys not yet reviewed: {n}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"run={'true' if n else 'false'}\n")
+          PY
+
       - uses: actions/checkout@v5
+        if: github.event_name != 'schedule' || steps.pending.outputs.run == 'true'
 
       - uses: actions/setup-python@v6
+        if: github.event_name != 'schedule' || steps.pending.outputs.run == 'true'
         with:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
+        if: github.event_name != 'schedule' || steps.pending.outputs.run == 'true'
         run: pip install -e .
 
       - name: Run committee
+        if: github.event_name != 'schedule' || steps.pending.outputs.run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
@@ -54,7 +85,13 @@ jobs:
           COMMITTEE_AS_OF: ${{ inputs.as_of }}
           TICKERS: ${{ inputs.tickers }}
           TOP: ${{ inputs.top || '1' }}
-        run: python -m src.jobs.run_committee $TICKERS --top "$TOP"
+          SCHEDULED: ${{ github.event_name == 'schedule' }}
+        run: |
+          if [ "$SCHEDULED" = "true" ]; then
+            python -m src.jobs.run_committee --new-buys
+          else
+            python -m src.jobs.run_committee $TICKERS --top "$TOP"
+          fi
 
       - name: Keep traces
         if: always()
