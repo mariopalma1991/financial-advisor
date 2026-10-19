@@ -193,11 +193,24 @@ def test_committee_run_members_then_chair(monkeypatch):
         "results": [{"cite": c, "status": "ref_not_found"} for c in cites]}})
     monkeypatch.setattr(committee, "role_tool_defs", lambda role: TOOLS)
     decision = _result("approve").chair.output
-    client = FakeClient([([_use("entregar_opinion", OPINION)], "tool_use")] * 5
+    shared = {"data": {"sector": "Tech"}}
+    monkeypatch.setitem(committee.tools.ALL_TOOLS, "get_fundamentals", lambda ticker, as_of=None: shared)
+    client = FakeClient([([_use("entregar_opinion", OPINION)], "tool_use")] * 10
                         + [([_use("entregar_decision", decision)], "tool_use")])
     cfg = committee.load_config()
+    cfg["committee"]["shared_data"] = ["get_fundamentals"]
     res = committee.run(client, "aapl", None, cfg, context="lugar 3")
     assert [m.role for m in res.members] == cfg["committee"]["members"] and res.error is None
+    # the shared data is in each member's first message (its role may call it) and marked in its calls
+    assert "\"sector\": \"Tech\"" in client.requests[0]["messages"][0]["content"]
+    assert res.members[0].tool_calls[0] == {"tool": "get_fundamentals", "args": {"ticker": "AAPL"},
+                                            "prefetched": True, "error": None}
+    # rebuttal round: no tools, the others' views in the prompt, stored as <role>_replica
+    assert [r.role for r in res.rebuttals] == [m + "_replica" for m in cfg["committee"]["members"]]
+    rebut = client.requests[5]
+    assert [t["name"] for t in rebut["tools"]] == ["entregar_opinion"]
+    assert "Opiniones de los otros miembros" in rebut["messages"][0]["content"]
+    assert "\"postura_inicial\": \"buy\"" in client.requests[-1]["messages"][0]["content"]
     assert res.price["price_mxn"] == 1800.0
     assert res.chair.output["decision"] == "approve"
     chair_prompt = client.requests[-1]["messages"][0]["content"]
@@ -213,6 +226,7 @@ def test_committee_budget_cap_marks_error(monkeypatch):
     monkeypatch.setattr(committee, "role_tool_defs", lambda role: TOOLS)
     cfg = committee.load_config()
     cfg["committee"]["max_usd_per_run"] = 0.001
+    cfg["committee"]["shared_data"] = []
     client = FakeClient([([_use("entregar_opinion", OPINION)], "tool_use")])
     res = committee.run(client, "AAPL", None, cfg)
     assert res.error.startswith("budget") and res.chair is None
