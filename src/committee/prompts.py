@@ -20,6 +20,9 @@ revisa cada cita.
 - En el texto (tesis, puntos, razonamiento) escribe las cifras como las lee una persona: una fracción como \
 porcentaje (0.4282 es 42.8%), montos grandes en millones (22822500.0 es 22.8 millones de USD) y fechas \
 legibles. El valor exacto va solo en cites.
+- El inversionista piensa en pesos: los precios, niveles de entrada, soportes y stops que menciones en el \
+texto van en MXN (si tienes get_cost_model, convierte con su tipo de cambio) o como porcentaje sobre el precio \
+actual, nunca solo en USD.
 - Lee data_status y notes de cada respuesta; si faltan datos importantes, dilo y baja tu confianza.
 - Tienes un número limitado de llamadas. Pide lo que tu papel necesita, no todo.
 - Cuando termines, llama a la herramienta entregar_opinion una sola vez con tu análisis. Escribe en español.\
