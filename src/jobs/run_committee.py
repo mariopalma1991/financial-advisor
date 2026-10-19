@@ -6,6 +6,7 @@ store each run, every agent's opinion and the chair's approve-or-veto alert
   python -m src.jobs.run_committee --top 20           # the day's top 20 by factor rank
   python -m src.jobs.run_committee AAPL --as-of 2026-10-16
   python -m src.jobs.run_committee --new-buys          # the portfolio's latest buys not yet reviewed
+  python -m src.jobs.run_committee --weekly            # weekly model test: top names this model has not seen lately
   python -m src.jobs.run_committee AAPL --model openrouter:google/gemini-3.8-flash   # another model, this run only
 """
 from __future__ import annotations
@@ -49,6 +50,18 @@ def new_buys(cur, portfolio: str, limit: int, model: str) -> list[str]:
     return [r[0] for r in cur.fetchall()]
 
 
+def recently_reviewed(cur, model: str, days: int) -> set[str]:
+    cur.execute("select distinct ticker from committee_runs where model = %s and status = 'done' "
+                "and started_at > now() - make_interval(days => %s)", (model, days))
+    return {r[0] for r in cur.fetchall()}
+
+
+def weekly_picks(ranked: list[str], seen: set[str], n: int) -> list[str]:
+    """The best-ranked names this model has not reviewed lately, so each week's
+    verdicts are new ones."""
+    return [t for t in ranked if t not in seen][:n]
+
+
 def factor_context(ticker: str, as_of: str | None) -> str:
     s = (tools.get_factor_scores(ticker, as_of=as_of).get("data") or {}).get("scores") or {}
     if not s:
@@ -63,6 +76,8 @@ def main() -> None:
     p.add_argument("--top", type=int, default=0, help="take the day's top N by factor rank")
     p.add_argument("--new-buys", action="store_true",
                    help="review the model portfolio's latest buys the committee has not seen")
+    p.add_argument("--weekly", action="store_true",
+                   help="weekly model test: the factor list's best names this model has not reviewed lately")
     p.add_argument("--as-of", default=os.getenv("COMMITTEE_AS_OF") or None)
     p.add_argument("--model", default=os.getenv("COMMITTEE_MODEL") or None,
                    help="model for this run only (default: config/committee.yaml)")
@@ -83,6 +98,12 @@ def main() -> None:
         if not tickers:
             print("no new buys to review")
             return
+    elif args.weekly:
+        c = cfg["committee"]
+        with pg_connection() as conn, conn.cursor() as cur:
+            seen = recently_reviewed(cur, c["model"], c["weekly_fresh_days"])
+        ranked = [x["ticker"] for x in candidates(c["default_top_n"], as_of)]
+        tickers = weekly_picks(ranked, seen, c["weekly_top"])
     elif not tickers:
         tickers = [c["ticker"] for c in candidates(args.top or cfg["committee"]["default_top_n"], as_of)]
     at = envelope.parse_as_of(as_of)
@@ -97,7 +118,8 @@ def main() -> None:
     with job_run("run_committee") as em:
         for t in tickers:
             with pg_connection() as conn, conn.cursor() as cur:
-                run_id = store.start_run(cur, t, as_of_ts, cfg, current_run_id())
+                run_id = store.start_run(cur, t, as_of_ts, cfg, current_run_id(),
+                                         kind="weekly_test" if args.weekly else "new_idea")
                 conn.commit()
                 try:
                     res = committee.run(client, t, as_of, cfg, context=factor_context(t, as_of))

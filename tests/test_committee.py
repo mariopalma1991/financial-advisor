@@ -317,3 +317,15 @@ def test_agent_remembers_rows_it_was_shown():
                          ([_use("entregar_opinion", OPINION, "b")], "tool_use")])
     res = _run(client, lambda n, a: {"data": {"x": {"_ref": "fund:AAPL|1", "roe": 0.3}}})
     assert res.seen == {"fund:AAPL|1": {"_ref": "fund:AAPL|1", "roe": 0.3}}
+
+
+def test_weekly_picks_skip_names_the_model_saw_lately():
+    from src.jobs.run_committee import weekly_picks
+    ranked = ["OSCR", "DAR", "PBF", "CNC", "RELY", "AAPL"]
+    assert weekly_picks(ranked, {"OSCR", "PBF"}, 3) == ["DAR", "CNC", "RELY"]
+    assert weekly_picks(ranked, set(ranked), 3) == []
+
+
+def test_alerts_are_scored_after_one_week():
+    from src.transforms.outcomes import HORIZONS
+    assert HORIZONS[0] == 5 and 21 in HORIZONS

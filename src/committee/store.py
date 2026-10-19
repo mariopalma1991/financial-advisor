@@ -63,11 +63,11 @@ def trace_doc(res: CommitteeResult, run_id: int, cfg: dict) -> dict:
                         "turns": a.turns} for a in agents]}
 
 
-def start_run(cur, ticker: str, as_of_ts: datetime, cfg: dict, gh_run: str) -> int:
+def start_run(cur, ticker: str, as_of_ts: datetime, cfg: dict, gh_run: str, kind: str = "new_idea") -> int:
     c = cfg["committee"]
     cur.execute("insert into committee_runs (kind, ticker, as_of, model, prompt_version, run_id) "
-                "values ('new_idea', %s, %s, %s, %s, %s) returning id",
-                (ticker, as_of_ts, c["model"], c["prompt_version"], gh_run))
+                "values (%s, %s, %s, %s, %s, %s) returning id",
+                (kind, ticker, as_of_ts, c["model"], c["prompt_version"], gh_run))
     return cur.fetchone()[0]
 
 
