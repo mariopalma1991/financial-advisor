@@ -113,7 +113,9 @@ Amounts the investor sees are in Mexican pesos (USD/MXN from FRED `DEXMXUS`).
   position is skipped until the budget grows. VOO gets the same pesos on the same days.
   `forward_top20` stores each decision once (from `forward_start`); `backtest_top20`
   replays the past year, and `backtest_top20_<amount>` replays it for each of
-  `backtest_amounts` (the dashboard's "other amount" view). Tables `paper_decisions`, `paper_fills`, `paper_nav`; view
+  `backtest_amounts` (the dashboard's "other amount" view). The investor sets the
+  initial amount and adds deposits on the "Mi inversión" page; a check every 10 minutes
+  reruns the job when `investor_contributions` changed. Tables `paper_decisions`, `paper_fills`, `paper_nav`; view
   `paper_performance`; MCP `get_portfolio`.
 - `committee_runs`, `committee_opinions`, `committee_alerts`: written by the committee
   runner: each run's as_of (replayable), each agent's stance, reasoning, cited refs and
