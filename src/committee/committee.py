@@ -319,7 +319,7 @@ def run(client: Any, ticker: str, as_of: str | None, cfg: dict, context: str = "
         chair_prompt = (f"{prompt}\n\nOpiniones de los miembros (JSON):\n"
                         f"{json.dumps(briefs, ensure_ascii=False, default=str)}")
         res.chair = agent(
-            role=c["chair"], system=prompts.chair_system(ticker, horizon), prompt=chair_prompt,
+            role=c["chair"], system=prompts.chair_system(ticker, horizon, bool(c.get("rebuttal"))), prompt=chair_prompt,
             tool_defs=role_tool_defs(c["chair"]), final_tool=DECISION_TOOL, as_of=as_of,
             max_calls=cfg["max_calls"][c["chair"]])
         res.validation |= validate([res.chair], as_of)
