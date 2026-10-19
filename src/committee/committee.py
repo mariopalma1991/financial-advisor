@@ -42,6 +42,22 @@ def _clean(ref: str) -> str:
     return ref.strip().removeprefix("<_ref>")  # some models copy the placeholder too
 
 
+def repair(cite: str, seen: dict[str, dict]) -> str:
+    """The reference an agent meant, when it copied one slightly wrong: the same
+    reference with its calc: prefix, or else the only row it was shown for that
+    ticker that carries the field. Anything less certain stays as written (and
+    fails)."""
+    ref, _, path = cite.partition("#")
+    if ref in seen or not path:
+        return cite
+    if "calc:" + ref in seen:
+        return f"calc:{ref}#{path}"
+    ticker = ref.partition(":")[2].split("|")[0]
+    hits = [r for r, row in seen.items()
+            if ticker and ticker in r.partition(":")[2].split("|") and tools._field(row, path)[0]]
+    return f"{hits[0]}#{path}" if len(hits) == 1 else cite
+
+
 def cites_of(output: dict | None) -> list[str]:
     """The references an agent's text cites through its markers, first use first."""
     found = [_clean(m.group(1)) for t in texts_of(output or {}) for m in MARKER.finditer(t)]
@@ -96,19 +112,23 @@ def validate(results: list[AgentResult], as_of: str | None) -> dict[str, dict]:
     for r in results:
         o = r.draft if r.draft is not None else r.output
         cites = cites_of(o)
+        fixed = {c: repair(c, r.seen) for c in cites}
         found: dict[str, Any] = {}
         failed: list[dict] = []
         if cites:
-            ans = tools.resolve_refs(cites, as_of=as_of)
-            for x in (ans.get("data") or {}).get("results") or []:
+            ans = tools.resolve_refs(list(dict.fromkeys(fixed.values())), as_of=as_of)
+            by_ref = {x.get("cite"): x for x in (ans.get("data") or {}).get("results") or []}
+            for c in cites:
+                x = by_ref.get(fixed[c]) or {"cite": c, "status": "ref_not_found"}
                 v = x.get("value")
                 if x.get("status") == "found" and v is not None and not isinstance(v, (dict, list)):
-                    found[x["cite"]] = v
+                    found[c] = v
                 else:  # a whole object (e.g. #returns instead of #returns.6m) is not one number
                     failed.append({k: x.get(k) for k in ("cite", "status", "detail") if x.get(k) is not None}
                                   | ({"status": "not_a_value"} if x.get("status") == "found" else {}))
         prose = [t for k in _PROSE for t in texts_of({k: (o or {}).get(k)})]
         out[r.role] = {"n": len(cites), "checked": len(found), "mismatches": 0, "unresolved": len(failed),
+                       "repaired": {c: f for c, f in fixed.items() if f != c},
                        "loose_numbers": sum(loose_numbers(t) for t in prose), "failed": failed, "values": found}
     return out
 

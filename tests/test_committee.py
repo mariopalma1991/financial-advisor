@@ -297,3 +297,23 @@ def test_validate_rejects_whole_objects(monkeypatch):
     r = agent.AgentResult(role="riesgo_timing", output={**OPINION, "key_points": ["{t:A#returns}", "{t:A#returns.6m!pct}"]})
     v = committee.validate([r], None)["riesgo_timing"]
     assert v["values"] == {"t:A#returns.6m": 1.0196} and v["failed"][0]["status"] == "not_a_value"
+
+
+def test_repair_finds_the_reference_the_agent_saw():
+    seen = {"calc:price_metrics:OSCR|2026-10-16": {"returns": {"6m": 1.02}},
+            "street_latest:OSCR|2026-10-15": {"short_pct_float": 0.049},
+            "quarterly:OSCR|2026-06-30": {"growth_yoy": 0.3}, "quarterly:OSCR|2026-03-31": {"growth_yoy": 0.5}}
+    assert committee.repair("price_metrics:OSCR|2026-10-16#returns.6m", seen) == \
+        "calc:price_metrics:OSCR|2026-10-16#returns.6m"
+    assert committee.repair("short_interest:OSCR|street_latest#short_pct_float", seen) == \
+        "street_latest:OSCR|2026-10-15#short_pct_float"
+    # two rows carry the field: no guess
+    assert committee.repair("trend:OSCR|x#growth_yoy", seen) == "trend:OSCR|x#growth_yoy"
+    assert committee.repair("street_latest:CNC|x#short_pct_float", seen) == "street_latest:CNC|x#short_pct_float"
+
+
+def test_agent_remembers_rows_it_was_shown():
+    client = FakeClient([([_use("get_fundamentals", {"ticker": "AAPL"})], "tool_use"),
+                         ([_use("entregar_opinion", OPINION, "b")], "tool_use")])
+    res = _run(client, lambda n, a: {"data": {"x": {"_ref": "fund:AAPL|1", "roe": 0.3}}})
+    assert res.seen == {"fund:AAPL|1": {"_ref": "fund:AAPL|1", "roe": 0.3}}
