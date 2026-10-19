@@ -82,11 +82,7 @@ def load_inputs(cur, as_of: date, history: dict[str, list[dict]] | None = None) 
         bars[r["ticker"]].append({"bar_date": _iso(r["bar_date"]), "close": float(r["close"]),
                                   "volume": float(r["volume"] or 0), "ingested_at": _iso(r["ingested_at"])})
     if history:
-        lo, hi = (as_of - timedelta(days=400)).isoformat(), as_of.isoformat()
-        for t, hb in history.items():
-            older = [b for b in hb if lo < b["bar_date"] <= hi]
-            if older:
-                bars[t] = older + bars.get(t, [])
+        price_history.merge(bars, history, (as_of - timedelta(days=400)).isoformat(), as_of.isoformat())
     splits: dict[str, list[dict]] = defaultdict(list)
     for r in _rows(cur, "select distinct ticker, ex_date, ratio from raw_corporate_actions "
                         "where action_type = 'split' and ratio > 0 and ex_date <= %(day)s", p):
@@ -244,11 +240,8 @@ def main() -> None:
             days = month_ends(cur, args.backfill_months) if args.backfill_months else []
             days.append(args.as_of or latest_bar_day(cur))
             total = 0
-            cur.execute("select min(bar_date) as d from price_bars_daily")
-            db_start = cur.fetchone()["d"]
             # a day whose year of prices starts before the database reads the archive
-            history = (price_history.load(db_start)
-                       if db_start and min(days) - timedelta(days=400) < db_start else None)
+            history = price_history.load() if price_history.needed(cur, min(days) - timedelta(days=400)) else None
             for d in days:
                 scored = fx.score_frame(load_inputs(cur, d, history))
                 n = store(cur, scored)

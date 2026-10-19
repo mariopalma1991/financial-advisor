@@ -6,8 +6,8 @@ backtest's early months after roll_window trims them, so the closes and volumes
 from Yahoo live at price_history/bars.parquet (all tickers, one file: a few MB
 read once per run, to spare Storage egress).
 
-Readers use these rows only before the database's first bar, so the database
-stays the source wherever it has data. Without Storage settings the readers get
+Readers use these rows only before each ticker's first bar in the database, so
+the database stays the source wherever it has data. Without Storage settings the readers get
 nothing and work from the database alone.
 """
 from __future__ import annotations
@@ -38,11 +38,9 @@ def write(rows: list[dict], s3=None) -> int:
     return table.num_rows
 
 
-def load(before: date | str | None, s3=None) -> dict[str, list[dict]]:
-    """Bars per ticker (ascending) dated before `before` (the database's first bar).
-    Empty when Storage isn't configured or the file doesn't exist yet."""
-    if before is None:
-        return {}
+def load(s3=None) -> dict[str, list[dict]]:
+    """All archived bars per ticker (ascending). Empty when Storage isn't configured
+    or the file doesn't exist yet."""
     if s3 is None and not os.getenv("SUPABASE_S3_ENDPOINT"):
         log.info("price_history: no Storage settings, database only")
         return {}
@@ -52,14 +50,34 @@ def load(before: date | str | None, s3=None) -> dict[str, list[dict]]:
     except Exception as e:  # noqa: BLE001 -- missing file or Storage down: the database alone still works
         log.warning("price_history: not read (%s)", e)
         return {}
-    cut = str(before)[:10]
     out: dict[str, list[dict]] = defaultdict(list)
     for r in pq.read_table(io.BytesIO(obj["Body"].read())).to_pylist():
         d = str(r["bar_date"])[:10]
-        if d < cut and r["close"] and r["close"] > 0:
+        if r["close"] and r["close"] > 0:
             out[r["ticker"]].append({"bar_date": d, "close": float(r["close"]),
                                      "volume": float(r["volume"] or 0),
                                      "ingested_at": str(r["ingested_at"])})
     for b in out.values():
         b.sort(key=lambda x: x["bar_date"])
     return dict(out)
+
+
+def merge(db_bars: dict[str, list[dict]], history: dict[str, list[dict]], lo: str, hi: str) -> None:
+    """Put archived bars in (lo, hi] in front of each ticker's database bars, only
+    those dated before the ticker's first database bar (in place)."""
+    for t, hb in history.items():
+        own = db_bars.get(t, [])
+        cut = own[0]["bar_date"] if own else hi + "~"
+        older = [b for b in hb if lo < b["bar_date"] <= hi and b["bar_date"] < cut]
+        if older:
+            db_bars[t] = older + own
+
+
+def needed(cur, since: date | str) -> bool:
+    """Whether a window starting at `since` reaches before most tickers' first
+    database bar (roll_window moves that forward every month)."""
+    cur.execute("select percentile_disc(0.5) within group (order by d) as d from "
+                "(select min(bar_date) as d from price_bars_daily group by ticker) m")
+    row = cur.fetchone()
+    first = row["d"] if isinstance(row, dict) else row[0]
+    return first is not None and str(since)[:10] < str(first)[:10]
