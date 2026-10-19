@@ -38,9 +38,9 @@ select d.ticker, d.rank, d.signal_day from paper_decisions d
 where d.portfolio = %(p)s and d.action = 'buy'
   and d.signal_day = (select max(signal_day) from paper_decisions where portfolio = %(p)s)
   and not exists (select 1 from committee_runs r where r.ticker = d.ticker and r.model = %(m)s
-                  and r.status = 'done' and r.as_of::date >= d.signal_day)
+                  and r.status = 'done' and r.started_at >= d.decided_at)
   and (select count(*) from committee_runs r where r.ticker = d.ticker and r.model = %(m)s
-       and r.status <> 'done' and r.as_of::date >= d.signal_day) < 2
+       and r.status <> 'done' and r.started_at >= d.decided_at) < 2
 order by d.rank limit %(n)s
 """
 

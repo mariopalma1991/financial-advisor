@@ -122,14 +122,22 @@ jobs:
           pip install -q psycopg2-binary
           python - <<'PY'
           import os, psycopg2
-          with psycopg2.connect(os.environ["SUPABASE_DB_URL"]) as conn, conn.cursor() as cur:
+          from urllib.parse import quote, unquote
+          # Same as src/storage/supabase_client._quote_password: the password may hold '@'.
+          url = os.environ["SUPABASE_DB_URL"]
+          scheme, _, rest = url.partition("://")
+          if rest.count("@") > 1:
+              creds, host = rest.rsplit("@", 1)
+              user, _, pw = creds.partition(":")
+              url = f"{scheme}://{user}:{quote(unquote(pw), safe='')}@{host}"
+          with psycopg2.connect(url) as conn, conn.cursor() as cur:
               cur.execute("""select count(*) from paper_decisions d
                   where d.portfolio = 'forward_top20' and d.action = 'buy'
                     and d.signal_day = (select max(signal_day) from paper_decisions where portfolio = 'forward_top20')
                     and not exists (select 1 from committee_runs r where r.ticker = d.ticker and r.model = %(m)s
-                                    and r.status = 'done' and r.as_of::date >= d.signal_day)
+                                    and r.status = 'done' and r.started_at >= d.decided_at)
                     and (select count(*) from committee_runs r where r.ticker = d.ticker and r.model = %(m)s
-                         and r.status <> 'done' and r.as_of::date >= d.signal_day) < 2""",
+                         and r.status <> 'done' and r.started_at >= d.decided_at) < 2""",
                   {"m": os.environ["MODEL"]})
               n = cur.fetchone()[0]
           print(f"new buys not yet reviewed by {os.environ['MODEL']}: {n}")
