@@ -354,7 +354,8 @@ def get_fundamentals(ticker: str, quarters: int = 8, as_of: str | None = None) -
 
 def get_peer_valuation(ticker: str, as_of: str | None = None) -> dict[str, Any]:
     """Valuation, margins, growth and ROE next to the median of the company's
-    industry peers, with the ratio company/peer for each metric."""
+    industry peers, with the ratio company/peer for each metric. Peers share the
+    company's SEC SIC code (peer_basis sic4/sic3), else Finnhub's list."""
     env, err = _open("get_peer_valuation", ticker, as_of)
     if err:
         return err
@@ -370,8 +371,10 @@ def get_peer_valuation(ticker: str, as_of: str | None = None) -> dict[str, Any]:
         if not row.get("n_peers"):
             env.missing.append("peer_medians")
     env.put("comparison", with_ref(row, "peer_comparison", "ticker"))
-    peers = db.one("select ticker, peers from company_profiles where ticker = %s", (t,))
-    env.put("peers", with_ref(peers, "company_profiles", "ticker"), required=False)
+    peers = db.one("select ticker, peers, peer_basis, sic, sic_description from peer_groups where ticker = %s", (t,))
+    env.put("peers", with_ref(peers, "peer_groups", "ticker"), required=False)
+    if peers and peers.get("peer_basis") == "finnhub":
+        env.note("Pares de Finnhub: la industria SEC (SIC) no da suficientes empresas comparables.")
     if env.at.past:
         env.note("La lista de pares es la de hoy; sus métricas son las de esa fecha.")
     return env.out()
@@ -956,7 +959,8 @@ def get_alert_history(ticker: str, as_of: str | None = None) -> dict[str, Any]:
 
 _VIEW_TOOLS: dict[str, tuple[str, ...]] = {
     "current_tickers": ("get_ticker_overview",),
-    "company_profiles": ("get_ticker_overview", "get_peer_valuation"),
+    "company_profiles": ("get_ticker_overview",),
+    "peer_groups": ("get_peer_valuation",),
     "current_fundamentals_snapshot": ("get_fundamentals", "get_ticker_overview"),
     "current_price_bars": ("get_ticker_overview",),
     "data_quality_flags": ("get_ticker_overview",),
