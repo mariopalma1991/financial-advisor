@@ -1,5 +1,5 @@
 # The day's action for the investor (src/jobs/order_alerts.py): every trading day at
-# 08:00 CST, one line: VENTA x (price in USD) - COMPRA y (price in USD), or HOLD x (price in USD), of the
+# 08:00 CST, one line: VENTA x (price) - COMPRA y (price), or HOLD x (price), of the
 # book they follow with the previous close, posted to Slack #alertas-factors-rank-01 (GitHub secret
 # ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK, given to the job as ORDERS_WEBHOOK_URL).
 
