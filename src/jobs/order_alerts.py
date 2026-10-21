@@ -93,8 +93,8 @@ def send_test() -> None:
     """A made-up example of the daily message, to check the Slack webhook and the format."""
     fills = [{"side": "sell", "ticker": "OSCR"}, {"side": "buy", "ticker": "RELY"}]
     usd = {"OSCR": 33.66, "RELY": 21.90}
-    swap = orders.message(fills=fills, holdings={"RELY": (90.0, 0.0)}, usd=usd)
-    hold = orders.message(fills=[], holdings={"OSCR": (59.0, 0.0)}, usd=usd)
+    swap = orders.message(fills=fills, holdings={"RELY": (90.0, 0.0)}, usd=usd, fx=18.5)
+    hold = orders.message(fills=[], holdings={"OSCR": (59.0, 0.0)}, usd=usd, fx=18.5)
     text = f"PRUEBA (datos inventados, no operes con esto)\n{swap}\n{hold}"
     _summary(text)
     if not send(text):
@@ -181,7 +181,7 @@ def main(dry_run: bool = False) -> None:
             fx = float(cur.fetchone()["value"])
             fills = orders.preview(state, pending, flow, exec_day, lambda t, d: close.get(t), fx, rules)
             holdings = {tk: (pos.shares, pos.shares * close.get(tk, 0.0) * fx) for tk, pos in state.positions.items()}
-            text = orders.message(fills=fills, holdings=holdings, usd=close)
+            text = orders.message(fills=fills, holdings=holdings, usd=close, fx=fx)
             payload = {"fills": [{k: f[k] for k in ("side", "ticker", "shares", "price_usd", "amount_mxn", "reason")}
                                  for f in fills], "holdings": sorted(holdings), "flow_mxn": flow, "prices_day": latest_bar, "usd_mxn": fx}
             deliver("orders", orders.signature(fills, []) + ":" + ",".join(sorted(holdings)),
