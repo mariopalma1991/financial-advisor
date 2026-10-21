@@ -67,6 +67,15 @@ def parse_company_tickers(doc: dict[str, Any]) -> dict[str, int]:
     return {str(v["ticker"]).upper(): int(v["cik_str"]) for v in doc.values()}
 
 
+def parse_sic(doc: dict[str, Any]) -> tuple[int | None, str | None]:
+    """Submissions JSON -> (SIC code, its description); (None, None) for people and funds."""
+    try:
+        sic = int(doc.get("sic") or 0) or None
+    except (TypeError, ValueError):
+        sic = None
+    return sic, (doc.get("sicDescription") or None) if sic else None
+
+
 def parse_recent_filings(doc: dict[str, Any], since: str, forms: set[str]) -> list[dict[str, Any]]:
     """Filings in a submissions JSON filed on/after `since` (YYYY-MM-DD) whose form is in `forms`."""
     recent = (doc.get("filings") or {}).get("recent") or {}

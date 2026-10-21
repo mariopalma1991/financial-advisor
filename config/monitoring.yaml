@@ -22,6 +22,8 @@ jobs:
   compute_factors: { max_hours: 78 }     # after each ingest_prices (weekend gap)
   score_alerts: { max_hours: 78 }        # after each compute_factors
   paper_portfolio: { max_hours: 78 }     # after each compute_factors
+  top1_portfolio: { max_hours: 78 }      # after each paper_portfolio
+  ingest_sic: { max_hours: 768 }         # monthly, 2nd 15:00 UTC (EDGAR)
   roll_window: { max_hours: 768 }        # monthly, 2nd 09:00 UTC
 
 # Tables that grow every run: the newest row must be younger than max_hours.
@@ -33,6 +35,7 @@ tables:
   raw_filings: { column: ingested_at, max_hours: 78 }
   factor_scores: { column: computed_at, max_hours: 78 }
   paper_nav: { column: computed_at, max_hours: 78 }
+  top1_nav: { column: computed_at, max_hours: 78 }
 
 # Per-ticker data problems (data_quality_flags view). More tickers than max_tickers
 # with the same problem means a pipeline issue, not a one-off: ERROR.

@@ -76,6 +76,7 @@ Long texts (news summaries, 8-K press releases, 10-K risk factors) come from the
 Parquet archive, so the server also needs the `SUPABASE_S3_*` settings; risk factors
 are read from EDGAR the first time a 10-K is asked for and cached there.
 `get_short_interest` adds FINRA's twice-monthly history (`ingest_finra_short`, weekly).
+`get_peer_valuation` compares with companies of the same SEC SIC code (`ingest_sic`, monthly), closest in market cap; Finnhub's peers only when the SIC code has fewer than 4.
 Every answer carries a `snapshot_id` and a `_ref` per row that agents cite as
 `<_ref>#<field>`. `config/mcp_roles.yaml` sets which tools each committee role sees.
 

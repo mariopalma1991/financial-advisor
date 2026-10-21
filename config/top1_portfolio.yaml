@@ -1,0 +1,4 @@
+# One-stock portfolio (src/jobs/top1_portfolio.py): hold only the factor #1, switch when it
+# stops being #1. Same budget, costs and taxes as config/paper_portfolio.yaml.
+start: "2025-12-31"        # first signal: the last factor day of 2025, filled on the first trading day of 2026
+live_start: "2026-10-21"   # decisions from this day on are stored once and checked on every factor day; before it, month-ends
