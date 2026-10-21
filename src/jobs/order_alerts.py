@@ -91,10 +91,11 @@ def _record(cur, book: str, exec_day: str, kind: str, sig: str, payload: dict, t
 
 def send_test() -> None:
     """A made-up example of the daily message, to check the Slack webhook and the format."""
+    today = datetime.now(CST).date().isoformat()
     fills = [{"side": "sell", "ticker": "OSCR", "shares": 59.0, "amount_mxn": 36700.0, "price_usd": 33.66},
              {"side": "buy", "ticker": "EJEMPLO", "shares": 90.0, "amount_mxn": 36500.0, "price_usd": 21.90}]
     text = orders.message(
-        exec_day=date.today().isoformat(), close_cst="14:00", prices_day=date.today().isoformat(),
+        exec_day=today, close_cst="14:00", prices_day=today,
         book_label=BOOK_LABELS["top1"], fills=fills,
         decisions={"OSCR": {"ticker": "OSCR", "action": "sell", "reason": "rank_below_keep", "rank": 2},
                    "EJEMPLO": {"ticker": "EJEMPLO", "action": "buy", "reason": "top_rank", "rank": 1}},

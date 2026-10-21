@@ -113,7 +113,7 @@ def message(*, exec_day: str, close_cst: str, prices_day: str, book_label: str, 
         for f in sells:
             d = decisions.get(f["ticker"]) or {}
             why = SELL_REASONS.get(d.get("reason") or f.get("reason"), d.get("reason") or "")
-            why = why.format(keep=keep_rank)
+            why = why.format(keep=keep_rank) if keep_rank > 1 else why.replace("salió del lugar 1", "ya no es el #1")
             if d.get("rank") and d.get("reason") == "rank_below_keep":
                 why += f" (va en el {d['rank']})"
             lines.append(f"• {f['shares']:g} {f['ticker']} ≈ {_mxn(f['amount_mxn'])} · {why}")
