@@ -1,0 +1,18 @@
+# The day's action for the investor (src/jobs/order_alerts.py): every trading day at
+# 08:00 CST, COMPRA / VENTA / HOLD of the book they follow, with the previous close, in
+# whole SIC shares and MXN, posted to Slack #alertas-factors-rank-01 (GitHub secret
+# ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK, given to the job as ORDERS_WEBHOOK_URL).
+
+# The book the investor follows: top1 (the one-stock portfolio, src/jobs/top1_portfolio.py)
+# or a paper_* portfolio such as capa4_mayoria (Capa 2 with the majority veto).
+book: top1                   # Mario 2026-10-21: only the one-stock portfolio for now
+rules: {n: 1, keep_rank: 1, max_per_industry: 1, min_position_mxn: 0}   # top1's rules over paper_portfolio's
+recorded_deposits: false     # top1 uses the recurring plan only, not the Mi inversión deposits
+compare:                     # e.g. forward_top20: also list its buys this book doesn't make
+simulated: true              # paper money for now: the message says so
+
+# NYSE holidays (the books trade on US days). The BMV ones close the SIC while New York
+# trades: the message warns to place the orders the next day. Check the BMV calendar.
+nyse_holidays: ["2026-11-26", "2026-12-25", "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26",
+                "2027-05-31", "2027-06-18", "2027-07-05", "2027-09-06", "2027-11-25", "2027-12-24"]
+bmv_holidays: ["2026-11-16", "2026-12-25"]

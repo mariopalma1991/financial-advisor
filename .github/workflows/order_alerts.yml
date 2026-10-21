@@ -1,0 +1,49 @@
+name: order_alerts
+
+# The day's action (COMPRA / VENTA / HOLD) of the followed book, posted to Slack every
+# trading day at 08:00 CST with the previous close (src/jobs/order_alerts.py,
+# config/order_alerts.yaml). The 10:00 CST run sends only what the first didn't
+# (GitHub can delay or skip a scheduled run; one message per day otherwise).
+
+on:
+  schedule:
+    - cron: "0 14 * * 1-5"    # 08:00 CST
+    - cron: "0 16 * * 1-5"    # 10:00 CST, backup
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only show the message in the run summary (no Slack, nothing recorded)"
+        type: boolean
+        required: false
+        default: true
+
+concurrency:
+  group: order-alerts
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Day's action
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          # Slack #alertas-factors-rank-01 (ALERT_WEBHOOK_URL is not passed, so this job's
+          # runs don't also post a job summary to the pipeline's channel)
+          ORDERS_WEBHOOK_URL: ${{ secrets.ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK }}
+          DRY_RUN: ${{ inputs.dry_run == true }}
+        run: python -m src.jobs.order_alerts $([ "$DRY_RUN" = true ] && echo --dry-run)
