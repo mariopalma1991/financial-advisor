@@ -43,6 +43,10 @@ def main(start: str = "2025-10-21") -> None:
                 "last": res["nav"][-1], "bench_last": ben["nav"][-1],
                 "nav_sample": [r for r in res["nav"] if r["day"][-2:] in ("28", "29", "30", "31")][::3],
             })
+            bnav = {r["day"]: r for r in ben["nav"]}
+            em.emit("INFO", "top1_sim", "nav", payload={"nav": [
+                [r["day"], round(r["nav_mxn"], 2), round(r["liquidation_mxn"], 2), round(r["contributed_mxn"], 2),
+                 round(bnav[r["day"]]["nav_mxn"], 2) if r["day"] in bnav else None] for r in res["nav"]]})
             em.emit("INFO", "top1_sim", "done")
 
 
