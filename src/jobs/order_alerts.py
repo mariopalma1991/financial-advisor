@@ -57,7 +57,7 @@ def close_utc(day: str) -> datetime:
 # ---------- channel ----------
 
 def send(text: str) -> bool:
-    """Post to Slack (ORDERS_WEBHOOK_URL; the workflow falls back to ALERT_WEBHOOK_URL);
+    """Post to Slack (ORDERS_WEBHOOK_URL: the workflow passes ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK);
     False with no webhook. A failed post raises, so the run fails and GitHub emails it."""
     url = os.getenv("ORDERS_WEBHOOK_URL")
     if not url:

@@ -1,7 +1,7 @@
 # The day's action for the investor (src/jobs/order_alerts.py): every trading day at
 # 08:00 CST, COMPRA / VENTA / HOLD of the book they follow, with the previous close, in
-# whole SIC shares and MXN, posted to Slack (secret ORDERS_WEBHOOK_URL, else
-# ALERT_WEBHOOK_URL; Mario 2026-10-21: ALERT_WEBHOOK_URL).
+# whole SIC shares and MXN, posted to Slack #alertas-factors-rank-01 (GitHub secret
+# ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK, given to the job as ORDERS_WEBHOOK_URL).
 
 # The book the investor follows: top1 (the one-stock portfolio, src/jobs/top1_portfolio.py)
 # or a paper_* portfolio such as capa4_mayoria (Capa 2 with the majority veto).

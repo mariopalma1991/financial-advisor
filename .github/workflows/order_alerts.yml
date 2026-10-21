@@ -42,8 +42,8 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-          # a channel just for orders, else the pipeline's; ALERT_WEBHOOK_URL itself is not
-          # passed, so this job's runs don't also post a job summary there
-          ORDERS_WEBHOOK_URL: ${{ secrets.ORDERS_WEBHOOK_URL || secrets.ALERT_WEBHOOK_URL }}
+          # Slack #alertas-factors-rank-01 (ALERT_WEBHOOK_URL is not passed, so this job's
+          # runs don't also post a job summary to the pipeline's channel)
+          ORDERS_WEBHOOK_URL: ${{ secrets.ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK }}
           DRY_RUN: ${{ inputs.dry_run == true }}
         run: python -m src.jobs.order_alerts $([ "$DRY_RUN" = true ] && echo --dry-run)
