@@ -111,6 +111,7 @@ def main(dry_run: bool = False) -> None:
                 em.emit("INFO", "order_alert_none", f"no trading today ({today}); next {exec_day}")
                 return
             if now >= close_utc(exec_day):
+                em.emit("INFO", "order_alert_none", f"{exec_day}'s close has passed: nothing to send")
                 return
             nav_day = pp._iso(nav["day"]) if nav else ""   # no fill yet: everything decided is pending
 
