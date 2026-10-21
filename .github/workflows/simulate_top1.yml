@@ -3,9 +3,6 @@ name: simulate_top1
 # One-off what-if (src/jobs/simulate_top1.py): hold only the factor #1 stock for the last year.
 on:
   workflow_dispatch:
-  push:
-    branches: [claude/project-thread-05xrjc]
-    paths: [.github/workflows/simulate_top1.yml]
 
 jobs:
   run:
