@@ -58,19 +58,18 @@ def day_name(d: str) -> str:
     return f"{_DAYS[x.weekday()]} {x.day} {_MONTHS[x.month - 1]}"
 
 
-def _price(t: str, usd: Mapping[str, float], fx: float) -> str:
-    return f"({usd[t]:,.2f} USD / {usd[t] * fx:,.0f} MXN)"
+def _price(t: str, usd: Mapping[str, float]) -> str:
+    return f"(${usd[t]:,.2f})"
 
 
-def message(*, fills: Sequence[dict], holdings: Mapping[str, tuple[float, float]], usd: Mapping[str, float],
-            fx: float) -> str:
+def message(*, fills: Sequence[dict], holdings: Mapping[str, tuple[float, float]], usd: Mapping[str, float]) -> str:
     """The day's action in one line: VENTA x (precio) - COMPRA y (precio), or HOLD x (precio).
-    holdings: ticker -> (shares, MXN) held after today's trades; usd: ticker -> last close."""
+    holdings: ticker -> (shares, MXN) held after today's trades; usd: ticker -> last close (USD)."""
     sells = [f["ticker"] for f in fills if f["side"] == "sell"]
     buys = list(dict.fromkeys(f["ticker"] for f in fills if f["side"] == "buy"))
-    parts = [f"VENTA {t} {_price(t, usd, fx)}" for t in sells] + [f"COMPRA {t} {_price(t, usd, fx)}" for t in buys]
+    parts = [f"VENTA {t} {_price(t, usd)}" for t in sells] + [f"COMPRA {t} {_price(t, usd)}" for t in buys]
     if parts:
         return " - ".join(parts)
     if holdings:
-        return " - ".join(f"HOLD {t} {_price(t, usd, fx)}" for t in sorted(holdings))
+        return " - ".join(f"HOLD {t} {_price(t, usd)}" for t in sorted(holdings))
     return "HOLD (todo en efectivo)"

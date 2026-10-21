@@ -48,14 +48,14 @@ def test_signature_ignores_order_and_changes_with_a_veto():
 def test_message_is_one_line_with_prices():
     usd = {"OSCR": 33.66, "RELY": 21.9}
     swap = [{"side": "sell", "ticker": "OSCR"}, {"side": "buy", "ticker": "RELY"}]
-    assert orders.message(fills=swap, holdings={"RELY": (90.0, 0.0)}, usd=usd, fx=18.5) == \
-        "VENTA OSCR (33.66 USD / 623 MXN) - COMPRA RELY (21.90 USD / 405 MXN)"
-    assert orders.message(fills=[], holdings={"OSCR": (59.0, 0.0)}, usd=usd, fx=18.5) == \
-        "HOLD OSCR (33.66 USD / 623 MXN)"
+    assert orders.message(fills=swap, holdings={"RELY": (90.0, 0.0)}, usd=usd) == \
+        "VENTA OSCR ($33.66) - COMPRA RELY ($21.90)"
+    assert orders.message(fills=[], holdings={"OSCR": (59.0, 0.0)}, usd=usd) == \
+        "HOLD OSCR ($33.66)"
     top_up = [{"side": "buy", "ticker": "OSCR"}, {"side": "buy", "ticker": "OSCR"}]
-    assert orders.message(fills=top_up, holdings={"OSCR": (60.0, 0.0)}, usd=usd, fx=18.5) == \
-        "COMPRA OSCR (33.66 USD / 623 MXN)"
-    assert orders.message(fills=[], holdings={}, usd=usd, fx=18.5) == "HOLD (todo en efectivo)"
+    assert orders.message(fills=top_up, holdings={"OSCR": (60.0, 0.0)}, usd=usd) == \
+        "COMPRA OSCR ($33.66)"
+    assert orders.message(fills=[], holdings={}, usd=usd) == "HOLD (todo en efectivo)"
 
 
 def test_trading_days_and_close():
