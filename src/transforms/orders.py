@@ -72,12 +72,13 @@ def _mxn(x: float) -> str:
 
 
 def _committee(reason: str | None) -> str:
-    if not reason or reason == "no_review":
+    """The committee's verdict on a buy of a book with the veto ('' for a book without it)."""
+    if reason == "no_review":
         return "sin revisión del comité"
-    if reason.startswith("approved_"):
+    if reason and reason.startswith("approved_"):
         n, _, of = reason.removeprefix("approved_").partition("_of_")
         return f"comité aprueba {n} de {of}"
-    return reason
+    return ""
 
 
 def _vetoes(reason: str | None) -> str:
@@ -85,24 +86,30 @@ def _vetoes(reason: str | None) -> str:
     return f"{n} de {of} modelos" if of else "vetada"
 
 
+def headline(fills: Sequence[dict], holdings: Mapping[str, tuple[float, float]]) -> str:
+    """VENTA x · COMPRA y, or HOLD with what is held."""
+    sells = [f["ticker"] for f in fills if f["side"] == "sell"]
+    buys = list(dict.fromkeys(f["ticker"] for f in fills if f["side"] == "buy"))
+    parts = ([f"VENTA {', '.join(sells)}"] if sells else []) + ([f"COMPRA {', '.join(buys)}"] if buys else [])
+    return " · ".join(parts) or ("HOLD " + ", ".join(sorted(holdings)) if holdings else "HOLD (todo en efectivo)")
+
+
 def message(*, exec_day: str, close_cst: str, prices_day: str, book_label: str, fills: Sequence[dict],
             decisions: Mapping[str, dict], vetoed: Sequence[dict], flow: float, cash_after: float,
-            positions_after: int, capa2_extra: Sequence[str], keep_rank: int, simulated: bool,
-            correction: bool = False, bmv_closed: bool = False) -> str:
-    """The text sent to the investor. decisions: ticker -> the book's pending decision row."""
-    head = f"Órdenes para el {day_name(exec_day)}, al cierre ({close_cst} CST)"
-    lines = []
-    if correction:
-        lines.append("CORRECCIÓN: cambió la lista que te mandé para este día. Esta es la buena.")
-    lines += [head + (" · simulación, sin dinero real" if simulated else ""), f"Libro: {book_label}", ""]
+            holdings: Mapping[str, tuple[float, float]], capa2_extra: Sequence[str], keep_rank: int,
+            simulated: bool, bmv_closed: bool = False) -> str:
+    """The text sent to the investor. decisions: ticker -> the book's pending decision row;
+    holdings: ticker -> (shares, MXN at the last close) after today's trades."""
+    lines = [f"{headline(fills, holdings)} — {day_name(exec_day)}",
+             book_label + (" · simulación, sin dinero real" if simulated else ""), ""]
     if bmv_closed:
-        lines += ["Ojo: ese día la BMV cierra y el SIC no opera; captura las órdenes el siguiente día hábil.", ""]
+        lines += ["Ojo: hoy la BMV cierra y el SIC no opera; captura las órdenes el siguiente día hábil.", ""]
     if flow:
-        lines += [f"Depósito: {_mxn(flow)}. Deposítalo en GBM antes de comprar.", ""]
+        lines += [f"Depósito de hoy: {_mxn(flow)}. Deposítalo en GBM antes de comprar.", ""]
     sells = [f for f in fills if f["side"] == "sell"]
     buys = [f for f in fills if f["side"] == "buy"]
     if sells:
-        lines.append("VENDER (todas las acciones de la posición)")
+        lines.append(f"VENDER al cierre ({close_cst} CST), todas las acciones de la posición")
         for f in sells:
             d = decisions.get(f["ticker"]) or {}
             why = SELL_REASONS.get(d.get("reason") or f.get("reason"), d.get("reason") or "")
@@ -112,25 +119,33 @@ def message(*, exec_day: str, close_cst: str, prices_day: str, book_label: str, 
             lines.append(f"• {f['shares']:g} {f['ticker']} ≈ {_mxn(f['amount_mxn'])} · {why}")
         lines.append("")
     if buys:
-        lines.append("COMPRAR")
+        lines.append(f"COMPRAR al cierre ({close_cst} CST)")
         for f in buys:
             d = decisions.get(f["ticker"])
-            unit = f["price_usd"]
             if d and d.get("action") == "buy":
-                what = f"nueva, lugar {d['rank']}, {_committee(d.get('reason'))}" if d.get("rank") else \
-                    f"nueva, {_committee(d.get('reason'))}"
+                what = ", ".join(x for x in ("nueva", d.get("rank") and f"lugar {d['rank']}",
+                                             _committee(d.get("reason"))) if x)
             else:
-                what = "recarga de una posición que ya tienes"
-            lines.append(f"• {f['shares']:g} {f['ticker']} ≈ {_mxn(f['amount_mxn'])} ({unit:,.2f} USD c/u) · {what}")
+                what = "más de una posición que ya tienes"
+            lines.append(f"• {f['shares']:g} {f['ticker']} ≈ {_mxn(f['amount_mxn'])} ({f['price_usd']:,.2f} USD c/u) · {what}")
         lines.append("")
     if not fills:
-        lines += ["Sin órdenes: el dinero no alcanza para una acción entera; queda en efectivo.", ""]
+        for t, (shares, value) in sorted(holdings.items()):
+            rank = (decisions.get(t) or {}).get("rank")
+            lines.append(f"Mantén tus {shares:g} {t} (≈ {_mxn(value)})" + (f"; sigue en el lugar {rank}." if rank else "."))
+        if flow:
+            lines.append("El depósito no alcanza para una acción entera; queda en efectivo.")
+        lines.append("")
     if vetoed:
         lines.append("Vetadas por el comité (no comprar): " +
                      ", ".join(f"{v['ticker']} ({_vetoes(v.get('reason'))})" for v in vetoed))
     if capa2_extra:
         lines.append("Capa 2 sin veto compraría además: " + ", ".join(capa2_extra))
-    lines += [f"Después: {positions_after} posiciones y ~{_mxn(cash_after)} en efectivo.",
-              (f"Cantidades con el cierre del {day_name(prices_day)}; si el precio se mueve, puede cambiar 1 acción. "
-               "Orden a mercado en el SIC antes del cierre.")]
+    if fills:
+        n = len(holdings)
+        lines.append(f"Después: {n} {'posición' if n == 1 else 'posiciones'} y ~{_mxn(cash_after)} en efectivo.")
+        lines.append(f"Cantidades con el cierre del {day_name(prices_day)}; si el precio se mueve, puede cambiar "
+                     "1 acción. Orden a mercado en el SIC antes del cierre.")
+    else:
+        lines.append(f"Datos del cierre del {day_name(prices_day)}.")
     return "\n".join(lines).strip()

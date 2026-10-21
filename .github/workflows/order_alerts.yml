@@ -1,20 +1,18 @@
 name: order_alerts
 
-# The investor's orders for the next trading day, posted to Slack (src/jobs/order_alerts.py,
-# config/order_alerts.yaml). Runs after each committee_portfolio run that updated the
-# books, and each weekday morning in case the committee or the chain ran late.
+# The day's action (COMPRA / VENTA / HOLD) of the followed book, posted to Slack every
+# trading day at 08:00 CST with the previous close (src/jobs/order_alerts.py,
+# config/order_alerts.yaml). The 10:00 CST run sends only what the first didn't
+# (GitHub can delay or skip a scheduled run; one message per day otherwise).
 
 on:
-  workflow_run:
-    workflows: [committee_portfolio]
-    types: [completed]
   schedule:
-    - cron: "5 14 * * 1-5"    # 08:05 CST: sends what is there if the committee hasn't reviewed a buy
-    - cron: "30 17 * * 1-5"   # 11:30 CST: again, in case GitHub delayed the first
+    - cron: "0 14 * * 1-5"    # 08:00 CST
+    - cron: "0 16 * * 1-5"    # 10:00 CST, backup
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Only show the list in the run summary (no Slack, nothing recorded)"
+        description: "Only show the message in the run summary (no Slack, nothing recorded)"
         type: boolean
         required: false
         default: true
@@ -25,54 +23,21 @@ concurrency:
 
 jobs:
   run:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - name: Check the books were just updated
-        id: changed
-        if: github.event_name == 'workflow_run'
-        env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: |
-          pip install -q psycopg2-binary
-          python - <<'PY'
-          import os, psycopg2
-          from urllib.parse import quote, unquote
-          # the password may hold '@' or ':' (same fix as supabase_client._quote_password,
-          # inlined so this check needs no checkout or install)
-          url = os.environ["SUPABASE_DB_URL"]
-          scheme, _, rest = url.partition("://")
-          if rest.count("@") >= 2:
-              creds, host = rest.rsplit("@", 1)
-              user, _, password = creds.partition(":")
-              url = f"{scheme}://{user}:{quote(unquote(password), safe='')}@{host}"
-          with psycopg2.connect(url) as conn, conn.cursor() as cur:
-              # committee_portfolio also completes when its own check skipped the update
-              cur.execute("select coalesce(max(computed_at) > now() - interval '30 minutes', false) "
-                          "from paper_nav where portfolio like 'capa4_%'")
-              run = bool(cur.fetchone()[0])
-          print(f"Capa 4 books updated in the last 30 minutes: {run}")
-          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"run={str(run).lower()}\n")
-          PY
-
       - uses: actions/checkout@v5
-        if: steps.changed.outputs.run != 'false'
 
       - uses: actions/setup-python@v6
-        if: steps.changed.outputs.run != 'false'
         with:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
-        if: steps.changed.outputs.run != 'false'
         run: pip install -e .
 
-      - name: Orders
-        if: steps.changed.outputs.run != 'false'
+      - name: Day's action
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}

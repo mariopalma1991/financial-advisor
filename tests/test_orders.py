@@ -52,17 +52,28 @@ def test_message_lists_sells_buys_vetoes_and_the_deposit():
     decisions = {"B": _d("B", "sell", "rank_below_keep", 57), "OSCR": _d("OSCR", "buy", "approved_3_of_3", 2)}
     text = orders.message(exec_day="2026-10-20", close_cst="14:00", prices_day="2026-10-19", book_label="Capa 4",
                           fills=fills, decisions=decisions, vetoed=[_d("PBF", "veto", "vetoed_2_of_3")], flow=500.0,
-                          cash_after=1234.0, positions_after=5, capa2_extra=["PBF"], keep_rank=40, simulated=True)
-    assert text.startswith("Órdenes para el martes 20 oct, al cierre (14:00 CST) · simulación")
-    assert "Depósito: 500 MXN" in text
+                          cash_after=1234.0, holdings={"OSCR": (3.0, 1870.0), "DAR": (1.0, 1096.0)},
+                          capa2_extra=["PBF"], keep_rank=40, simulated=True)
+    assert text.startswith("VENTA B · COMPRA OSCR, DAR — martes 20 oct\nCapa 4 · simulación")
+    assert "Depósito de hoy: 500 MXN" in text
     assert "• 2 B ≈ 1,500 MXN · salió del lugar 40 (va en el 57)" in text
     assert "• 3 OSCR ≈ 1,870 MXN (33.66 USD c/u) · nueva, lugar 2, comité aprueba 3 de 3" in text
-    assert "• 1 DAR ≈ 1,096 MXN (59.22 USD c/u) · recarga de una posición que ya tienes" in text
+    assert "• 1 DAR ≈ 1,096 MXN (59.22 USD c/u) · más de una posición que ya tienes" in text
     assert "Vetadas por el comité (no comprar): PBF (2 de 3 modelos)" in text
     assert "Capa 2 sin veto compraría además: PBF" in text
-    assert orders.message(exec_day="2026-10-20", close_cst="14:00", prices_day="2026-10-19", book_label="x",
-                          fills=[], decisions={}, vetoed=[], flow=500.0, cash_after=0.0, positions_after=0,
-                          capa2_extra=[], keep_rank=40, simulated=False, correction=True).startswith("CORRECCIÓN")
+    assert "Después: 2 posiciones" in text
+
+
+def test_message_holds_when_nothing_trades():
+    text = orders.message(exec_day="2026-10-22", close_cst="14:00", prices_day="2026-10-21", book_label="Una acción",
+                          fills=[], decisions={"OSCR": _d("OSCR", "hold", "rank_within_keep", 1)}, vetoed=[],
+                          flow=0.0, cash_after=76.0, holdings={"OSCR": (58.0, 36822.0)}, capa2_extra=[],
+                          keep_rank=1, simulated=False)
+    assert text == ("HOLD OSCR — jueves 22 oct\nUna acción\n\n"
+                    "Mantén tus 58 OSCR (≈ 36,822 MXN); sigue en el lugar 1.\n\nDatos del cierre del miércoles 21 oct.")
+    swap = [{"side": "sell", "ticker": "OSCR", "shares": 58.0, "amount_mxn": 36822.0, "price_usd": 34.0},
+            {"side": "buy", "ticker": "TXG", "shares": 90.0, "amount_mxn": 36500.0, "price_usd": 22.0}]
+    assert orders.headline(swap, {"TXG": (90.0, 36500.0)}) == "VENTA OSCR · COMPRA TXG"
 
 
 def test_trading_days_and_close():

@@ -1,15 +1,12 @@
-"""The investor's orders for the next trading day, sent to them (settings in
-config/order_alerts.yaml, rules in src/transforms/orders.py).
+"""The day's action for the investor, every trading day at 08:00 CST: COMPRA, VENTA or
+HOLD for the book they follow (config/order_alerts.yaml; rules in src/transforms/orders.py).
 
-After the books are updated for the latest close, it plays the next trading day of
-the book the investor follows (by default Capa 4 with the majority veto): the
-pending signal's sells and buys, and what the day's deposit buys, in whole SIC
-shares and MXN. It posts the list to Slack only when there is something to do,
-once per day; a different list later the same day (the committee finished late)
-goes out as a correction. While a new
-buy still waits for its committee review it holds the list until
-wait_for_committee_until_utc. What was sent is kept in order_alerts.
-Runs after committee_portfolio and on a morning schedule.
+With the books updated to the last close, it plays today's close of the book with the
+simulation's own rules: the pending signal's sells and buys and what a deposit due
+today buys, in whole SIC shares and MXN at the last close; with nothing to trade it is
+HOLD with the shares held. Posted to Slack once per trading day (a different result
+later that day goes out as a correction); when the last close or the book's update is
+missing it says so instead of sending an old action. Sent messages are kept in order_alerts.
   python -m src.jobs.order_alerts [--dry-run]
 """
 from __future__ import annotations
@@ -31,8 +28,17 @@ from src.transforms import orders, paper
 
 _ROOT = Path(__file__).resolve().parents[2]
 CST, NY = ZoneInfo("America/Mexico_City"), ZoneInfo("America/New_York")
-BOOK_LABELS = {"capa4_mayoria": "Capa 4 · mayoría (Capa 2 con veto de 2 de 3 modelos)",
+BOOK_LABELS = {"top1": "Portafolio de una acción (el factor #1)",
+               "capa4_mayoria": "Capa 4 · mayoría (Capa 2 con veto de 2 de 3 modelos)",
                "forward_top20": "Capa 2 · factores, sin veto"}
+
+
+def source(book: str) -> tuple[str, str, tuple]:
+    """The book's tables prefix and filter: top1_* hold one book (src/jobs/top1_portfolio.py),
+    paper_* one per portfolio."""
+    if book == "top1":
+        return "top1", "", ()
+    return "paper", " and portfolio = %s", (book,)
 
 
 def next_trading_day(d: str, holidays: set[str]) -> str:
@@ -85,70 +91,79 @@ def _record(cur, book: str, exec_day: str, kind: str, sig: str, payload: dict, t
 def main(dry_run: bool = False) -> None:
     cfg = yaml.safe_load((_ROOT / "config/order_alerts.yaml").read_text())
     rules, pcfg = pp.load_rules()
+    rules = paper.Rules(**{**rules.__dict__, **(cfg.get("rules") or {})})
     book, compare = cfg["book"], cfg.get("compare")
+    t, w, p = source(book)
     holidays = {str(d) for d in cfg.get("nyse_holidays") or []}
     now = datetime.now(UTC)
+    today = now.astimezone(CST).date().isoformat()
+    label = BOOK_LABELS.get(book, book)
+    simulated = bool(cfg.get("simulated", True))
     with job_run("order_alerts") as em, pg_connection() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("select max(bar_date) as d from price_bars_daily where ticker = %s", (pcfg["benchmark"],))
             latest_bar = pp._iso(cur.fetchone()["d"])
-            cur.execute("select day, cash_mxn, contributed_mxn from paper_nav where portfolio = %s "
-                        "order by day desc limit 1", (book,))
+            cur.execute(f"select day, cash_mxn, contributed_mxn from {t}_nav where true{w} "
+                        "order by day desc limit 1", p)
             nav = cur.fetchone()
             exec_day = next_trading_day(latest_bar, holidays)
-            today = now.astimezone(CST).date().isoformat()
-            h, m = (int(x) for x in cfg["wait_for_committee_until_utc"].split(":"))
-            morning = lambda d: datetime.fromisoformat(d).replace(hour=h, minute=m, tzinfo=UTC)
-            if exec_day < today:
-                # the last trading day's prices never came: no list can be trusted (said in the morning,
-                # not while the night's ingest may just be late)
-                if now < morning(today):
-                    return
-                sig = f"stale:{latest_bar}"
-                if (_last_sent(cur, book, today) or {}).get("signature") == sig:
-                    return
-                text = (f"Sin lista de órdenes para hoy {orders.day_name(today)}: los últimos precios son del "
-                        f"{orders.day_name(latest_bar)} y no llegaron los del {orders.day_name(exec_day)}. "
-                        "No operes con una lista vieja; revisa ingest_prices en GitHub Actions.")
-                _summary(text)
-                em.emit("WARN", "order_alert_stale", text)
-                if not dry_run and send(text):
-                    _record(cur, book, today, "stale", sig, {}, text)
-                    conn.commit()
-                return
-            if nav and pp._iso(nav["day"]) < latest_bar:
-                em.emit("INFO", "order_alert_waiting", f"{book} not updated to {latest_bar} yet")
+            if exec_day > today:
+                em.emit("INFO", "order_alert_none", f"no trading today ({today}); next {exec_day}")
                 return
             if now >= close_utc(exec_day):
                 return
             nav_day = pp._iso(nav["day"]) if nav else ""   # no fill yet: everything decided is pending
-            cur.execute("select portfolio, signal_day, ticker, action, reason, rank from paper_decisions "
-                        "where portfolio = any(%s) and signal_day >= %s", ([book, compare], nav_day or "0001-01-01"))
-            pending: dict[str, list[dict]] = {}
-            other_buys: set[str] = set()
-            for r in cur.fetchall():
-                if r["portfolio"] == book:
-                    pending.setdefault(pp._iso(r["signal_day"]), []).append(dict(r))
-                elif r["action"] == "buy":
-                    other_buys.add(r["ticker"])
-            deposits = pp.contributions(cur, pcfg["owner"]) + paper.recurring_flows(
-                pcfg["forward_start"], exec_day, float(pcfg.get("recurring_mxn") or 0),
-                pcfg.get("recurring_days") or [])
-            flow = sum(a for d, a in deposits if nav_day < d <= exec_day)
-            if not pending and (not flow or not nav):
-                em.emit("INFO", "order_alert_none", f"no orders for {exec_day}")
-                return
-            decisions = {d["ticker"]: d for ds in pending.values() for d in ds}
-            waiting = [t for t, d in decisions.items() if d["action"] == "buy" and d["reason"] == "no_review"]
-            if waiting and now < morning(exec_day):
-                em.emit("INFO", "order_alert_waiting", f"committee hasn't reviewed {', '.join(sorted(waiting))}")
+
+            def deliver(kind: str, sig: str, payload: dict, text: str) -> None:
+                last = _last_sent(cur, book, today)
+                if last and last["signature"] == sig:
+                    return
+                if last and last["kind"] != "stale" and kind == "orders":
+                    kind = "correction"
+                    text = "CORRECCIÓN: cambió lo que te mandé hoy. Esto es lo bueno.\n" + text
+                _summary(text)
+                em.emit("INFO", "order_alert", today, payload={**payload, "kind": kind, "dry_run": dry_run})
+                if dry_run:
+                    return
+                if not send(text):
+                    em.emit("WARN", "order_alert_no_channel", "no Slack webhook: the message is only in the run summary")
+                    return
+                _record(cur, book, today, kind, sig, payload, text)
+                conn.commit()
+
+            if exec_day < today or (nav and nav_day < latest_bar):
+                # yesterday's close never came, or the book wasn't updated to it: no action can be trusted
+                missing = (f"no llegaron los precios del {orders.day_name(exec_day)}" if exec_day < today
+                           else f"{label} no se actualizó con el cierre del {orders.day_name(latest_bar)}")
+                deliver("stale", f"stale:{latest_bar}:{nav_day}", {"prices_day": latest_bar, "book_day": nav_day},
+                        f"SIN SEÑAL hoy {orders.day_name(today)}: {missing}. No operes con datos viejos; "
+                        "revisa GitHub Actions." + (" (simulación)" if simulated else ""))
                 return
 
-            cur.execute("select ticker, side, shares, amount_mxn, cost_mxn from paper_fills where portfolio = %s "
-                        "order by exec_day, side, ticker", (book,))
+            since = nav_day or "0001-01-01"
+            cur.execute(f"select signal_day, ticker, action, reason, rank from {t}_decisions "
+                        f"where signal_day >= %s{w}", (since, *p))
+            pending: dict[str, list[dict]] = {}
+            for r in cur.fetchall():
+                pending.setdefault(pp._iso(r.pop("signal_day")), []).append(dict(r))
+            other_buys: set[str] = set()
+            if compare and compare != book:
+                cur.execute("select ticker from paper_decisions where portfolio = %s and signal_day >= %s "
+                            "and action = 'buy'", (compare, since))
+                other_buys = {r["ticker"] for r in cur.fetchall()}
+            # the book's deposits: the plan, plus the investor's recorded ones where the book uses them
+            deposits = paper.recurring_flows(pcfg["forward_start"], exec_day, float(pcfg.get("recurring_mxn") or 0),
+                                             pcfg.get("recurring_days") or [])
+            if cfg.get("recorded_deposits", True):
+                deposits += pp.contributions(cur, pcfg["owner"])
+            flow = sum(a for d, a in deposits if nav_day < d <= exec_day) if nav else 0.0
+            decisions = {d["ticker"]: d for ds in pending.values() for d in ds}
+
+            cur.execute(f"select ticker, side, shares, amount_mxn, cost_mxn from {t}_fills where true{w} "
+                        "order by exec_day, side, ticker", p)
             state = orders.book_from_fills([dict(r) for r in cur.fetchall()], float(nav["cash_mxn"]) if nav else 0.0,
                                            float(nav["contributed_mxn"]) if nav else 0.0)
-            tickers = sorted(set(state.positions) | set(decisions))
+            tickers = sorted(set(state.positions) | set(decisions)) or [pcfg["benchmark"]]
             cur.execute("select distinct on (ticker) ticker, close from price_bars_daily where ticker = any(%s) "
                         "and bar_date <= %s and bar_date >= %s::date - 10 and close > 0 "
                         "order by ticker, bar_date desc, ingested_at desc", (tickers, latest_bar, latest_bar))
@@ -159,30 +174,18 @@ def main(dry_run: bool = False) -> None:
             fills = orders.preview(state, pending, flow, exec_day, lambda t, d: close.get(t), fx, rules)
             vetoed = [d for d in decisions.values() if d["action"] == "veto"]
             mine = {f["ticker"] for f in fills if f["side"] == "buy"} | set(state.positions)
-            capa2_extra = sorted(other_buys - mine) if compare and compare != book else []
-            sig = orders.signature(fills, [v["ticker"] for v in vetoed])
-            last = _last_sent(cur, book, exec_day)
-            if last and last["signature"] == sig:
-                return
+            holdings = {tk: (pos.shares, pos.shares * close.get(tk, 0.0) * fx) for tk, pos in state.positions.items()}
             bmv = exec_day in {str(d) for d in cfg.get("bmv_holidays") or []}
             text = orders.message(
                 exec_day=exec_day, close_cst=close_utc(exec_day).astimezone(CST).strftime("%H:%M"),
-                prices_day=latest_bar, book_label=BOOK_LABELS.get(book, book), fills=fills, decisions=decisions,
-                vetoed=vetoed, flow=flow, cash_after=state.cash, positions_after=len(state.positions),
-                capa2_extra=capa2_extra, keep_rank=rules.keep_rank, simulated=bool(cfg.get("simulated", True)),
-                correction=last is not None, bmv_closed=bmv)
-            _summary(text)
+                prices_day=latest_bar, book_label=label, fills=fills, decisions=decisions, vetoed=vetoed, flow=flow,
+                cash_after=state.cash, holdings=holdings, capa2_extra=sorted(other_buys - mine),
+                keep_rank=rules.keep_rank, simulated=simulated, bmv_closed=bmv)
             payload = {"fills": [{k: f[k] for k in ("side", "ticker", "shares", "price_usd", "amount_mxn", "reason")}
-                                 for f in fills], "vetoed": [v["ticker"] for v in vetoed], "flow_mxn": flow,
-                       "prices_day": latest_bar, "usd_mxn": fx}
-            em.emit("INFO", "order_alert", exec_day, payload={**payload, "dry_run": dry_run})
-            if dry_run:
-                return
-            if not send(text):
-                em.emit("WARN", "order_alert_no_channel", "no channel configured: the list is only in the run summary")
-                return
-            _record(cur, book, exec_day, "correction" if last else "orders", sig, payload, text)
-            conn.commit()
+                                 for f in fills], "holdings": sorted(holdings), "vetoed": [v["ticker"] for v in vetoed],
+                       "flow_mxn": flow, "prices_day": latest_bar, "usd_mxn": fx}
+            deliver("orders", orders.signature(fills, [v["ticker"] for v in vetoed]) + ":" + ",".join(sorted(holdings)),
+                    payload, text)
 
 
 if __name__ == "__main__":
