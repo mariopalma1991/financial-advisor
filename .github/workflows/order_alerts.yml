@@ -16,6 +16,11 @@ on:
         type: boolean
         required: false
         default: true
+      test:
+        description: "Post a made-up example message to Slack (to check the webhook); ignores dry_run"
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: order-alerts
@@ -46,4 +51,7 @@ jobs:
           # runs don't also post a job summary to the pipeline's channel)
           ORDERS_WEBHOOK_URL: ${{ secrets.ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK }}
           DRY_RUN: ${{ inputs.dry_run == true }}
-        run: python -m src.jobs.order_alerts $([ "$DRY_RUN" = true ] && echo --dry-run)
+          TEST: ${{ inputs.test == true }}
+        run: |
+          if [ "$TEST" = true ]; then python -m src.jobs.order_alerts --test
+          else python -m src.jobs.order_alerts $([ "$DRY_RUN" = true ] && echo --dry-run); fi

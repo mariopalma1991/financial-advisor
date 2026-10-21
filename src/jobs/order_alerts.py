@@ -7,7 +7,8 @@ today buys, in whole SIC shares and MXN at the last close; with nothing to trade
 HOLD with the shares held. Posted to Slack once per trading day (a different result
 later that day goes out as a correction); when the last close or the book's update is
 missing it says so instead of sending an old action. Sent messages are kept in order_alerts.
-  python -m src.jobs.order_alerts [--dry-run]
+  python -m src.jobs.order_alerts [--dry-run | --test]
+--test posts a made-up example message (marked PRUEBA) to Slack, to check the webhook.
 """
 from __future__ import annotations
 
@@ -86,6 +87,23 @@ def _last_sent(cur, book: str, exec_day: str) -> dict | None:
 def _record(cur, book: str, exec_day: str, kind: str, sig: str, payload: dict, text: str):
     cur.execute("insert into order_alerts (book, exec_day, kind, signature, orders, message) "
                 "values (%s, %s, %s, %s, %s, %s)", (book, exec_day, kind, sig, psycopg2.extras.Json(payload), text))
+
+
+def send_test() -> None:
+    """A made-up example of the daily message, to check the Slack webhook and the format."""
+    fills = [{"side": "sell", "ticker": "OSCR", "shares": 59.0, "amount_mxn": 36700.0, "price_usd": 33.66},
+             {"side": "buy", "ticker": "EJEMPLO", "shares": 90.0, "amount_mxn": 36500.0, "price_usd": 21.90}]
+    text = orders.message(
+        exec_day=date.today().isoformat(), close_cst="14:00", prices_day=date.today().isoformat(),
+        book_label=BOOK_LABELS["top1"], fills=fills,
+        decisions={"OSCR": {"ticker": "OSCR", "action": "sell", "reason": "rank_below_keep", "rank": 2},
+                   "EJEMPLO": {"ticker": "EJEMPLO", "action": "buy", "reason": "top_rank", "rank": 1}},
+        vetoed=[], flow=0.0, cash_after=70.0, holdings={"EJEMPLO": (90.0, 36500.0)}, capa2_extra=[],
+        keep_rank=1, simulated=True)
+    text = "PRUEBA — así se verá el mensaje diario de las 8:00 CST (datos inventados, no operes con esto)\n\n" + text
+    _summary(text)
+    if not send(text):
+        raise RuntimeError("no Slack webhook configured (secret ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK)")
 
 
 def main(dry_run: bool = False) -> None:
@@ -190,4 +208,7 @@ def main(dry_run: bool = False) -> None:
 
 
 if __name__ == "__main__":
-    main(dry_run="--dry-run" in sys.argv[1:])
+    if "--test" in sys.argv[1:]:
+        send_test()
+    else:
+        main(dry_run="--dry-run" in sys.argv[1:])
