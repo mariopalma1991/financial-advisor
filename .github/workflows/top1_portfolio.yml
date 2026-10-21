@@ -1,16 +1,26 @@
-name: simulate_top1
+name: top1_portfolio
 
-# One-off what-if (src/jobs/simulate_top1.py): hold only the factor #1 stock for the last year.
+# One-stock portfolio (the factor #1) against VOO, in MXN (src/jobs/top1_portfolio.py).
+# Runs after every successful paper_portfolio run.
+
 on:
+  workflow_run:
+    workflows: [paper_portfolio]
+    types: [completed]
   workflow_dispatch:
   push:
     branches: [claude/project-thread-05xrjc]
-    paths: [.github/workflows/simulate_top1.yml]
+    paths: [.github/workflows/top1_portfolio.yml]
+
+concurrency:
+  group: top1-portfolio
+  cancel-in-progress: false
 
 jobs:
   run:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -19,7 +29,7 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install -e .
-      - name: Simulate
+      - name: Update the one-stock portfolio
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
@@ -28,4 +38,4 @@ jobs:
           SUPABASE_S3_REGION: ${{ secrets.SUPABASE_S3_REGION }}
           SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
           SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
-        run: python -m src.jobs.simulate_top1
+        run: python -m src.jobs.top1_portfolio
