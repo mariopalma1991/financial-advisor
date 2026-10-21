@@ -91,17 +91,11 @@ def _record(cur, book: str, exec_day: str, kind: str, sig: str, payload: dict, t
 
 def send_test() -> None:
     """A made-up example of the daily message, to check the Slack webhook and the format."""
-    today = datetime.now(CST).date().isoformat()
-    fills = [{"side": "sell", "ticker": "OSCR", "shares": 59.0, "amount_mxn": 36700.0, "price_usd": 33.66},
-             {"side": "buy", "ticker": "EJEMPLO", "shares": 90.0, "amount_mxn": 36500.0, "price_usd": 21.90}]
-    text = orders.message(
-        exec_day=today, close_cst="14:00", prices_day=today,
-        book_label=BOOK_LABELS["top1"], fills=fills,
-        decisions={"OSCR": {"ticker": "OSCR", "action": "sell", "reason": "rank_below_keep", "rank": 2},
-                   "EJEMPLO": {"ticker": "EJEMPLO", "action": "buy", "reason": "top_rank", "rank": 1}},
-        vetoed=[], flow=0.0, cash_after=70.0, holdings={"EJEMPLO": (90.0, 36500.0)}, capa2_extra=[],
-        keep_rank=1, simulated=True)
-    text = "PRUEBA — así se verá el mensaje diario de las 8:00 CST (datos inventados, no operes con esto)\n\n" + text
+    fills = [{"side": "sell", "ticker": "OSCR"}, {"side": "buy", "ticker": "RELY"}]
+    usd = {"OSCR": 33.66, "RELY": 21.90}
+    swap = orders.message(fills=fills, holdings={"RELY": (90.0, 0.0)}, usd=usd, fx=18.5)
+    hold = orders.message(fills=[], holdings={"OSCR": (59.0, 0.0)}, usd=usd, fx=18.5)
+    text = f"PRUEBA (datos inventados, no operes con esto)\n{swap}\n{hold}"
     _summary(text)
     if not send(text):
         raise RuntimeError("no Slack webhook configured (secret ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK)")
@@ -111,13 +105,12 @@ def main(dry_run: bool = False) -> None:
     cfg = yaml.safe_load((_ROOT / "config/order_alerts.yaml").read_text())
     rules, pcfg = pp.load_rules()
     rules = paper.Rules(**{**rules.__dict__, **(cfg.get("rules") or {})})
-    book, compare = cfg["book"], cfg.get("compare")
+    book = cfg["book"]
     t, w, p = source(book)
     holidays = {str(d) for d in cfg.get("nyse_holidays") or []}
     now = datetime.now(UTC)
     today = now.astimezone(CST).date().isoformat()
     label = BOOK_LABELS.get(book, book)
-    simulated = bool(cfg.get("simulated", True))
     with job_run("order_alerts") as em, pg_connection() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("select max(bar_date) as d from price_bars_daily where ticker = %s", (pcfg["benchmark"],))
@@ -157,7 +150,7 @@ def main(dry_run: bool = False) -> None:
                            else f"{label} no se actualizó con el cierre del {orders.day_name(latest_bar)}")
                 deliver("stale", f"stale:{latest_bar}:{nav_day}", {"prices_day": latest_bar, "book_day": nav_day},
                         f"SIN SEÑAL hoy {orders.day_name(today)}: {missing}. No operes con datos viejos; "
-                        "revisa GitHub Actions." + (" (simulación)" if simulated else ""))
+                        "revisa GitHub Actions.")
                 return
 
             since = nav_day or "0001-01-01"
@@ -166,11 +159,6 @@ def main(dry_run: bool = False) -> None:
             pending: dict[str, list[dict]] = {}
             for r in cur.fetchall():
                 pending.setdefault(pp._iso(r.pop("signal_day")), []).append(dict(r))
-            other_buys: set[str] = set()
-            if compare and compare != book:
-                cur.execute("select ticker from paper_decisions where portfolio = %s and signal_day >= %s "
-                            "and action = 'buy'", (compare, since))
-                other_buys = {r["ticker"] for r in cur.fetchall()}
             # the book's deposits: the plan, plus the investor's recorded ones where the book uses them
             deposits = paper.recurring_flows(pcfg["forward_start"], exec_day, float(pcfg.get("recurring_mxn") or 0),
                                              pcfg.get("recurring_days") or [])
@@ -192,19 +180,11 @@ def main(dry_run: bool = False) -> None:
                         "and obs_date <= %s order by obs_date desc, ingested_at desc limit 1", (latest_bar,))
             fx = float(cur.fetchone()["value"])
             fills = orders.preview(state, pending, flow, exec_day, lambda t, d: close.get(t), fx, rules)
-            vetoed = [d for d in decisions.values() if d["action"] == "veto"]
-            mine = {f["ticker"] for f in fills if f["side"] == "buy"} | set(state.positions)
             holdings = {tk: (pos.shares, pos.shares * close.get(tk, 0.0) * fx) for tk, pos in state.positions.items()}
-            bmv = exec_day in {str(d) for d in cfg.get("bmv_holidays") or []}
-            text = orders.message(
-                exec_day=exec_day, close_cst=close_utc(exec_day).astimezone(CST).strftime("%H:%M"),
-                prices_day=latest_bar, book_label=label, fills=fills, decisions=decisions, vetoed=vetoed, flow=flow,
-                cash_after=state.cash, holdings=holdings, capa2_extra=sorted(other_buys - mine),
-                keep_rank=rules.keep_rank, simulated=simulated, bmv_closed=bmv)
+            text = orders.message(fills=fills, holdings=holdings, usd=close, fx=fx)
             payload = {"fills": [{k: f[k] for k in ("side", "ticker", "shares", "price_usd", "amount_mxn", "reason")}
-                                 for f in fills], "holdings": sorted(holdings), "vetoed": [v["ticker"] for v in vetoed],
-                       "flow_mxn": flow, "prices_day": latest_bar, "usd_mxn": fx}
-            deliver("orders", orders.signature(fills, [v["ticker"] for v in vetoed]) + ":" + ",".join(sorted(holdings)),
+                                 for f in fills], "holdings": sorted(holdings), "flow_mxn": flow, "prices_day": latest_bar, "usd_mxn": fx}
+            deliver("orders", orders.signature(fills, []) + ":" + ",".join(sorted(holdings)),
                     payload, text)
 
 
