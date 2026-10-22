@@ -2,13 +2,13 @@
 top, on the paper portfolio's budget, costs and taxes, against VOO, in MXN
 (settings in config/top1_portfolio.yaml, rules from config/paper_portfolio.yaml).
 
-Two books (column portfolio): desde_enero, the retrospective one below, and mi_inversion, which
+Two books (column portfolio of top1_book_*; top1_* are views of desde_enero): desde_enero, the retrospective one below, and mi_inversion, which
 starts from zero on the investor's own deposits (investor_contributions plus the recurring plan, like
 the forward book of paper_portfolio) with every factor day from its start a stored signal.
 
 From `start` the desde_enero book is replayed from the month-end rankings; from `live_start` every
-factor day is a signal and its decisions are stored once (top1_decisions), because daily
-factor_scores are trimmed after about 40 days. Fills and NAV (top1_fills, top1_nav) are
+factor day is a signal and its decisions are stored once (top1_book_decisions), because daily
+factor_scores are trimmed after about 40 days. Fills and NAV (top1_book_fills, top1_book_nav) are
 recomputed from prices each run. Reads prices only for the tickers it can hold.
   python -m src.jobs.top1_portfolio
 """
@@ -78,17 +78,17 @@ def store(cur, name: str, result: dict, bench: dict, bench_ticker: str, new_deci
            for sd, ds in new_decisions.items() for d in ds]
     if dec:
         psycopg2.extras.execute_values(
-            cur, "insert into top1_decisions (portfolio, signal_day, ticker, action, reason, rank, score, industry, run_id) "
+            cur, "insert into top1_book_decisions (portfolio, signal_day, ticker, action, reason, rank, score, industry, run_id) "
                  "values %s on conflict do nothing", dec)
-    cur.execute("delete from top1_fills where portfolio = %s", (name,))
+    cur.execute("delete from top1_book_fills where portfolio = %s", (name,))
     fills = [(name, f["exec_day"], f["signal_day"], f["ticker"], f["side"], f["reason"], f["shares"], f["price_usd"],
               f["usd_mxn"], f["amount_mxn"], f["cost_mxn"], f["gain_mxn"], run_id) for f in result["fills"]]
     if fills:
         psycopg2.extras.execute_values(
-            cur, "insert into top1_fills (portfolio, exec_day, signal_day, ticker, side, reason, shares, price_usd, usd_mxn, "
+            cur, "insert into top1_book_fills (portfolio, exec_day, signal_day, ticker, side, reason, shares, price_usd, usd_mxn, "
                  "amount_mxn, cost_mxn, gain_mxn, run_id) values %s on conflict do nothing", fills)
     held = held_by_day(result["fills"])
-    cur.execute("delete from top1_nav where portfolio = %s", (name,))
+    cur.execute("delete from top1_book_nav where portfolio = %s", (name,))
     b = {r["day"]: r for r in bench["nav"]}
     nav, i, now_t = [], 0, None
     for r in result["nav"]:
@@ -101,7 +101,7 @@ def store(cur, name: str, result: dict, bench: dict, bench_ticker: str, new_deci
                     br.get("liquidation_mxn"), br.get("twr"), run_id))
     if nav:
         psycopg2.extras.execute_values(
-            cur, "insert into top1_nav (portfolio, day, ticker, nav_mxn, cash_mxn, liquidation_mxn, flow_mxn, contributed_mxn, "
+            cur, "insert into top1_book_nav (portfolio, day, ticker, nav_mxn, cash_mxn, liquidation_mxn, flow_mxn, contributed_mxn, "
                  "twr, usd_mxn, bench_ticker, bench_nav_mxn, bench_liquidation_mxn, bench_twr, run_id) values %s", nav)
 
 
@@ -125,7 +125,7 @@ def run_book(cur, em, name: str, rules, cfg: dict, start: str, live: str, factor
     days = [d for d in market["closes"][bench].days if d >= signals[0]]
     flows = flows_from(signals[0])
     frozen: dict[str, list[dict]] = defaultdict(list)
-    for r in pp._rows(cur, "select signal_day, ticker, action, reason, rank, score, industry from top1_decisions "
+    for r in pp._rows(cur, "select signal_day, ticker, action, reason, rank, score, industry from top1_book_decisions "
                            "where portfolio = %(p)s", {"p": name}):
         frozen[pp._iso(r.pop("signal_day"))].append(r)
     result = pp.run_book(cur, signals, dict(frozen), market, days, rules, flows)
