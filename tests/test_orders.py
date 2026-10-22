@@ -63,3 +63,9 @@ def test_trading_days_and_close():
     assert next_trading_day("2026-11-25", {"2026-11-26"}) == "2026-11-27"           # Thanksgiving
     assert close_utc("2026-10-20").isoformat() == "2026-10-20T20:00:00+00:00"       # EDT: 14:00 CST
     assert close_utc("2026-11-02").isoformat() == "2026-11-02T21:00:00+00:00"       # EST: 15:00 CST
+
+
+def test_source_points_at_the_books_tables():
+    from src.jobs.order_alerts import source
+    assert source("top1", "mi_inversion") == ("top1_book", " and portfolio = %s", ("mi_inversion",))
+    assert source("paper", "capa4_mayoria") == ("paper", " and portfolio = %s", ("capa4_mayoria",))

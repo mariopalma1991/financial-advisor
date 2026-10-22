@@ -3,11 +3,13 @@
 # book they follow with the previous close, posted to Slack #alertas-factors-rank-01 (GitHub secret
 # ONE_STOCK_PORTFOLIO_ALERTS_WEBHOOK, given to the job as ORDERS_WEBHOOK_URL).
 
-# The book the investor follows: top1 (the one-stock portfolio, src/jobs/top1_portfolio.py)
-# or a paper_* portfolio such as capa4_mayoria (Capa 2 with the majority veto).
-book: top1                   # Mario 2026-10-21: only the one-stock portfolio for now
-rules: {n: 1, keep_rank: 1, max_per_industry: 1, min_position_mxn: 0}   # top1's rules over paper_portfolio's
-recorded_deposits: false     # top1 uses the recurring plan only, not the Mi inversión deposits
+# The book the investor follows: `source` top1 (top1_book_*: desde_enero or mi_inversion, from
+# src/jobs/top1_portfolio.py) or paper (a paper_* portfolio such as capa4_mayoria).
+# Mario 2026-10-22: the one-stock book on Mi inversión (first buy at the 2026-10-22 close).
+source: top1
+book: mi_inversion
+rules: {n: 1, keep_rank: 1, max_per_industry: 1, min_position_mxn: 0}   # the one-stock book's rules over paper_portfolio's
+recorded_deposits: true      # the Mi inversión deposits (investor_contributions) plus the recurring plan
 
 # NYSE holidays (the books trade on US days): no message those days.
 nyse_holidays: ["2026-11-26", "2026-12-25", "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26",
