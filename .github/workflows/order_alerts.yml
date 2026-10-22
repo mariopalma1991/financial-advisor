@@ -2,13 +2,20 @@ name: order_alerts
 
 # The day's action (COMPRA / VENTA / HOLD) of the followed book, posted to Slack every
 # trading day at 08:00 CST with the previous close (src/jobs/order_alerts.py,
-# config/order_alerts.yaml). The 10:00 CST run sends only what the first didn't
-# (GitHub can delay or skip a scheduled run; one message per day otherwise).
+# config/order_alerts.yaml). The later runs send only what the first didn't (GitHub can
+# delay or skip a scheduled run; one message per day otherwise).
 
 on:
   schedule:
     - cron: "0 14 * * 1-5"    # 08:00 CST
-    - cron: "0 16 * * 1-5"    # 10:00 CST, backup
+    # backups: GitHub skipped both scheduled runs on 2026-10-22; the job sends once per day
+    # (order_alerts.signature) and does nothing after the close, so extra runs cost only minutes
+    - cron: "30 14 * * 1-5"
+    - cron: "0 15 * * 1-5"
+    - cron: "0 16 * * 1-5"
+    - cron: "0 17 * * 1-5"
+    - cron: "0 18 * * 1-5"
+    - cron: "0 19 * * 1-5"
   workflow_dispatch:
     inputs:
       dry_run:
