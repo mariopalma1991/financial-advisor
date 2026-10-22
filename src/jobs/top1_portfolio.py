@@ -2,9 +2,13 @@
 top, on the paper portfolio's budget, costs and taxes, against VOO, in MXN
 (settings in config/top1_portfolio.yaml, rules from config/paper_portfolio.yaml).
 
-From `start` the book is replayed from the month-end rankings; from `live_start` every
-factor day is a signal and its decisions are stored once (top1_decisions), because daily
-factor_scores are trimmed after about 40 days. Fills and NAV (top1_fills, top1_nav) are
+Two books (column portfolio of top1_book_*; top1_* are views of desde_enero): desde_enero, the retrospective one below, and mi_inversion, which
+starts from zero on the investor's own deposits (investor_contributions plus the recurring plan, like
+the forward book of paper_portfolio) with every factor day from its start a stored signal.
+
+From `start` the desde_enero book is replayed from the month-end rankings; from `live_start` every
+factor day is a signal and its decisions are stored once (top1_book_decisions), because daily
+factor_scores are trimmed after about 40 days. Fills and NAV (top1_book_fills, top1_book_nav) are
 recomputed from prices each run. Reads prices only for the tickers it can hold.
   python -m src.jobs.top1_portfolio
 """
@@ -68,23 +72,23 @@ def held_by_day(fills: list[dict]) -> list[tuple[str, str | None]]:
     return out
 
 
-def store(cur, result: dict, bench: dict, bench_ticker: str, new_decisions: dict[str, list[dict]]) -> None:
+def store(cur, name: str, result: dict, bench: dict, bench_ticker: str, new_decisions: dict[str, list[dict]]) -> None:
     run_id = current_run_id()
-    dec = [(sd, d["ticker"], d["action"], d.get("reason"), d.get("rank"), d.get("score"), d.get("industry"), run_id)
+    dec = [(name, sd, d["ticker"], d["action"], d.get("reason"), d.get("rank"), d.get("score"), d.get("industry"), run_id)
            for sd, ds in new_decisions.items() for d in ds]
     if dec:
         psycopg2.extras.execute_values(
-            cur, "insert into top1_decisions (signal_day, ticker, action, reason, rank, score, industry, run_id) "
+            cur, "insert into top1_book_decisions (portfolio, signal_day, ticker, action, reason, rank, score, industry, run_id) "
                  "values %s on conflict do nothing", dec)
-    cur.execute("delete from top1_fills")
-    fills = [(f["exec_day"], f["signal_day"], f["ticker"], f["side"], f["reason"], f["shares"], f["price_usd"],
+    cur.execute("delete from top1_book_fills where portfolio = %s", (name,))
+    fills = [(name, f["exec_day"], f["signal_day"], f["ticker"], f["side"], f["reason"], f["shares"], f["price_usd"],
               f["usd_mxn"], f["amount_mxn"], f["cost_mxn"], f["gain_mxn"], run_id) for f in result["fills"]]
     if fills:
         psycopg2.extras.execute_values(
-            cur, "insert into top1_fills (exec_day, signal_day, ticker, side, reason, shares, price_usd, usd_mxn, "
+            cur, "insert into top1_book_fills (portfolio, exec_day, signal_day, ticker, side, reason, shares, price_usd, usd_mxn, "
                  "amount_mxn, cost_mxn, gain_mxn, run_id) values %s on conflict do nothing", fills)
     held = held_by_day(result["fills"])
-    cur.execute("delete from top1_nav")
+    cur.execute("delete from top1_book_nav where portfolio = %s", (name,))
     b = {r["day"]: r for r in bench["nav"]}
     nav, i, now_t = [], 0, None
     for r in result["nav"]:
@@ -92,13 +96,48 @@ def store(cur, result: dict, bench: dict, bench_ticker: str, new_decisions: dict
             now_t = held[i][1]
             i += 1
         br = b.get(r["day"], {})
-        nav.append((r["day"], now_t, r["nav_mxn"], r["cash_mxn"], r["liquidation_mxn"], r["flow_mxn"],
+        nav.append((name, r["day"], now_t, r["nav_mxn"], r["cash_mxn"], r["liquidation_mxn"], r["flow_mxn"],
                     r["contributed_mxn"], r["twr"], r["usd_mxn"], bench_ticker, br.get("nav_mxn"),
                     br.get("liquidation_mxn"), br.get("twr"), run_id))
     if nav:
         psycopg2.extras.execute_values(
-            cur, "insert into top1_nav (day, ticker, nav_mxn, cash_mxn, liquidation_mxn, flow_mxn, contributed_mxn, "
+            cur, "insert into top1_book_nav (portfolio, day, ticker, nav_mxn, cash_mxn, liquidation_mxn, flow_mxn, contributed_mxn, "
                  "twr, usd_mxn, bench_ticker, bench_nav_mxn, bench_liquidation_mxn, bench_twr, run_id) values %s", nav)
+
+
+def run_book(cur, em, name: str, rules, cfg: dict, start: str, live: str, factor_days: list[str], latest: str,
+             flows_from) -> None:
+    """One book: signals (the start's, then month-ends until `live`, every factor day from it), the run, the store.
+    flows_from(first_signal) gives the deposits (day, MXN)."""
+    signals = sorted(set(pp.signal_days(factor_days, start, latest)) | {d for d in factor_days if d >= live})
+    signals = [d for d in signals if d >= start]
+    if not signals:
+        em.emit("INFO", "top1_waiting", f"{name}: no factor day on or after {start} yet")
+        return
+    bench = cfg["benchmark"]
+    tickers = [r["ticker"] for r in pp._rows(
+        cur, "select distinct ticker from factor_scores where as_of = any(%(d)s::date[]) and eligible "
+             "and rank <= %(n)s", {"d": signals, "n": CANDIDATES})] + [bench, pp.FALLBACK_BENCHMARK]
+    market = load_market(cur, start, tickers)
+    vc = market["closes"].get(bench)
+    if not vc or not vc.days or vc.days[0] > signals[0]:
+        bench = pp.FALLBACK_BENCHMARK
+    days = [d for d in market["closes"][bench].days if d >= signals[0]]
+    flows = flows_from(signals[0])
+    frozen: dict[str, list[dict]] = defaultdict(list)
+    for r in pp._rows(cur, "select signal_day, ticker, action, reason, rank, score, industry from top1_book_decisions "
+                           "where portfolio = %(p)s", {"p": name}):
+        frozen[pp._iso(r.pop("signal_day"))].append(r)
+    result = pp.run_book(cur, signals, dict(frozen), market, days, rules, flows)
+    bres = pp.run_benchmark(signals[0], bench, market, days, rules, flows)
+    new = {sd: ds for sd, ds in result["decisions"].items() if sd >= live and sd not in frozen}
+    store(cur, name, result, bres, bench, new)
+    last = result["nav"][-1] if result["nav"] else None
+    blast = bres["nav"][-1] if bres["nav"] else None
+    em.emit("INFO", "top1_book", name, payload={
+        "signals": len(signals), "new_decisions": sorted(new), "fills": len(result["fills"]),
+        "pending": result["pending"], "benchmark": bench,
+        "nav_mxn": last and round(last["nav_mxn"]), "bench_nav_mxn": blast and round(blast["nav_mxn"])})
 
 
 def main() -> None:
@@ -106,41 +145,26 @@ def main() -> None:
     one = paper.Rules(**{**rules.__dict__, "n": 1, "keep_rank": 1, "max_per_industry": 1, "min_position_mxn": 0.0})
     top = yaml.safe_load((_ROOT / "config/top1_portfolio.yaml").read_text())
     start, live = str(top["start"]), str(top["live_start"])
+    plan = (float(cfg.get("recurring_mxn") or 0), cfg.get("recurring_days") or [])
     with job_run("top1_portfolio") as em, pg_connection() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             factor_days = [pp._iso(r["as_of"]) for r in pp._rows(cur, "select distinct as_of from factor_scores")]
             cur.execute("select max(bar_date) as d from price_bars_daily")
             latest = pp._iso(cur.fetchone()["d"])
-            signals = sorted(set(pp.signal_days(factor_days, start, latest)) | {d for d in factor_days if d >= live})
-            if not signals:
-                em.emit("INFO", "top1_waiting", f"no factor day on or after {start} yet")
-                return
-            bench = cfg["benchmark"]
-            tickers = [r["ticker"] for r in pp._rows(
-                cur, "select distinct ticker from factor_scores where as_of = any(%(d)s::date[]) and eligible "
-                     "and rank <= %(n)s", {"d": signals, "n": CANDIDATES})] + [bench, pp.FALLBACK_BENCHMARK]
-            market = load_market(cur, start, tickers)
-            vc = market["closes"].get(bench)
-            if not vc or not vc.days or vc.days[0] > signals[0]:
-                bench = pp.FALLBACK_BENCHMARK
-            days = [d for d in market["closes"][bench].days if d >= signals[0]]
-            flows = sorted([(signals[0], float(cfg["initial_mxn"]))]
-                           + paper.recurring_flows(signals[0], latest, float(cfg.get("recurring_mxn") or 0),
-                                                   cfg.get("recurring_days") or []))
-            frozen: dict[str, list[dict]] = defaultdict(list)
-            for r in pp._rows(cur, "select signal_day, ticker, action, reason, rank, score, industry from top1_decisions"):
-                frozen[pp._iso(r.pop("signal_day"))].append(r)
-            result = pp.run_book(cur, signals, dict(frozen), market, days, one, flows)
-            bres = pp.run_benchmark(signals[0], bench, market, days, one, flows)
-            new = {sd: ds for sd, ds in result["decisions"].items() if sd >= live and sd not in frozen}
-            store(cur, result, bres, bench, new)
+
+            def from_january(first: str) -> list[tuple[str, float]]:
+                return sorted([(first, float(cfg["initial_mxn"]))] + paper.recurring_flows(first, latest, *plan))
+
+            def from_deposits(first: str) -> list[tuple[str, float]]:
+                deposits = pp.contributions(cur, cfg["owner"]) or [(cfg["forward_start"], float(cfg["initial_mxn"]))]
+                return sorted(deposits + paper.recurring_flows(cfg["forward_start"], latest, *plan))
+
+            run_book(cur, em, "desde_enero", one, cfg, start, live, factor_days, latest, from_january)
             conn.commit()
-            last = result["nav"][-1] if result["nav"] else None
-            blast = bres["nav"][-1] if bres["nav"] else None
-            em.emit("INFO", "top1_book", "top1", payload={
-                "signals": len(signals), "new_decisions": sorted(new), "fills": len(result["fills"]),
-                "pending": result["pending"], "benchmark": bench,
-                "nav_mxn": last and round(last["nav_mxn"]), "bench_nav_mxn": blast and round(blast["nav_mxn"])})
+            # Mi inversión: from the first factor day on or after its start, every day a stored signal
+            run_book(cur, em, "mi_inversion", one, cfg, str(top["mi_inversion_start"]), str(top["mi_inversion_start"]),
+                     factor_days, latest, from_deposits)
+            conn.commit()
 
 
 if __name__ == "__main__":
