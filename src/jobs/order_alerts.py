@@ -29,17 +29,16 @@ from src.transforms import orders, paper
 
 _ROOT = Path(__file__).resolve().parents[2]
 CST, NY = ZoneInfo("America/Mexico_City"), ZoneInfo("America/New_York")
-BOOK_LABELS = {"top1": "Portafolio de una acción (el factor #1)",
+BOOK_LABELS = {"mi_inversion": "Portafolio de una acción (factor #1) con Mi inversión",
+               "desde_enero": "Portafolio de una acción (factor #1) desde enero",
                "capa4_mayoria": "Capa 4 · mayoría (Capa 2 con veto de 2 de 3 modelos)",
                "forward_top20": "Capa 2 · factores, sin veto"}
 
 
-def source(book: str) -> tuple[str, str, tuple]:
-    """The book's tables prefix and filter: top1_* hold one book (src/jobs/top1_portfolio.py),
-    paper_* one per portfolio."""
-    if book == "top1":
-        return "top1", "", ()
-    return "paper", " and portfolio = %s", (book,)
+def source(kind: str, book: str) -> tuple[str, str, tuple]:
+    """The tables prefix and row filter of the book: top1_book_* (src/jobs/top1_portfolio.py) and
+    paper_* both hold several books in a portfolio column."""
+    return ("top1_book" if kind == "top1" else "paper"), " and portfolio = %s", (book,)
 
 
 def next_trading_day(d: str, holidays: set[str]) -> str:
@@ -106,7 +105,7 @@ def main(dry_run: bool = False) -> None:
     rules, pcfg = pp.load_rules()
     rules = paper.Rules(**{**rules.__dict__, **(cfg.get("rules") or {})})
     book = cfg["book"]
-    t, w, p = source(book)
+    t, w, p = source(cfg.get("source", "top1"), book)
     holidays = {str(d) for d in cfg.get("nyse_holidays") or []}
     now = datetime.now(UTC)
     today = now.astimezone(CST).date().isoformat()
@@ -126,6 +125,7 @@ def main(dry_run: bool = False) -> None:
                 em.emit("INFO", "order_alert_none", f"{exec_day}'s close has passed: nothing to send")
                 return
             nav_day = pp._iso(nav["day"]) if nav else ""   # no fill yet: everything decided is pending
+            first_day = not nav   # the book has not made its first buy: its cash is the deposits up to today
 
             def deliver(kind: str, sig: str, payload: dict, text: str) -> None:
                 last = _last_sent(cur, book, today)
@@ -163,8 +163,14 @@ def main(dry_run: bool = False) -> None:
             deposits = paper.recurring_flows(pcfg["forward_start"], exec_day, float(pcfg.get("recurring_mxn") or 0),
                                              pcfg.get("recurring_days") or [])
             if cfg.get("recorded_deposits", True):
-                deposits += pp.contributions(cur, pcfg["owner"])
-            flow = sum(a for d, a in deposits if nav_day < d <= exec_day) if nav else 0.0
+                deposits += pp.contributions(cur, pcfg["owner"]) or [(pcfg["forward_start"], float(pcfg["initial_mxn"]))]
+            flow = sum(a for d, a in deposits if nav_day < d <= exec_day)
+            if first_day and not pending:
+                # the book's first signal is not stored yet (the night's chain is late): say so, no HOLD without a position
+                deliver("stale", f"nosignal:{latest_bar}", {"prices_day": latest_bar},
+                        f"SIN SEÑAL hoy {orders.day_name(today)}: {label} aún no tiene su primera decisión "
+                        f"con el cierre del {orders.day_name(latest_bar)}. No operes; revisa GitHub Actions.")
+                return
             decisions = {d["ticker"]: d for ds in pending.values() for d in ds}
 
             cur.execute(f"select ticker, side, shares, amount_mxn, cost_mxn from {t}_fills where true{w} "
