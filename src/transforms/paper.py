@@ -253,7 +253,7 @@ def _sizing(book: Book, day: str | None, px, fx: float, rules: Rules, basis) -> 
 def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., list[dict]],
              px: Callable[[str, str], float | None], fx: Series,
              dividends: Mapping[str, Sequence[tuple[str, float]]], rules: Rules,
-             flows: Sequence[tuple[str, float]] = (), basis=None) -> dict:
+             flows: Sequence[tuple[str, float]] = (), basis=None, prev_close_fills: bool = False) -> dict:
     """Run the book over trading `days` (ascending). Each signal day's decisions
     (decide(signal_day, held, slots, can_buy)) fill on the first trading day after
     it; slots is how many positions the deposits (or a larger value) allow (Book.slots) and
@@ -294,13 +294,16 @@ def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., 
         book.contributed += flow
         contributed += flow
         filled = False
+        opx, orate = px, rate
+        if prev_close_fills and prev:
+            opx, orate = (lambda t, d, _p=prev: px(t, _p)), (fx.at(prev) or rate)
         while pending and pending[0] < day:
             sd = pending.pop(0)
-            decided[sd] = decide(sd, list(book.positions), *_sizing(book, day, px, rate, rules, basis))
-            rebalance(book, decided[sd], day, px, rate, rules, sd, basis)
+            decided[sd] = decide(sd, list(book.positions), *_sizing(book, day, opx, orate, rules, basis))
+            rebalance(book, decided[sd], day, opx, orate, rules, sd, basis)
             filled = True
         if started and flow and not filled:
-            top_up(book, day, px, rate, rules, day, basis)
+            top_up(book, day, opx, orate, rules, day, basis)
         value = book.value(day, px, rate)
         if started:
             last = nav[-1]["nav_mxn"]

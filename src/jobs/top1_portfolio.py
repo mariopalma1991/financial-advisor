@@ -106,7 +106,7 @@ def store(cur, name: str, result: dict, bench: dict, bench_ticker: str, new_deci
 
 
 def run_book(cur, em, name: str, rules, cfg: dict, start: str, live: str, factor_days: list[str], latest: str,
-             flows_from) -> None:
+             flows_from, prev_close_fills: bool = False) -> None:
     """One book: signals (the start's, then month-ends until `live`, every factor day from it), the run, the store.
     flows_from(first_signal) gives the deposits (day, MXN)."""
     signals = sorted(set(pp.signal_days(factor_days, start, latest)) | {d for d in factor_days if d >= live})
@@ -128,8 +128,8 @@ def run_book(cur, em, name: str, rules, cfg: dict, start: str, live: str, factor
     for r in pp._rows(cur, "select signal_day, ticker, action, reason, rank, score, industry from top1_book_decisions "
                            "where portfolio = %(p)s", {"p": name}):
         frozen[pp._iso(r.pop("signal_day"))].append(r)
-    result = pp.run_book(cur, signals, dict(frozen), market, days, rules, flows)
-    bres = pp.run_benchmark(signals[0], bench, market, days, rules, flows)
+    result = pp.run_book(cur, signals, dict(frozen), market, days, rules, flows, prev_close_fills)
+    bres = pp.run_benchmark(signals[0], bench, market, days, rules, flows, prev_close_fills)
     new = {sd: ds for sd, ds in result["decisions"].items() if sd >= live and sd not in frozen}
     store(cur, name, result, bres, bench, new)
     last = result["nav"][-1] if result["nav"] else None
@@ -161,9 +161,10 @@ def main() -> None:
 
             run_book(cur, em, "desde_enero", one, cfg, start, live, factor_days, latest, from_january)
             conn.commit()
-            # Mi inversión: from the first factor day on or after its start, every day a stored signal
+            # Mi inversión: from the first factor day on or after its start, every day a stored signal; its orders fill at
+            # the previous close (the price the 08:00 alert quotes), like a real order placed that morning
             run_book(cur, em, "mi_inversion", one, cfg, str(top["mi_inversion_start"]), str(top["mi_inversion_start"]),
-                     factor_days, latest, from_deposits)
+                     factor_days, latest, from_deposits, prev_close_fills=True)
             conn.commit()
 
 

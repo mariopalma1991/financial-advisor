@@ -145,21 +145,22 @@ def _basis(market: dict):
 
 
 def run_book(cur, signals: list[str], frozen: dict[str, list[dict]], market: dict, days: list[str],
-             rules: paper.Rules, flows: list[tuple[str, float]]) -> dict:
+             rules: paper.Rules, flows: list[tuple[str, float]], prev_close_fills: bool = False) -> dict:
     def decide(sd: str, held: list[str], slots: int, can_buy) -> list[dict]:
         return frozen.get(sd) or paper.select_targets(held, scores_on(cur, sd), rules, slots, can_buy)
 
     return paper.simulate(days, signals, decide, _px(market), market["fx"], market["divs"], rules,
-                          flows=flows, basis=_basis(market))
+                          flows=flows, basis=_basis(market), prev_close_fills=prev_close_fills)
 
 
 def run_benchmark(first_signal: str, bench: str, market: dict, days: list[str], rules: paper.Rules,
-                  flows: list[tuple[str, float]]) -> dict:
+                  flows: list[tuple[str, float]], prev_close_fills: bool = False) -> dict:
     """The same pesos, on the same days, in VOO with the same costs. Fractional:
     it is the yardstick, and one VOO share costs more than a small budget."""
     one = paper.Rules(**{**rules.__dict__, "n": 1, "min_position_mxn": 0.0, "whole_shares": False})
     return paper.simulate(days, [first_signal], lambda sd, held, slots, can_buy: [{"ticker": bench, "action": "buy"}],
-                          _px(market), market["fx"], market["divs"], one, flows=flows, basis=_basis(market))
+                          _px(market), market["fx"], market["divs"], one, flows=flows, basis=_basis(market),
+                         prev_close_fills=prev_close_fills)
 
 
 def store(cur, name: str, result: dict, bench: dict, bench_ticker: str, rules: paper.Rules,

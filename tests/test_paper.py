@@ -202,3 +202,16 @@ def test_month_end_signal_comes_out_on_the_months_last_trading_day():
     assert signal_days(["2027-05-03", "2027-05-28"], "2027-05-03", "2027-05-28") == ["2027-05-03", "2027-05-28"]
     assert signal_days(["2029-03-01", "2029-03-29"], "2029-03-01", "2029-03-29") == ["2029-03-01", "2029-03-29"]
     assert signal_days(["2029-03-01", "2029-03-28"], "2029-03-01", "2029-03-28") == ["2029-03-01"]
+
+
+def test_prev_close_fills_use_the_alert_price_on_the_next_day():
+    prices = {"A": {"2026-01-01": 10.0, "2026-01-02": 12.0}, "B": {"2026-01-01": 5.0, "2026-01-02": 5.0}}
+    r = _run(prices, rules=RULES)
+    days = sorted({d for p in prices.values() for d in p})
+    series = {t: paper.Series(list(p.items())) for t, p in prices.items()}
+    sim = paper.simulate(days, ["2026-01-01"], lambda sd, held, n, cb: paper.select_targets(
+        held, _scores(["A", "B"]), RULES, n, cb), lambda t, d: series[t].at(d), paper.Series([(days[0], 20.0)]),
+        {}, RULES, prev_close_fills=True)
+    a = next(f for f in sim["fills"] if f["ticker"] == "A")
+    assert a["exec_day"] == "2026-01-02" and a["price_usd"] == 10.0   # ordered on the 2nd at the 1st's close
+    assert next(f for f in r["fills"] if f["ticker"] == "A")["price_usd"] == 12.0   # default: the day's own close
