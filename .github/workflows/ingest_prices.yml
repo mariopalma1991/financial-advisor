@@ -5,8 +5,9 @@ name: ingest_prices
 # Weekends have no bars (lookback 1 = the previous UTC day). Holidays still run but find nothing.
 
 on:
-  schedule:
-    - cron: "0 2 * * 2-6"
+  # No `schedule:` here: GitHub delayed this cron by hours. Supabase pg_cron job
+  # `dispatch_ingest_prices` ('0 2 * * 2-6' UTC) calls workflow_dispatch on time
+  # (see public.dispatch_workflow and the workflow_dispatch_status view).
   workflow_dispatch:
     inputs:
       lookback_days:
