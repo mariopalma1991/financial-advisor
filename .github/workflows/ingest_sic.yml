@@ -4,8 +4,7 @@ name: ingest_sic
 # at 15:00 UTC (9:00 CST); EDGAR allows 10 requests/s, so it shares the sec-edgar group.
 
 on:
-  schedule:
-    - cron: "0 15 2 * *"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_sic` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch:
 
 concurrency:

@@ -6,8 +6,7 @@ name: ingest_macro
 # overnight update of the previous business day.
 
 on:
-  schedule:
-    - cron: "0 3 * * 2-6"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_macro` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch: {}
 
 concurrency:

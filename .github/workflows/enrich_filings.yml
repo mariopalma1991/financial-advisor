@@ -6,8 +6,7 @@ name: enrich_filings
 # (10 requests/s), so this runs outside the finnhub-api group.
 
 on:
-  schedule:
-    - cron: "0 15 * * 1-6"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_enrich_filings` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch:
     inputs:
       days:

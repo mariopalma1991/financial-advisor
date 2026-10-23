@@ -7,8 +7,7 @@ name: roll_window
 # ingests; never alongside archive_cold.
 
 on:
-  schedule:
-    - cron: "0 9 2 * *"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_roll_window` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch:
     inputs:
       vacuum_full:

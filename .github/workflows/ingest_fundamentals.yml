@@ -5,8 +5,7 @@ name: ingest_fundamentals
 # Runs Tuesday 16:00 UTC (10:00 CST), after the daily filings ingest.
 
 on:
-  schedule:
-    - cron: "0 16 * * 2"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_fundamentals` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch: {}
 
 # Finnhub allows 30 calls/min for the whole account, so Finnhub workflows run

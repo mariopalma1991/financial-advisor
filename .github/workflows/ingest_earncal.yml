@@ -5,8 +5,7 @@ name: ingest_earncal
 # Runs Monday 18:00 UTC (~12pm Mexico City).
 
 on:
-  schedule:
-    - cron: "0 18 * * 1"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_earncal` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch: {}
 
 # Finnhub allows 30 calls/min for the whole account, so Finnhub workflows run

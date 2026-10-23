@@ -5,8 +5,7 @@ name: monitor_health
 # A failed check fails this workflow, so GitHub sends the failure email.
 
 on:
-  schedule:
-    - cron: "30 15 * * *"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_monitor_health` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch: {}
 
 concurrency:

@@ -4,8 +4,7 @@ name: ingest_filings
 # Runs 14:00 UTC Mon-Sat (~8am Mexico City), before enrich_filings at 15:00.
 
 on:
-  schedule:
-    - cron: "0 14 * * 1-6"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_filings` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch:
     inputs:
       days:

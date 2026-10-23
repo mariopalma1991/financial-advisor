@@ -6,8 +6,7 @@ name: ingest_street
 # Runs Saturday 17:00 UTC (11:00 CST), ~25 min.
 
 on:
-  schedule:
-    - cron: "0 17 * * 6"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_street` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch:
     inputs:
       max_symbols:
