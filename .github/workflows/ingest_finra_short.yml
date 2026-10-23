@@ -5,8 +5,7 @@ name: ingest_finra_short
 # run loads two years.
 
 on:
-  schedule:
-    - cron: "0 16 * * 3"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_finra_short` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch:
     inputs:
       since:

@@ -5,8 +5,7 @@ name: ingest_insider_sentiment
 # Runs Sundays at 12:00 UTC, when no other Finnhub workflow is scheduled.
 
 on:
-  schedule:
-    - cron: "0 12 * * 0"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_insider_sentiment` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch: {}
 
 # Finnhub allows 30 calls/min for the whole account, so Finnhub workflows run

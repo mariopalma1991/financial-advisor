@@ -4,8 +4,7 @@ name: ingest_news
 # Independent of the main daily pipeline.
 
 on:
-  schedule:
-    - cron: "0 13,19,23 * * *"
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_ingest_news` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
   workflow_dispatch: {}
 
 # Finnhub allows 30 calls/min for the whole account, so Finnhub workflows run

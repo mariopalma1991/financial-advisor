@@ -10,8 +10,13 @@ on:
     workflows: [compute_factors]
     types: [completed]
   workflow_dispatch:
-  schedule:
-    - cron: "*/10 * * * *"
+    inputs:
+      check_deposits:
+        description: "Only run if deposits changed since the last run (what pg_cron sends every 10 minutes)"
+        type: boolean
+        required: false
+        default: false
+  # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_paper_portfolio` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
 
 concurrency:
   group: paper-portfolio
@@ -25,7 +30,7 @@ jobs:
     steps:
       - name: Check for new deposits
         id: changed
-        if: github.event_name == 'schedule'
+        if: inputs.check_deposits == true
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
