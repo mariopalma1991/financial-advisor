@@ -8,6 +8,9 @@ on:
     workflows: [paper_portfolio]
     types: [completed]
   workflow_dispatch:
+  push:
+    branches: [claude/project-thread-05xrjc]
+    paths: [.github/workflows/top1_portfolio.yml]
 
 concurrency:
   group: top1-portfolio

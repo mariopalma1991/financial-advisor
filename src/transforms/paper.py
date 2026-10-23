@@ -253,7 +253,7 @@ def _sizing(book: Book, day: str | None, px, fx: float, rules: Rules, basis) -> 
 def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., list[dict]],
              px: Callable[[str, str], float | None], fx: Series,
              dividends: Mapping[str, Sequence[tuple[str, float]]], rules: Rules,
-             flows: Sequence[tuple[str, float]] = (), basis=None) -> dict:
+             flows: Sequence[tuple[str, float]] = (), basis=None, fill_at_prior_close: bool = False) -> dict:
     """Run the book over trading `days` (ascending). Each signal day's decisions
     (decide(signal_day, held, slots, can_buy)) fill on the first trading day after
     it; slots is how many positions the deposits (or a larger value) allow (Book.slots) and
@@ -261,6 +261,9 @@ def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., 
     the investor's deposits (day, MXN): cash on the first trading day on or after
     their date, spent the same day on the positions below target (or at the first
     fill). basis(t, day) gives later split ratios for whole shares (default 1).
+    fill_at_prior_close: trades (signal fills and deposit top-ups) are priced at the previous
+    trading day's close and USD/MXN, the quote an alert gives that morning, while the NAV still
+    marks each day's own close.
     Returns decisions per signal, fills and one NAV row per day from the first fill,
     with the money put in so far and the time-weighted return (flows removed)."""
     basis = basis or (lambda t, day: 1.0)
@@ -293,14 +296,17 @@ def simulate(days: Sequence[str], signals: Sequence[str], decide: Callable[..., 
         book.cash += flow
         book.contributed += flow
         contributed += flow
+        tpx, trate = px, rate   # the price trades are made at
+        if fill_at_prior_close and prev:
+            tpx, trate = (lambda t, d, _p=prev: px(t, _p)), (fx.at(prev) or rate)
         filled = False
         while pending and pending[0] < day:
             sd = pending.pop(0)
-            decided[sd] = decide(sd, list(book.positions), *_sizing(book, day, px, rate, rules, basis))
-            rebalance(book, decided[sd], day, px, rate, rules, sd, basis)
+            decided[sd] = decide(sd, list(book.positions), *_sizing(book, day, tpx, trate, rules, basis))
+            rebalance(book, decided[sd], day, tpx, trate, rules, sd, basis)
             filled = True
         if started and flow and not filled:
-            top_up(book, day, px, rate, rules, day, basis)
+            top_up(book, day, tpx, trate, rules, day, basis)
         value = book.value(day, px, rate)
         if started:
             last = nav[-1]["nav_mxn"]

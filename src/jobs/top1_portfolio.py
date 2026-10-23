@@ -2,7 +2,8 @@
 top, on the paper portfolio's budget, costs and taxes, against VOO, in MXN
 (settings in config/top1_portfolio.yaml, rules from config/paper_portfolio.yaml).
 
-Two books (column portfolio of top1_book_*; top1_* are views of desde_enero): desde_enero, the retrospective one below, and mi_inversion, which
+Two books (column portfolio of top1_book_*; top1_* are views of desde_enero; mi_inversion trades at the
+previous close, the price the morning alert gives, desde_enero at the fill day's close): desde_enero, the retrospective one below, and mi_inversion, which
 starts from zero on the investor's own deposits (investor_contributions plus the recurring plan, like
 the forward book of paper_portfolio) with every factor day from its start a stored signal.
 
@@ -105,8 +106,25 @@ def store(cur, name: str, result: dict, bench: dict, bench_ticker: str, new_deci
                  "twr, usd_mxn, bench_ticker, bench_nav_mxn, bench_liquidation_mxn, bench_twr, run_id) values %s", nav)
 
 
+def simulate(cur, signals: list[str], frozen: dict, market: dict, days: list[str], rules, flows, bench: str,
+             prior_close: bool) -> tuple[dict, dict]:
+    """The book and its VOO yardstick (paper_portfolio's run_book / run_benchmark) with the option
+    to price trades at the previous close, as the morning alert quotes them."""
+    def decide(sd: str, held: list[str], slots: int, can_buy) -> list[dict]:
+        return frozen.get(sd) or paper.select_targets(held, pp.scores_on(cur, sd), rules, slots, can_buy)
+
+    px, basis = pp._px(market), pp._basis(market)
+    result = paper.simulate(days, signals, decide, px, market["fx"], market["divs"], rules, flows=flows,
+                            basis=basis, fill_at_prior_close=prior_close)
+    yard = paper.Rules(**{**rules.__dict__, "n": 1, "min_position_mxn": 0.0, "whole_shares": False})
+    bres = paper.simulate(days, [signals[0]], lambda sd, held, slots, can_buy: [{"ticker": bench, "action": "buy"}],
+                          px, market["fx"], market["divs"], yard, flows=flows, basis=basis,
+                          fill_at_prior_close=prior_close)
+    return result, bres
+
+
 def run_book(cur, em, name: str, rules, cfg: dict, start: str, live: str, factor_days: list[str], latest: str,
-             flows_from) -> None:
+             flows_from, prior_close: bool = False) -> None:
     """One book: signals (the start's, then month-ends until `live`, every factor day from it), the run, the store.
     flows_from(first_signal) gives the deposits (day, MXN)."""
     signals = sorted(set(pp.signal_days(factor_days, start, latest)) | {d for d in factor_days if d >= live})
@@ -128,8 +146,7 @@ def run_book(cur, em, name: str, rules, cfg: dict, start: str, live: str, factor
     for r in pp._rows(cur, "select signal_day, ticker, action, reason, rank, score, industry from top1_book_decisions "
                            "where portfolio = %(p)s", {"p": name}):
         frozen[pp._iso(r.pop("signal_day"))].append(r)
-    result = pp.run_book(cur, signals, dict(frozen), market, days, rules, flows)
-    bres = pp.run_benchmark(signals[0], bench, market, days, rules, flows)
+    result, bres = simulate(cur, signals, dict(frozen), market, days, rules, flows, bench, prior_close)
     new = {sd: ds for sd, ds in result["decisions"].items() if sd >= live and sd not in frozen}
     store(cur, name, result, bres, bench, new)
     last = result["nav"][-1] if result["nav"] else None
@@ -162,8 +179,9 @@ def main() -> None:
             run_book(cur, em, "desde_enero", one, cfg, start, live, factor_days, latest, from_january)
             conn.commit()
             # Mi inversión: from the first factor day on or after its start, every day a stored signal
+            # a fictitious order is filled at the price the 8 am alert quotes (the previous close)
             run_book(cur, em, "mi_inversion", one, cfg, str(top["mi_inversion_start"]), str(top["mi_inversion_start"]),
-                     factor_days, latest, from_deposits)
+                     factor_days, latest, from_deposits, prior_close=True)
             conn.commit()
 
 
