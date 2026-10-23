@@ -202,3 +202,19 @@ def test_month_end_signal_comes_out_on_the_months_last_trading_day():
     assert signal_days(["2027-05-03", "2027-05-28"], "2027-05-03", "2027-05-28") == ["2027-05-03", "2027-05-28"]
     assert signal_days(["2029-03-01", "2029-03-29"], "2029-03-01", "2029-03-29") == ["2029-03-01", "2029-03-29"]
     assert signal_days(["2029-03-01", "2029-03-28"], "2029-03-01", "2029-03-28") == ["2029-03-01"]
+
+
+def test_fill_at_prior_close_prices_the_trade_at_the_signal_day_close_but_marks_the_next_close():
+    prices = {"A": {"2026-01-01": 10.0, "2026-01-02": 12.0}}
+    rules = paper.Rules(n=1, keep_rank=1, max_per_industry=1, cost_per_side=0.0, initial_mxn=1000.0,
+                        isr_on_gains=0.0, dividend_withholding=0.0, whole_shares=False)
+    days = sorted(prices["A"])
+    series = paper.Series(list(prices["A"].items()))
+    args = (days, ["2026-01-01"], lambda sd, held, n, cb: paper.select_targets(held, _scores(["A"]), rules, n, cb),
+            lambda t, d: series.at(d), paper.Series([(days[0], 20.0)]), {}, rules)
+    default = paper.simulate(*args)
+    alert = paper.simulate(*args, fill_at_prior_close=True)
+    assert default["fills"][0]["price_usd"] == 12.0 and alert["fills"][0]["price_usd"] == 10.0
+    assert alert["fills"][0]["exec_day"] == "2026-01-02"
+    assert alert["nav"][-1]["nav_mxn"] == pytest.approx(1000 * 12 / 10)   # the day's move is the book's
+    assert default["nav"][-1]["nav_mxn"] == pytest.approx(1000)
