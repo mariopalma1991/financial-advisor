@@ -12,6 +12,12 @@ name: committee
 
 on:
   # No `schedule:` here: GitHub's cron ran hours late. Supabase pg_cron job `dispatch_committee` fires workflow_dispatch on time (db/0028_dispatch_all.sql).
+  # Nightly review starts when paper_portfolio finishes the run that follows compute_factors
+  # (the decision for the next close exists by then); the 22:15 / 06:15 CST pg_cron dispatches stay as
+  # fallback and find nothing pending if the chained run already did the work.
+  workflow_run:
+    workflows: [paper_portfolio]
+    types: [completed]
   workflow_dispatch:
     inputs:
       tickers:
@@ -51,6 +57,9 @@ concurrency:
 
 jobs:
   plan:
+    # paper_portfolio also finishes every 10 minutes (deposit check, a workflow_dispatch run):
+    # only the run chained from compute_factors counts.
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'workflow_run')
     runs-on: ubuntu-24.04
     outputs:
       models: ${{ steps.m.outputs.models }}
@@ -62,7 +71,7 @@ jobs:
         env:
           MODELS: ${{ inputs.model }}
           LIST: ${{ inputs.list_models }}
-          SCHEDULED: ${{ inputs.scheduled == true }}
+          SCHEDULED: ${{ inputs.scheduled == true || github.event_name == 'workflow_run' }}
           WEEKLY: ${{ inputs.weekly == true }}
         # Checks every OpenRouter model id against the public catalog before spending
         # anything; with list_models it only prints the matching catalog rows.
@@ -117,7 +126,7 @@ jobs:
     steps:
       - name: Check for new buys to review
         id: pending
-        if: inputs.scheduled == true && inputs.weekly != true
+        if: (inputs.scheduled == true || github.event_name == 'workflow_run') && inputs.weekly != true
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           MODEL: ${{ matrix.model }}
@@ -179,7 +188,7 @@ jobs:
           TOP: ${{ inputs.top || '1' }}
           COMMITTEE_MODEL: ${{ matrix.model }}
           OPEN_ROUTER_API_KEY: ${{ secrets.OPEN_ROUTER_API_KEY }}
-          SCHEDULED: ${{ inputs.scheduled == true }}
+          SCHEDULED: ${{ inputs.scheduled == true || github.event_name == 'workflow_run' }}
           WEEKLY: ${{ inputs.weekly == true }}
         run: |
           if [ "$WEEKLY" = "true" ]; then
